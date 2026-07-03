@@ -234,10 +234,25 @@ section { padding: 80px 20px; }
   font-size: 11px; font-weight: 700; padding: 4px 12px;
   border-radius: 20px; letter-spacing: 1px;
 }
-.card-body { padding: 1.25rem 1.5rem; }
-.card-name { font-size: 18px; font-weight: 900; margin-bottom: 4px; }
-.card-price-range { font-size: 13px; color: var(--green); font-weight: 700; margin-bottom: 8px; }
+.card-body { padding: 1.25rem 1.5rem 1.5rem; }
+.card-name {
+  display: inline-block; font-size: 12px; font-weight: 700; color: var(--green);
+  border: 1.5px solid var(--green); border-radius: 20px;
+  padding: 2px 12px; letter-spacing: 1px; margin-bottom: 10px;
+}
+.card-catch { font-size: 20px; font-weight: 900; line-height: 1.5; margin-bottom: 6px; }
+.card-price-range { font-size: 14px; color: var(--green); font-weight: 700; margin-bottom: 8px; }
 .card-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.card-select-btn {
+  margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--green); color: #fff;
+  font-size: 14px; font-weight: 700;
+  padding: 13px; border-radius: 30px;
+  transition: background 0.2s;
+}
+.card-select-btn::after { content: '→'; transition: transform 0.2s; }
+.base-card:hover .card-select-btn { background: #009058; }
+.base-card:hover .card-select-btn::after { transform: translateX(4px); }
 
 /* TYPE CARDS */
 .type-cards {
@@ -589,8 +604,10 @@ footer p { font-size: 13px; line-height: 2; }
             </div>
             <div class="card-body">
               <div class="card-name">システムブース</div>
+              <div class="card-catch">選ぶだけで、展示会ブースが完成。</div>
               <div class="card-price-range">¥150,000〜 (+税)</div>
-              <div class="card-desc">アルミフレームとパネルで構成。搬入・撤去が早く、コストパフォーマンスに優れた定番タイプ。</div>
+              <div class="card-desc">豊富なデザインテンプレートから選ぶだけ。お見積りから施工までスムーズに進められる、スピーディーなシステムブースです。</div>
+              <div class="card-select-btn">このブースを選ぶ</div>
             </div>
           </div>
           <div class="base-card" onclick="selectBase('wood')">
@@ -600,8 +617,10 @@ footer p { font-size: 13px; line-height: 2; }
             </div>
             <div class="card-body">
               <div class="card-name">木工ブース</div>
+              <div class="card-catch">理想のブースを、もっと簡単に。</div>
               <div class="card-price-range">¥390,000〜 (+税)</div>
-              <div class="card-desc">完全オーダーメイドの造作ブース。ブランドの世界観を最大限に表現したい方に。</div>
+              <div class="card-desc">テンプレートをベースにした木工ブースだから、デザインも価格も分かりやすく安心です。</div>
+              <div class="card-select-btn">このブースを選ぶ</div>
             </div>
           </div>
         </div>
