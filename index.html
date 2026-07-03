@@ -745,7 +745,15 @@ footer p { font-size: 13px; line-height: 2; }
     <div class="section-inner">
       <span class="section-eyebrow">BOOTH SELECTOR</span>
       <h2 class="section-title">ブースを選んで、<br>見積もりをつくる</h2>
-      <p class="section-desc">4ステップで見積もり完了。イメージ図を見ながら選ぶだけ。</p>
+      <p class="section-desc" style="margin-bottom:24px;">4ステップで見積もり完了。イメージ図を見ながら選ぶだけ。</p>
+
+      <!-- 担当者さん × ブースくん -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:2.5rem;">
+        <img src="img/persona.svg" alt="展示会の担当者さん" style="width:104px;height:104px;">
+        <span class="bubble" style="margin-right:24px;">展示会、急に任された…！</span>
+        <img class="mascot bounce" src="img/mascot.svg" alt="ブースくん" style="width:104px;height:104px;">
+        <span class="bubble">だいじょうぶ、選ぶだけ！</span>
+      </div>
 
       <div class="step-indicator">
         <div class="step-dot active" id="dot1">1</div>
@@ -797,12 +805,14 @@ footer p { font-size: 13px; line-height: 2; }
         <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">ブースの広さを選んでください。</p>
         <div class="type-cards" style="grid-template-columns:1fr 1fr;">
           <div class="type-card" onclick="selectKoma('system',1,this)">
+            <svg viewBox="0 0 100 74" style="width:86px;height:auto;display:block;margin:0 auto 10px;"><rect x="20" y="12" width="60" height="52" fill="#EEF3F3"/><path d="M20 64 V12 H80" stroke="#2B838C" stroke-width="8" fill="none"/><path d="M80 12 V64 H20" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><text x="50" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">3×3m</text></svg>
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">1小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">9m²（3m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">コンパクトで取り回しやすい。はじめての展示会にも最適。</div>
             <div class="type-check">選択中</div>
           </div>
           <div class="type-card" onclick="selectKoma('system',2,this)">
+            <svg viewBox="0 0 160 74" style="width:130px;height:auto;display:block;margin:0 auto 10px;"><rect x="14" y="12" width="132" height="52" fill="#EEF3F3"/><path d="M14 64 V12 H146" stroke="#D98452" stroke-width="8" fill="none"/><path d="M146 12 V64 H14" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><line x1="80" y1="16" x2="80" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><text x="80" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">6×3m</text></svg>
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">2小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">18m²（6m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">展示スペースと商談スペースを両立できる人気サイズ。</div>
@@ -825,12 +835,14 @@ footer p { font-size: 13px; line-height: 2; }
         <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">ブースの広さを選んでください。</p>
         <div class="type-cards" style="grid-template-columns:1fr 1fr;">
           <div class="type-card" onclick="selectKoma('wood',1,this)">
+            <svg viewBox="0 0 100 74" style="width:86px;height:auto;display:block;margin:0 auto 10px;"><rect x="20" y="12" width="60" height="52" fill="#EEF3F3"/><path d="M20 64 V12 H80" stroke="#2B838C" stroke-width="8" fill="none"/><path d="M80 12 V64 H20" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><text x="50" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">3×3m</text></svg>
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">1小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">9m²（3m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">小さくても存在感のある木工ブースを実現できます。</div>
             <div class="type-check">選択中</div>
           </div>
           <div class="type-card" onclick="selectKoma('wood',2,this)">
+            <svg viewBox="0 0 160 74" style="width:130px;height:auto;display:block;margin:0 auto 10px;"><rect x="14" y="12" width="132" height="52" fill="#EEF3F3"/><path d="M14 64 V12 H146" stroke="#D98452" stroke-width="8" fill="none"/><path d="M146 12 V64 H14" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><line x1="80" y1="16" x2="80" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><text x="80" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">6×3m</text></svg>
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">2小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">18m²（6m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">大型の木工ブースで圧倒的な存在感を演出できます。</div>
@@ -1411,7 +1423,10 @@ footer p { font-size: 13px; line-height: 2; }
   </section>
 
   <!-- FOOTER -->
-  <svg class="wave" style="background:var(--gray);" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="#26221E" d="M0,60 H1440 V30 C1080,-8 360,-8 0,30 Z M0,60 V30 Z"/><path fill="#26221E" d="M0,60 L0,32 C360,-6 1080,-6 1440,32 L1440,60 Z"/></svg>
+  <div style="background:var(--gray);padding:20px 20px 0;text-align:center;">
+    <img src="img/scene_nigiwai.svg" alt="にぎわう展示会のイラスト" style="width:100%;max-width:760px;height:auto;">
+  </div>
+  <svg class="wave" style="background:var(--gray);" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="#26221E" d="M0,60 L0,32 C360,-6 1080,-6 1440,32 L1440,60 Z"/></svg>
   <footer>
     <div class="footer-logo"><img src="img/logo.jpg" alt="NEIGHBOR — TOKYO FILM ART"></div>
     <p>
