@@ -5,25 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEIGHBOR — 展示会ブース、選ぶだけ。</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=RocknRoll+One&family=Anton&display=swap" rel="stylesheet">
 <style>
 :root {
-  --black: #0d0d0d;
+  --black: #26221E;
   --white: #ffffff;
-  --green: #00A968;
-  --green-light: #e6f7f1;
-  --gold: #f1c40f;
-  --gray: #f5f5f3;
-  --text: #1a1a1a;
-  --muted: #888;
-  --orange: #FF6B2B;
-  --orange-light: #FFF1EB;
+  --cream: #F7F5F1;
+  --green: #2B838C;
+  --green-light: #E7F1F2;
+  --gold: #F7C948;
+  --yellow: #F7C948;
+  --sky: #2B838C;
+  --pink: #D93B48;
+  --red: #D93B48;
+  --olive: #AEBF6F;
+  --gray: #F1EFEA;
+  --text: #2B2724;
+  --muted: #8A8580;
+  --orange: #D98452;
+  --orange-light: #F9EDE4;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Noto Sans JP', sans-serif;
-  background: var(--white);
+  background: var(--cream);
   color: var(--text);
   line-height: 1.7;
   overflow-x: hidden;
@@ -34,7 +40,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 40px; height: 64px;
-  background: rgba(255,255,255,0.97); border-bottom: 1px solid #e8e8e8;
+  background: rgba(255,255,255,0.97); border-bottom: 1px solid #E5E1D8;
   backdrop-filter: blur(10px);
 }
 .nav-logo { cursor: pointer; display: flex; align-items: center; }
@@ -47,7 +53,7 @@ nav {
   transition: background 0.2s, transform 0.2s;
   white-space: nowrap;
 }
-.nav-cta:hover { background: #009058; transform: scale(1.03); }
+.nav-cta:hover { background: #236E76; transform: scale(1.03); }
 
 /* ========== HERO ========== */
 .hero {
@@ -61,7 +67,7 @@ nav {
 }
 .hero-bg-text {
   position: absolute;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'RocknRoll One', sans-serif;
   font-size: clamp(120px, 20vw, 240px);
   color: rgba(255,255,255,0.03);
   top: 50%; left: 50%;
@@ -72,7 +78,7 @@ nav {
 }
 .hero-badge {
   display: inline-block;
-  border: 1px solid rgba(0,169,104,0.6);
+  border: 1px solid rgba(43,131,140,0.6);
   color: var(--green);
   font-size: 12px; font-weight: 700;
   padding: 5px 18px; border-radius: 30px;
@@ -80,7 +86,7 @@ nav {
   animation: fadeUp 0.8s ease both;
 }
 .hero h1 {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'RocknRoll One', sans-serif;
   font-size: clamp(56px, 10vw, 110px);
   color: var(--white); line-height: 0.95;
   letter-spacing: 4px;
@@ -108,7 +114,7 @@ nav {
 }
 .hero-price-label { color: rgba(255,255,255,0.5); font-size: 14px; }
 .hero-price-num {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'RocknRoll One', sans-serif;
   font-size: 52px; color: var(--gold); letter-spacing: 2px;
 }
 .hero-price-unit { color: rgba(255,255,255,0.5); font-size: 14px; }
@@ -122,11 +128,11 @@ nav {
   transition: all 0.2s;
   animation: fadeUp 0.8s 0.4s ease both;
 }
-.hero-btn:hover { background: #009058; transform: translateY(-2px); }
+.hero-btn:hover { background: #236E76; transform: translateY(-2px); }
 .hero-scroll {
   position: absolute; bottom: 30px; left: 50%;
   transform: translateX(-50%);
-  color: rgba(255,107,43,0.6); font-size: 12px;
+  color: rgba(217,59,72,0.6); font-size: 12px;
   letter-spacing: 2px; animation: bounce 2s infinite;
 }
 
@@ -141,7 +147,7 @@ nav {
 }
 .stat:last-child { border-right: none; }
 .stat-num {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'RocknRoll One', sans-serif;
   font-size: 42px; color: #fff; letter-spacing: 2px; line-height: 1;
 }
 .stat-label { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 700; margin-top: 4px; }
@@ -150,12 +156,17 @@ nav {
 section { padding: 80px 20px; }
 .section-inner { max-width: 1000px; margin: 0 auto; }
 .section-eyebrow {
+  display: inline-block;
   font-size: 11px; font-weight: 700; letter-spacing: 3px;
-  color: #FF6B2B; margin-bottom: 12px; display: block;
+  color: #3E4429; background: var(--olive);
+  padding: 5px 16px; border-radius: 20px;
+  transform: rotate(-2deg);
+  margin-bottom: 14px;
 }
 .section-title {
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 900; line-height: 1.2; margin-bottom: 16px;
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: clamp(26px, 3.6vw, 38px);
+  font-weight: 400; line-height: 1.35; margin-bottom: 16px;
 }
 .section-desc { color: var(--muted); font-size: 15px; line-height: 1.9; margin-bottom: 48px; }
 
@@ -163,18 +174,22 @@ section { padding: 80px 20px; }
 .how-section { background: var(--gray); }
 .flow-steps {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0; position: relative;
+  gap: 16px; position: relative;
 }
 .flow-step {
   padding: 2rem 1.5rem;
   background: var(--white);
-  border-right: 1px solid #e8e8e8;
+  border-radius: 22px;
+  border: 2px solid #E5E1D8;
   text-align: center;
 }
-.flow-step:last-child { border-right: none; }
+.flow-step:nth-child(1) .step-num { color: var(--red); }
+.flow-step:nth-child(2) .step-num { color: var(--orange); }
+.flow-step:nth-child(3) .step-num { color: #97A85C; }
+.flow-step:nth-child(4) .step-num { color: var(--green); }
 .step-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 56px; color: #FF6B2B;
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: 48px;
   line-height: 1; margin-bottom: 12px;
 }
 .step-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
@@ -206,7 +221,7 @@ section { padding: 80px 20px; }
   transition: all 0.3s;
 }
 .step-dot.active { background: var(--green); color: #fff; }
-.step-dot.done { background: #FF6B2B; color: #fff; }
+.step-dot.done { background: var(--red); color: #fff; }
 .step-line { flex: 1; height: 2px; background: #eee; min-width: 20px; max-width: 60px; transition: background 0.3s; }
 .step-line.done { background: var(--black); }
 
@@ -216,12 +231,13 @@ section { padding: 80px 20px; }
   gap: 20px; margin-bottom: 2rem;
 }
 .base-card {
-  border: 2px solid #e8e8e8; border-radius: 16px;
+  background: var(--white);
+  border: 2px solid #E5E1D8; border-radius: 22px;
   overflow: hidden; cursor: pointer;
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.base-card:hover { border-color: var(--green); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,169,104,0.15); }
-.base-card.selected { border-color: var(--green); box-shadow: 0 0 0 4px rgba(0,169,104,0.12); }
+.base-card:hover { border-color: var(--green); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(43,131,140,0.15); }
+.base-card.selected { border-color: var(--green); box-shadow: 0 0 0 4px rgba(43,131,140,0.12); }
 .card-visual {
   height: 180px; display: flex; align-items: center; justify-content: center;
   font-size: 48px; position: relative; overflow: hidden;
@@ -251,7 +267,7 @@ section { padding: 80px 20px; }
   transition: background 0.2s;
 }
 .card-select-btn::after { content: '→'; transition: transform 0.2s; }
-.base-card:hover .card-select-btn { background: #009058; }
+.base-card:hover .card-select-btn { background: #236E76; }
 .base-card:hover .card-select-btn::after { transform: translateX(4px); }
 
 /* TYPE CARDS */
@@ -260,7 +276,8 @@ section { padding: 80px 20px; }
   gap: 16px; margin-bottom: 2rem;
 }
 .type-card {
-  border: 2px solid #e8e8e8; border-radius: 12px; padding: 1.5rem;
+  background: var(--white);
+  border: 2px solid #E5E1D8; border-radius: 18px; padding: 1.5rem;
   cursor: pointer; transition: all 0.2s; position: relative;
 }
 .type-card:hover { border-color: var(--green); background: var(--green-light); }
@@ -288,10 +305,16 @@ section { padding: 80px 20px; }
 }
 .options-panel h3 { font-size: 16px; font-weight: 900; margin-bottom: 1rem; }
 .option-item {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--white); border-radius: 10px; padding: 12px 16px;
-  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 14px;
+  background: var(--white); border-radius: 16px; padding: 12px 16px;
+  margin-bottom: 10px; border: 2px solid #ECEAE4;
 }
+.opt-img {
+  width: 64px; height: 64px; object-fit: contain;
+  background: #fff; border-radius: 12px;
+  border: 2px solid #E5E1D8; flex-shrink: 0; padding: 4px;
+}
+.option-info { flex: 1; }
 .option-info .opt-name { font-size: 14px; font-weight: 700; }
 .option-info .opt-price { font-size: 12px; color: var(--muted); }
 .qty-control {
@@ -316,7 +339,7 @@ section { padding: 80px 20px; }
 .qs-plan-name { color: var(--white); font-size: 15px; font-weight: 700; margin-bottom: 1.5rem; }
 .qs-total-label { color: rgba(255,255,255,0.5); font-size: 12px; margin-bottom: 4px; }
 .qs-total {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'RocknRoll One', sans-serif;
   font-size: 48px; color: var(--gold); letter-spacing: 2px;
   line-height: 1; margin-bottom: 4px;
 }
@@ -336,11 +359,11 @@ section { padding: 80px 20px; }
 .submit-btn {
   width: 100%; background: var(--green);
   border: none; color: #fff; padding: 14px;
-  border-radius: 10px; font-size: 16px; font-weight: 700;
+  border-radius: 30px; font-size: 16px; font-weight: 700;
   cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
   transition: background 0.2s, transform 0.2s; margin-top: 4px;
 }
-.submit-btn:hover { background: #009058; transform: scale(1.01); }
+.submit-btn:hover { background: #236E76; transform: scale(1.01); }
 .submit-btn:disabled { background: #666; cursor: not-allowed; transform: none; }
 
 /* SUCCESS */
@@ -353,6 +376,49 @@ section { padding: 80px 20px; }
 .success-msg h3 { font-size: 18px; font-weight: 900; color: var(--green); margin-bottom: 8px; }
 .success-msg p { font-size: 14px; color: var(--muted); }
 
+/* LARGE BOOTH (3小間以上) */
+.large-booth-banner {
+  border: 3px dashed var(--red);
+  background: var(--orange-light);
+  border-radius: 22px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.large-booth-banner:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(217,59,72,0.2); }
+.lb-badge {
+  display: inline-block; background: var(--red); color: #fff;
+  font-size: 12px; font-weight: 700; padding: 4px 16px;
+  border-radius: 20px; transform: rotate(-2deg); margin-bottom: 10px;
+}
+.lb-title { font-family: 'RocknRoll One', sans-serif; font-size: 20px; margin-bottom: 6px; }
+.lb-desc { font-size: 13px; color: var(--muted); }
+.large-booth-banner .card-select-btn { max-width: 340px; margin: 16px auto 0; background: var(--red); }
+.large-booth-banner:hover .card-select-btn { background: #C33440; }
+
+.large-form-panel {
+  background: var(--white); border: 2px solid #E5E1D8;
+  border-radius: 22px; padding: 1.75rem;
+}
+.lf-label { font-size: 13px; font-weight: 700; margin: 14px 0 6px; display: block; }
+.lf-label:first-child { margin-top: 0; }
+.lf-label .req {
+  background: var(--red); color: #fff; font-size: 10px;
+  border-radius: 10px; padding: 1px 8px; margin-left: 6px; vertical-align: 1px;
+}
+.lf-input, .lf-select, .lf-textarea {
+  width: 100%; background: var(--cream);
+  border: 2px solid #E5E1D8; border-radius: 12px;
+  padding: 11px 14px; font-size: 14px;
+  font-family: 'Noto Sans JP', sans-serif; color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.lf-input:focus, .lf-select:focus, .lf-textarea:focus { border-color: var(--green); background: #fff; }
+.lf-textarea { min-height: 100px; resize: vertical; }
+.lf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+@media (max-width: 600px) { .lf-grid { grid-template-columns: 1fr; } }
+
 /* BACK BTN */
 .back-btn {
   background: none; border: 1.5px solid #ccc; padding: 8px 20px;
@@ -360,7 +426,7 @@ section { padding: 80px 20px; }
   color: var(--muted); margin-bottom: 1.5rem;
   font-family: 'Noto Sans JP', sans-serif; transition: all 0.2s;
 }
-.back-btn:hover { border-color: #FF6B2B; color: #FF6B2B; }
+.back-btn:hover { border-color: var(--red); color: var(--red); }
 
 /* VIEW MANAGEMENT */
 .view { display: none; }
@@ -392,7 +458,7 @@ footer p { font-size: 13px; line-height: 2; }
   background: var(--black); color: #fff;
   padding: 14px 24px; border-radius: 12px;
   font-size: 14px; font-weight: 700;
-  border-left: 4px solid var(--green);
+  border-left: 4px solid var(--red);
   transform: translateY(80px); opacity: 0;
   transition: all 0.3s;
 }
@@ -420,10 +486,69 @@ footer p { font-size: 13px; line-height: 2; }
   font-weight: 700; cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
 }
 
+/* ========== NY POP パーツ ========== */
+/* レンガ壁(段違いパターン) */
+.brick-bg {
+  background-color: #C2394A;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='48'%3E%3Crect width='88' height='48' fill='%23A32D3B'/%3E%3Crect x='1' y='2' width='42' height='20' rx='1.5' fill='%23C2394A'/%3E%3Crect x='45' y='2' width='42' height='20' rx='1.5' fill='%23BE3646'/%3E%3Crect x='-21' y='26' width='42' height='20' rx='1.5' fill='%23BC3444'/%3E%3Crect x='23' y='26' width='42' height='20' rx='1.5' fill='%23C53B4C'/%3E%3Crect x='67' y='26' width='42' height='20' rx='1.5' fill='%23C2394A'/%3E%3C/svg%3E");
+}
+/* オーニング(NYの店先の日よけストライプ) */
+.awning {
+  height: 16px;
+  background: repeating-linear-gradient(90deg, var(--red) 0 42px, #fff 42px 84px);
+  border-bottom: 3px solid rgba(0,0,0,0.12);
+}
+.awning.teal { background: repeating-linear-gradient(90deg, var(--green) 0 42px, #fff 42px 84px); }
+/* ポラロイド風フォトカード */
+.hero-collage {
+  display: flex; justify-content: center; align-items: stretch;
+  gap: 22px; flex-wrap: wrap; margin: 2.2rem 0 0.5rem;
+}
+.polaroid {
+  background: #fff; padding: 10px 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  width: min(280px, 80vw);
+  position: relative;
+  transition: transform 0.25s;
+}
+.polaroid:nth-child(1) { transform: rotate(-3deg); }
+.polaroid:nth-child(2) { transform: rotate(2deg) translateY(10px); }
+.polaroid:nth-child(3) { transform: rotate(-1.5deg); }
+.polaroid:hover { transform: rotate(0deg) translateY(-6px) scale(1.03); z-index: 2; }
+.polaroid img { width: 100%; height: 190px; object-fit: cover; display: block; border-radius: 3px; }
+.polaroid .tape {
+  position: absolute; top: -12px; left: 50%;
+  transform: translateX(-50%) rotate(-4deg);
+  width: 92px; height: 26px;
+  background: rgba(247,201,72,0.85);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.polaroid:nth-child(2) .tape { background: rgba(43,131,140,0.75); transform: translateX(-50%) rotate(3deg); }
+.polaroid:nth-child(3) .tape { background: rgba(174,191,111,0.85); }
+.polaroid .p-label {
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: 13px; color: var(--text);
+  padding: 10px 4px 2px; text-align: center;
+}
+/* タクシーイエローのCTA */
+.taxi-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--yellow); color: #26221E;
+  font-size: 17px; font-weight: 900;
+  padding: 17px 46px; border-radius: 50px;
+  border: 3px solid #26221E;
+  box-shadow: 0 6px 0 #26221E;
+  cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.taxi-btn:hover { transform: translateY(3px); box-shadow: 0 3px 0 #26221E; }
+.taxi-btn::after { content: '→'; }
+
 @media (max-width: 600px) {
   nav { padding: 0 20px; }
   .stat { padding: 1rem 1.5rem; }
-  .hero h1 { font-size: 56px; }
+  .polaroid img { height: 150px; }
 }
 </style>
 </head>
@@ -439,101 +564,60 @@ footer p { font-size: 13px; line-height: 2; }
 <div id="view-main" class="view active">
 
   <!-- HERO -->
-  <section class="hero" style="background:linear-gradient(160deg,#f0faf5 0%,#e8f5f0 40%,#f5f9ff 100%);min-height:auto;padding:100px 20px 0;">
-    <div class="hero-bg-text" style="color:rgba(0,169,104,0.06);">NEIGHBOR</div>
+  <section class="hero brick-bg" style="min-height:auto;padding:100px 20px 0;">
+    <div class="hero-bg-text" style="color:rgba(255,255,255,0.05);">NEIGHBOR</div>
     <div style="position:relative;z-index:1;max-width:1000px;margin:0 auto;">
 
       <!-- タグライン -->
-      <div class="hero-badge" style="background:rgba(255,107,43,0.1);color:#FF6B2B;border-color:rgba(255,107,43,0.3);">展示会ブース — 選んで、頼むだけ。</div>
+      <div class="hero-badge" style="background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.4);">展示会ブース — 選んで、頼むだけ。</div>
 
       <!-- メインコピー -->
-      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,7vw,88px);color:var(--dark);line-height:0.95;letter-spacing:3px;margin-bottom:1rem;">
-        ブース発注、<br><span style="color:var(--green);">もっと</span>かんたんに。
+      <h1 style="font-family:'RocknRoll One', sans-serif;font-size:clamp(34px,5.5vw,64px);color:#fff;line-height:1.3;letter-spacing:2px;margin-bottom:1rem;text-shadow:0 3px 0 rgba(0,0,0,0.2);">
+        ブース発注、<br><span style="color:var(--yellow);">もっと</span>かんたんに。
       </h1>
 
       <!-- サブコピー：ターゲットに刺さる言葉 -->
-      <p style="font-size:clamp(14px,1.8vw,18px);color:#444;max-width:560px;margin:0 auto 0.5rem;line-height:1.9;text-align:center;">
+      <p style="font-size:clamp(14px,1.8vw,18px);color:rgba(255,255,255,0.92);max-width:560px;margin:0 auto 0.5rem;line-height:1.9;text-align:center;">
         「展示会の担当、急に任された…」そんなあなたへ。<br>
-        <strong>パース図を見て選ぶだけ。</strong>その場で見積もりが完成します。
+        <strong style="color:var(--yellow);">イメージ図を見て選ぶだけ。</strong>その場で見積もりが完成します。
       </p>
 
       <!-- 安心感バッジ -->
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:1.2rem 0 2rem;">
-        <span style="background:#fff;border:1px solid #ddd;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:#444;"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#FF6B2B;color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>初めてでも安心</span>
-        <span style="background:#fff;border:1px solid #ddd;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:#444;"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#FF6B2B;color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>即日見積もり対応</span>
-        <span style="background:#fff;border:1px solid #ddd;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:#444;"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#FF6B2B;color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>金額が先に分かる</span>
-        <span style="background:#fff;border:1px solid #ddd;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:#444;"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#FF6B2B;color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>担当者サポートあり</span>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:1.2rem 0 0.5rem;">
+        <span style="background:#fff;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--text);"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>初めてでも安心</span>
+        <span style="background:#fff;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--text);"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>即日見積もり対応</span>
+        <span style="background:#fff;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--text);"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>金額が先に分かる</span>
+        <span style="background:#fff;border-radius:30px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--text);"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:900;line-height:14px;text-align:center;margin-right:5px;">✓</span>担当者サポートあり</span>
       </div>
 
-      <!-- プランカード4枚 -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:0;">
-
-        <!-- BASIC -->
-        <div onclick="scrollToPlans()" style="background:#fff;border:2px solid #e8e8e8;border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.06);" onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='var(--green)';this.style.boxShadow='0 12px 32px rgba(0,169,104,0.18)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='#e8e8e8';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="background:#f8fffe;padding:12px;border-bottom:1px solid #f0f0f0;">
-            <img src="img/hero_basic.png" style="width:100%;height:140px;object-fit:contain;object-position:center;">
-          </div>
-          <div style="padding:12px 14px 14px;">
-            <div style="font-size:9px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:5px;">BASIC</div>
-            <div style="font-size:14px;font-weight:900;color:#1a1a1a;margin-bottom:6px;">壁のみプラン</div>
-            <div style="font-size:22px;font-weight:900;color:var(--green);line-height:1;">¥150,000<span style="font-size:11px;color:#888;font-weight:400;">〜 +税</span></div>
-            <div style="font-size:10px;color:#aaa;margin-top:4px;">1小間 / 壁面のみ</div>
-            <div style="margin-top:10px;background:var(--green);color:#fff;border-radius:6px;padding:6px 0;font-size:11px;font-weight:700;text-align:center;">見積もりを見る →</div>
-          </div>
+      <!-- フォトコラージュ: ビッグサイト / 施工ブース / イメージ図 -->
+      <div class="hero-collage">
+        <div class="polaroid">
+          <div class="tape"></div>
+          <img src="img/bigsight.jpg" alt="東京ビッグサイト" style="object-position:center 60%;">
+          <div class="p-label">東京ビッグサイトほか全国対応</div>
         </div>
-
-        <!-- STANDARD -->
-        <div onclick="scrollToPlans()" style="background:#fff;border:2px solid #e8e8e8;border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.06);" onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='var(--green)';this.style.boxShadow='0 12px 32px rgba(0,169,104,0.18)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='#e8e8e8';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="background:#f8fffe;padding:12px;border-bottom:1px solid #f0f0f0;">
-            <img src="img/hero_standard.png" style="width:100%;height:140px;object-fit:contain;object-position:center;">
-          </div>
-          <div style="padding:12px 14px 14px;">
-            <div style="font-size:9px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:5px;">STANDARD</div>
-            <div style="font-size:14px;font-weight:900;color:#1a1a1a;margin-bottom:6px;">シンプルプラン</div>
-            <div style="font-size:22px;font-weight:900;color:var(--green);line-height:1;">¥200,000<span style="font-size:11px;color:#888;font-weight:400;">〜 +税</span></div>
-            <div style="font-size:10px;color:#aaa;margin-top:4px;">1小間 / 壁＋基本什器</div>
-            <div style="margin-top:10px;background:var(--green);color:#fff;border-radius:6px;padding:6px 0;font-size:11px;font-weight:700;text-align:center;">見積もりを見る →</div>
-          </div>
+        <div class="polaroid">
+          <div class="tape"></div>
+          <img src="img/base_wood.jpg" alt="施工したブースの写真">
+          <div class="p-label">実際の施工ブース</div>
         </div>
-
-        <!-- POPULAR -->
-        <div onclick="scrollToPlans()" style="background:#fff;border:2px solid #FF6B2B;border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 20px rgba(255,107,43,0.2);position:relative;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,169,104,0.28)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(0,169,104,0.2)'">
-          <div style="position:absolute;top:10px;right:10px;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:4px 10px;border-radius:20px;z-index:2;letter-spacing:1px;">人気No.1</div>
-          <div style="background:#f0faf5;padding:12px;border-bottom:1px solid #d4ede3;">
-            <img src="img/hero_popular.png" style="width:100%;height:140px;object-fit:contain;object-position:center;">
-          </div>
-          <div style="padding:12px 14px 14px;">
-            <div style="font-size:9px;font-weight:800;color:var(--green);letter-spacing:2px;margin-bottom:5px;">POPULAR</div>
-            <div style="font-size:14px;font-weight:900;color:#1a1a1a;margin-bottom:6px;">王道プラン</div>
-            <div style="font-size:22px;font-weight:900;color:var(--green);line-height:1;">¥280,000<span style="font-size:11px;color:#888;font-weight:400;">〜 +税</span></div>
-            <div style="font-size:10px;color:#aaa;margin-top:4px;">2小間 / フル装飾</div>
-            <div style="margin-top:10px;background:var(--green);color:#fff;border-radius:6px;padding:6px 0;font-size:11px;font-weight:700;text-align:center;">見積もりを見る →</div>
-          </div>
+        <div class="polaroid">
+          <div class="tape"></div>
+          <img src="img/hero_popular.png" alt="ブースのイメージ図" style="object-fit:contain;background:#fff;">
+          <div class="p-label">イメージ図から選べる</div>
         </div>
-
-        <!-- PREMIUM -->
-        <div onclick="scrollToPlans()" style="background:#fff;border:2px solid #e8e8e8;border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.06);" onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='var(--green)';this.style.boxShadow='0 12px 32px rgba(0,169,104,0.18)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='#e8e8e8';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="background:#f8fffe;padding:12px;border-bottom:1px solid #f0f0f0;">
-            <img src="img/hero_premium.png" style="width:100%;height:140px;object-fit:contain;object-position:center;">
-          </div>
-          <div style="padding:12px 14px 14px;">
-            <div style="font-size:9px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:5px;">PREMIUM</div>
-            <div style="font-size:14px;font-weight:900;color:#1a1a1a;margin-bottom:6px;">RXプラン</div>
-            <div style="font-size:22px;font-weight:900;color:var(--green);line-height:1;">¥380,000<span style="font-size:11px;color:#888;font-weight:400;">〜 +税</span></div>
-            <div style="font-size:10px;color:#aaa;margin-top:4px;">2小間 / ハイグレード</div>
-            <div style="margin-top:10px;background:var(--green);color:#fff;border-radius:6px;padding:6px 0;font-size:11px;font-weight:700;text-align:center;">見積もりを見る →</div>
-          </div>
-        </div>
-
       </div>
+
+      <!-- CTA -->
+      <div style="margin:2.2rem 0 3rem;">
+        <button class="taxi-btn" onclick="scrollToPlans()">今すぐ見積もりをつくる</button>
+      </div>
+
     </div>
 
-    <!-- 下部の波形装飾 -->
-    <div style="margin-top:40px;overflow:hidden;line-height:0;">
-      <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;height:60px;">
-        <path d="M0,0 C360,60 1080,60 1440,0 L1440,60 L0,60 Z" fill="#00A968"/>
-      </svg>
-    </div>
+    <!-- 下部オーニング(NYストライプ) -->
+    <div class="awning" style="margin-top:30px;"></div>
   </section>
 
   <!-- STATS -->
@@ -565,7 +649,7 @@ footer p { font-size: 13px; line-height: 2; }
         <div class="flow-step">
           <div class="step-num">03</div>
           <div class="step-title">プランを選ぶ</div>
-          <div class="step-desc">パース図を見ながら、イメージに合うプランを選択。</div>
+          <div class="step-desc">イメージ図を見ながら、イメージに合うプランを選択。</div>
         </div>
         <div class="flow-step">
           <div class="step-num">04</div>
@@ -581,7 +665,7 @@ footer p { font-size: 13px; line-height: 2; }
     <div class="section-inner">
       <span class="section-eyebrow">BOOTH SELECTOR</span>
       <h2 class="section-title">ブースを選んで、<br>見積もりをつくる</h2>
-      <p class="section-desc">4ステップで見積もり完了。パース図を見ながら選ぶだけ。</p>
+      <p class="section-desc">4ステップで見積もり完了。イメージ図を見ながら選ぶだけ。</p>
 
       <div class="step-indicator">
         <div class="step-dot active" id="dot1">1</div>
@@ -645,6 +729,12 @@ footer p { font-size: 13px; line-height: 2; }
             <div class="type-check">選択中</div>
           </div>
         </div>
+        <div class="large-booth-banner" onclick="goToLarge()">
+          <div class="lb-badge">3小間以上をご検討の方</div>
+          <div class="lb-title">大型ブースをご予定のお客様はこちら</div>
+          <p class="lb-desc">ご要望をお伺いして、専任スタッフがぴったりのプランを個別にお見積もりします。</p>
+          <div class="card-select-btn">大型ブースの相談にすすむ</div>
+        </div>
       </div>
 
       <!-- STEP2: コマ数（木工） -->
@@ -666,21 +756,27 @@ footer p { font-size: 13px; line-height: 2; }
             <div class="type-check">選択中</div>
           </div>
         </div>
+        <div class="large-booth-banner" onclick="goToLarge()">
+          <div class="lb-badge">3小間以上をご検討の方</div>
+          <div class="lb-title">大型ブースをご予定のお客様はこちら</div>
+          <p class="lb-desc">ご要望をお伺いして、専任スタッフがぴったりのプランを個別にお見積もりします。</p>
+          <div class="card-select-btn">大型ブースの相談にすすむ</div>
+        </div>
       </div>
 
       <!-- STEP3: プラン（s1） -->
       <div id="step-plan-s1" class="view">
         <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
         <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">システムブース 1小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">パース図を見ながら、イメージに合うプランを選んでください。</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">イメージ図を見ながら、イメージに合うプランを選んでください。</p>
         <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('s1','kabe','壁のみプラン',150000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/hero_basic.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
@@ -695,19 +791,19 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('s1','simple','シンプルプラン',200000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/hero_standard.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
@@ -722,26 +818,26 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('s1','odo','王道プラン',260000,this)"
-  style="background:#fff;border:2px solid #FF6B2B;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(255,107,43,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(255,107,43,0.2)'">
+  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
+         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
+  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/hero_popular.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
   <!-- テキストエリア（右・40%） -->
   <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:#FF6B2B;color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:#FF6B2B;letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
+    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
+    <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
     <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">王道プラン</div>
     <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">展示台・照明・グラフィックをバランスよく揃えた最も人気のプラン。来場者の目を引く空間演出ができます。</div>
     <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
@@ -749,19 +845,19 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('s1','rx','RXプラン',350000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/hero_premium.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
@@ -776,7 +872,7 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
@@ -788,15 +884,15 @@ footer p { font-size: 13px; line-height: 2; }
       <div id="step-plan-s2" class="view">
         <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
         <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">システムブース 2小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">パース図を見ながら、イメージに合うプランを選んでください。</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">イメージ図を見ながら、イメージに合うプランを選んでください。</p>
         <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('s2','kabe','壁のみプラン',200000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/hero_basic.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
@@ -811,19 +907,19 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('s2','cospa','コスパプラン',280000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/s2_cospa.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
@@ -838,26 +934,26 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('s2','odo','王道プラン',350000,this)"
-  style="background:#fff;border:2px solid #FF6B2B;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(255,107,43,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(255,107,43,0.2)'">
+  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
+         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
+  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/s2_odo.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
   <!-- テキストエリア（右・40%） -->
   <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:#FF6B2B;color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:#FF6B2B;letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
+    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
+    <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
     <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">王道プラン</div>
     <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">2小間の王道スタイル。展示スペースと商談スペースを理想的なバランスで構成した人気プラン。</div>
     <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
@@ -865,19 +961,19 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('s2','rich','リッチプラン',480000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/s2_rich.png" style="width:100%;max-height:280px;object-fit:contain;">
   </div>
 
@@ -892,7 +988,7 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
@@ -906,13 +1002,13 @@ footer p { font-size: 13px; line-height: 2; }
         <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">木工ブース 1小間</span></h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">木工ブースはオーダーメイドです。ご要望に応じてカスタマイズ可能。</p>
         <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('w1','simple','シンプル木工',390000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/w1_simple.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
   </div>
 
@@ -927,25 +1023,25 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('w1','rich','リッチ木工',580000,this)"
-  style="background:#fff;border:2px solid #FF6B2B;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(255,107,43,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(255,107,43,0.2)'">
+  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
+         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
+  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/w1_rich.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
   </div>
 
   <!-- テキストエリア（右・40%） -->
   <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:#FF6B2B;color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
+    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
     <div style="font-size:10px;font-weight:800;color:var(--green);letter-spacing:2px;margin-bottom:6px;">PREMIUM</div>
     <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">リッチ木工</div>
     <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">造作棚・照明・グラフィックをフルで揃えたハイグレード仕様。世界観を徹底的に作り込みます。</div>
@@ -954,7 +1050,7 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
@@ -968,13 +1064,13 @@ footer p { font-size: 13px; line-height: 2; }
         <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">木工ブース 2小間</span></h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">2小間の木工ブースは圧倒的な存在感を演出できます。</p>
         <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('w2','cospa','コスパ木工',580000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/base_wood.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
   </div>
 
@@ -989,26 +1085,26 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('w2','odo','王道木工',750000,this)"
-  style="background:#fff;border:2px solid #FF6B2B;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(255,107,43,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(255,107,43,0.2)'">
+  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
+         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
+  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/w1_simple.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
   </div>
 
   <!-- テキストエリア（右・40%） -->
   <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:#FF6B2B;color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:#FF6B2B;letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
+    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
+    <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
     <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">王道木工</div>
     <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">2小間木工の王道スタイル。多くのお客様に選ばれている、バランスの良い木工ブースです。</div>
     <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
@@ -1016,19 +1112,19 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
   </div>
 </div><div onclick="selectPlan('w2','rich','フルカスタム',980000,this)"
-  style="background:#fff;border:2px solid #e8e8e8;border-radius:20px;overflow:hidden;cursor:pointer;
+  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(255,107,43,0.28)'"
+  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
 
   <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#f4fdf8;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
+  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
     <img src="img/w2_rich.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
   </div>
 
@@ -1043,7 +1139,7 @@ footer p { font-size: 13px; line-height: 2; }
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#009058'"
+         onmouseover="this.style.background='#236E76'"
          onmouseout="this.style.background='var(--green)'">
       このプランで見積もる →
     </div>
@@ -1059,10 +1155,10 @@ footer p { font-size: 13px; line-height: 2; }
           <div>
             <div class="options-panel">
               <h3>追加オプション</h3>
-              <div class="option-item"><div class="option-info"><div class="opt-name">リース台</div><div class="opt-price">¥30,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt1',-1)">−</button><span class="qty-val" id="qty-opt1">0</span><button class="qty-btn" onclick="changeQty('opt1',1)">＋</button></div></div>
-              <div class="option-item"><div class="option-info"><div class="opt-name">ハイテーブル</div><div class="opt-price">¥8,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt2',-1)">−</button><span class="qty-val" id="qty-opt2">0</span><button class="qty-btn" onclick="changeQty('opt2',1)">＋</button></div></div>
-              <div class="option-item"><div class="option-info"><div class="opt-name">チェア</div><div class="opt-price">¥3,000 / 脚</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
-              <div class="option-item"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥35,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_wagon.jpg" alt="リース台"><div class="option-info"><div class="opt-name">リース台</div><div class="opt-price">¥30,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt1',-1)">−</button><span class="qty-val" id="qty-opt1">0</span><button class="qty-btn" onclick="changeQty('opt1',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_hightable.jpg" alt="ハイテーブル"><div class="option-info"><div class="opt-name">ハイテーブル</div><div class="opt-price">¥8,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt2',-1)">−</button><span class="qty-val" id="qty-opt2">0</span><button class="qty-btn" onclick="changeQty('opt2',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_chair.jpg" alt="チェア"><div class="option-info"><div class="opt-name">チェア</div><div class="opt-price">¥3,000 / 脚</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥35,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
             </div>
           </div>
           <div class="quote-sidebar-panel">
@@ -1092,6 +1188,86 @@ footer p { font-size: 13px; line-height: 2; }
         </div>
       </div>
 
+      <!-- 大型ブース（3小間以上）相談フォーム -->
+      <div id="step-large" class="view">
+        <button class="back-btn" onclick="goToStep(2)">← 小間数選択にもどる</button>
+        <div class="lb-badge">3小間以上をご検討の方</div>
+        <h3 style="font-family:'RocknRoll One', sans-serif;font-size:24px;margin-bottom:0.5rem;">大型ブースのご相談</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">ご予定の内容を教えてください。専任スタッフがぴったりのプランをお見積もりして、担当者よりご連絡します。</p>
+        <div class="large-form-panel">
+          <form id="large-form" onsubmit="submitLarge(event)">
+            <div class="lf-grid">
+              <div>
+                <label class="lf-label">コマ数<span class="req">必須</span></label>
+                <select class="lf-select" id="lf-koma" required>
+                  <option value="">選択してください</option>
+                  <option>3小間（27m²）</option>
+                  <option>4小間（36m²）</option>
+                  <option>5小間（45m²）</option>
+                  <option>6小間以上</option>
+                  <option>未定・相談したい</option>
+                </select>
+              </div>
+              <div>
+                <label class="lf-label">開放面（通路に面した面数）<span class="req">必須</span></label>
+                <select class="lf-select" id="lf-open" required>
+                  <option value="">選択してください</option>
+                  <option>1面（並列）</option>
+                  <option>2面（角）</option>
+                  <option>3面（突き出し）</option>
+                  <option>4面（島）</option>
+                  <option>未定</option>
+                </select>
+              </div>
+              <div>
+                <label class="lf-label">ストックルーム</label>
+                <select class="lf-select" id="lf-stock">
+                  <option>必要</option>
+                  <option>不要</option>
+                  <option selected>未定</option>
+                </select>
+              </div>
+              <div>
+                <label class="lf-label">展示台の数</label>
+                <select class="lf-select" id="lf-stands">
+                  <option selected>未定</option>
+                  <option>1〜2台</option>
+                  <option>3〜5台</option>
+                  <option>6〜10台</option>
+                  <option>11台以上</option>
+                </select>
+              </div>
+            </div>
+            <label class="lf-label">展示予定の商品</label>
+            <textarea class="lf-textarea" id="lf-products" placeholder="例）自社製の産業用ロボット2台と、パンフレット・ノベルティを展示予定です。"></textarea>
+            <div class="lf-grid">
+              <div>
+                <label class="lf-label">会社名<span class="req">必須</span></label>
+                <input class="lf-input" id="lf-company" type="text" placeholder="株式会社〇〇" required>
+              </div>
+              <div>
+                <label class="lf-label">担当者名<span class="req">必須</span></label>
+                <input class="lf-input" id="lf-name" type="text" placeholder="山田 太郎" required>
+              </div>
+              <div>
+                <label class="lf-label">電話番号<span class="req">必須</span></label>
+                <input class="lf-input" id="lf-tel" type="tel" placeholder="080-0000-0000" required>
+              </div>
+              <div>
+                <label class="lf-label">メールアドレス<span class="req">必須</span></label>
+                <input class="lf-input" id="lf-email" type="email" placeholder="example@mail.com" required>
+              </div>
+            </div>
+            <button type="submit" class="submit-btn" style="margin-top:1.5rem;">この内容で相談する →</button>
+          </form>
+          <div class="success-msg" id="large-success">
+            <div style="font-size:40px;color:var(--green);font-weight:900;">OK</div>
+            <h3>送信完了！</h3>
+            <p>担当者より改めてご連絡します。</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -1103,7 +1279,7 @@ footer p { font-size: 13px; line-height: 2; }
       <p class="section-desc">実際に納品したブースの一部をご紹介します。</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #e8e8e8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
+        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
           <div style="height:220px;overflow:hidden;position:relative;">
             <img src="img/hero_popular.png" style="width:100%;height:100%;object-fit:cover;object-position:center;">
             <span style="position:absolute;top:12px;left:12px;background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">システムブース</span>
@@ -1114,7 +1290,7 @@ footer p { font-size: 13px; line-height: 2; }
           </div>
         </div>
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #e8e8e8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
+        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
           <div style="height:220px;overflow:hidden;position:relative;">
             <img src="img/base_wood.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;">
             <span style="position:absolute;top:12px;left:12px;background:#7a5230;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">木工ブース</span>
@@ -1125,7 +1301,7 @@ footer p { font-size: 13px; line-height: 2; }
           </div>
         </div>
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #e8e8e8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
+        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
           <div style="height:220px;overflow:hidden;position:relative;">
             <img src="img/s2_cospa.png" style="width:100%;height:100%;object-fit:cover;object-position:center;">
             <span style="position:absolute;top:12px;left:12px;background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">システムブース</span>
@@ -1136,7 +1312,7 @@ footer p { font-size: 13px; line-height: 2; }
           </div>
         </div>
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #e8e8e8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
+        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
           <div style="height:220px;overflow:hidden;position:relative;">
             <img src="img/w1_simple.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;">
             <span style="position:absolute;top:12px;left:12px;background:#7a5230;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">木工ブース</span>
@@ -1153,6 +1329,7 @@ footer p { font-size: 13px; line-height: 2; }
   </section>
 
   <!-- FOOTER -->
+  <div class="awning teal"></div>
   <footer>
     <div class="footer-logo"><img src="img/logo.jpg" alt="NEIGHBOR — TOKYO FILM ART"></div>
     <p>
@@ -1160,7 +1337,9 @@ footer p { font-size: 13px; line-height: 2; }
       〒156-0043 東京都世田谷区松原２丁目４６－９ 力蔵ビル２階<br>
       TEL: 080-1238-9414　平日・土日・祝 9:00-21:00
     </p>
-    <div class="footer-copy">© TOKYOFILMART. All Rights Reserved.</div>
+    <div class="footer-copy">© TOKYOFILMART. All Rights Reserved.<br>
+      <span style="font-size:10px;opacity:0.6;">Photo: "Tokyo Big Sight" by Masahiko OHKUBO (CC BY 2.0)</span>
+    </div>
   </footer>
 
 </div><!-- /view-main -->
@@ -1187,7 +1366,7 @@ var STEP_LABELS = {
 };
 
 var ALL_VIEWS = ['step-base', 'step-koma-system', 'step-koma-wood',
-                 'step-plan-s1', 'step-plan-s2', 'step-plan-w1', 'step-plan-w2', 'step-quote'];
+                 'step-plan-s1', 'step-plan-s2', 'step-plan-w1', 'step-plan-w2', 'step-quote', 'step-large'];
 
 function showView(id) {
   ALL_VIEWS.forEach(function (v) {
@@ -1230,6 +1409,8 @@ function goToStep(step) {
 function resetQuoteForm() {
   document.getElementById('quote-form').style.display = '';
   document.getElementById('success-msg').style.display = 'none';
+  document.getElementById('large-form').style.display = '';
+  document.getElementById('large-success').style.display = 'none';
 }
 
 function goHome() {
@@ -1248,6 +1429,48 @@ function goHome() {
 function selectBase(base) {
   state.base = base;
   goToStep(2);
+}
+
+function goToLarge() {
+  resetQuoteForm();
+  showView('step-large');
+  document.getElementById('step-label').textContent = '大型ブース（3小間以上）のご相談';
+  scrollToPlans();
+}
+
+function submitLarge(e) {
+  e.preventDefault();
+
+  var baseLabel = state.base === 'wood' ? '木工ブース' : 'システムブース';
+  var lines = [
+    '【NEIGHBOR 大型ブース相談（3小間以上）】',
+    '',
+    '■ お客様情報',
+    '会社名: ' + document.getElementById('lf-company').value.trim(),
+    '担当者名: ' + document.getElementById('lf-name').value.trim(),
+    '電話番号: ' + document.getElementById('lf-tel').value.trim(),
+    'メールアドレス: ' + document.getElementById('lf-email').value.trim(),
+    '',
+    '■ ご希望の内容',
+    'ベース: ' + baseLabel,
+    'コマ数: ' + document.getElementById('lf-koma').value,
+    '開放面: ' + document.getElementById('lf-open').value,
+    'ストックルーム: ' + document.getElementById('lf-stock').value,
+    '展示台の数: ' + document.getElementById('lf-stands').value,
+    '',
+    '■ 展示予定の商品',
+    document.getElementById('lf-products').value.trim() || '（未記入）'
+  ];
+
+  var subject = '【大型ブース相談】' + document.getElementById('lf-company').value.trim() + ' 様（' + baseLabel + ' / ' + document.getElementById('lf-koma').value + '）';
+  var mailto = 'mailto:info@t-filmart.co.jp'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(lines.join('\n'));
+
+  window.location.href = mailto;
+
+  document.getElementById('large-form').style.display = 'none';
+  document.getElementById('large-success').style.display = 'block';
 }
 
 function selectKoma(base, koma, el) {
