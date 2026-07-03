@@ -531,6 +531,15 @@ footer p { font-size: 13px; line-height: 2; }
   font-size: 13px; color: var(--text);
   padding: 10px 4px 2px; text-align: center;
 }
+/* 波形セクション区切り */
+.wave { display: block; width: 100%; height: 52px; }
+@media (max-width: 600px) { .wave { height: 32px; } }
+/* 雲の装飾 */
+.cloud { position: absolute; pointer-events: none; opacity: 0.9; }
+@media (max-width: 700px) { .cloud { display: none; } }
+/* ステップイラスト */
+.step-illust { width: 74px; height: 74px; display: block; margin: 0 auto 8px; }
+
 /* マーキー(流れる帯) */
 .marquee {
   overflow: hidden; background: var(--red); color: #fff;
@@ -693,28 +702,35 @@ footer p { font-size: 13px; line-height: 2; }
   </div>
 
   <!-- HOW IT WORKS -->
-  <section class="how-section">
+  <svg class="wave" style="background:var(--gray);" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="#2B838C" d="M0,0 H1440 V18 C1080,58 360,58 0,18 Z"/></svg>
+  <section class="how-section" style="position:relative;overflow:hidden;padding-top:50px;">
+    <svg class="cloud" style="top:30px;right:5%;" width="110" height="54" viewBox="0 0 110 54"><path d="M20 44 a16 16 0 0 1 2-32 a22 22 0 0 1 42-6 a18 18 0 0 1 26 16 a13 13 0 0 1 -2 22 Z" fill="#fff"/></svg>
+    <svg class="cloud" style="bottom:40px;left:4%;" width="90" height="46" viewBox="0 0 110 54"><path d="M20 44 a16 16 0 0 1 2-32 a22 22 0 0 1 42-6 a18 18 0 0 1 26 16 a13 13 0 0 1 -2 22 Z" fill="#fff"/></svg>
     <div class="section-inner">
       <span class="section-eyebrow">HOW IT WORKS</span>
       <h2 class="section-title">たった4ステップ</h2>
       <p class="section-desc">ブースの発注って、もっとシンプルでいい。</p>
       <div class="flow-steps">
         <div class="flow-step">
+          <svg class="step-illust" viewBox="0 0 100 100"><rect x="8" y="30" width="40" height="46" rx="8" fill="#2B838C" stroke="#26221E" stroke-width="4"/><rect x="16" y="40" width="24" height="28" rx="4" fill="#fff"/><rect x="52" y="30" width="40" height="46" rx="8" fill="#D98452" stroke="#26221E" stroke-width="4"/><rect x="60" y="40" width="24" height="28" rx="4" fill="#fff"/><path d="M42 20 Q50 8 58 20" stroke="#D93B48" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="50" cy="24" r="4" fill="#D93B48"/></svg>
           <div class="step-num">01</div>
           <div class="step-title">ベースを選ぶ</div>
           <div class="step-desc">システムブースか木工ブースか。まずここから。</div>
         </div>
         <div class="flow-step">
+          <svg class="step-illust" viewBox="0 0 100 100"><rect x="12" y="20" width="34" height="34" rx="6" fill="#AEBF6F" stroke="#26221E" stroke-width="4"/><rect x="54" y="20" width="34" height="34" rx="6" fill="#fff" stroke="#26221E" stroke-width="4" stroke-dasharray="7 5"/><rect x="12" y="60" width="76" height="20" rx="6" fill="#F7C948" stroke="#26221E" stroke-width="4"/><text x="50" y="76" font-size="14" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">9m²</text></svg>
           <div class="step-num">02</div>
           <div class="step-title">小間数を選ぶ</div>
           <div class="step-desc">出展スペースの広さに合わせて、1小間か2小間か。</div>
         </div>
         <div class="flow-step">
+          <svg class="step-illust" viewBox="0 0 100 100"><rect x="10" y="16" width="80" height="64" rx="8" fill="#fff" stroke="#26221E" stroke-width="4"/><circle cx="34" cy="38" r="8" fill="#F7C948"/><path d="M18 70 L42 48 L58 62 L72 50 L84 62 L84 72 a6 6 0 0 1 -6 6 L24 78 a6 6 0 0 1 -6 -6 Z" fill="#2B838C"/><path d="M62 84 l6 10 4 -7 8 1 Z" fill="#D93B48"/></svg>
           <div class="step-num">03</div>
           <div class="step-title">プランを選ぶ</div>
           <div class="step-desc">イメージ図を見ながら、イメージに合うプランを選択。</div>
         </div>
         <div class="flow-step">
+          <svg class="step-illust" viewBox="0 0 100 100"><rect x="10" y="26" width="80" height="54" rx="8" fill="#F7C948" stroke="#26221E" stroke-width="4"/><path d="M12 32 L50 60 L88 32" stroke="#26221E" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="78" cy="24" r="13" fill="#D93B48" stroke="#26221E" stroke-width="3"/><text x="78" y="29" font-size="15" font-weight="bold" text-anchor="middle" fill="#fff" font-family="sans-serif">¥</text></svg>
           <div class="step-num">04</div>
           <div class="step-title">見積もりを依頼</div>
           <div class="step-desc">オプションを追加して送信するだけ。担当者からご連絡します。</div>
@@ -724,6 +740,7 @@ footer p { font-size: 13px; line-height: 2; }
   </section>
 
   <!-- PLAN SELECT -->
+  <svg class="wave" style="background:var(--white);" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="#F1EFEA" d="M0,0 H1440 V18 C1080,58 360,58 0,18 Z"/></svg>
   <section class="plan-section" id="plans-section">
     <div class="section-inner">
       <span class="section-eyebrow">BOOTH SELECTOR</span>
@@ -1340,7 +1357,7 @@ footer p { font-size: 13px; line-height: 2; }
   <section style="background: var(--gray); padding: 80px 20px;">
     <div class="section-inner">
       <span class="section-eyebrow">WORKS</span>
-      <h2 class="section-title">施工事例</h2>
+      <h2 class="section-title" style="display:flex;align-items:center;gap:14px;">施工事例<img src="img/mascot_yay.svg" alt="" style="width:64px;height:64px;"></h2>
       <p class="section-desc">実際に納品したブースの一部をご紹介します。</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
 
@@ -1394,7 +1411,7 @@ footer p { font-size: 13px; line-height: 2; }
   </section>
 
   <!-- FOOTER -->
-  <div class="awning teal"></div>
+  <svg class="wave" style="background:var(--gray);" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="#26221E" d="M0,60 H1440 V30 C1080,-8 360,-8 0,30 Z M0,60 V30 Z"/><path fill="#26221E" d="M0,60 L0,32 C360,-6 1080,-6 1440,32 L1440,60 Z"/></svg>
   <footer>
     <div class="footer-logo"><img src="img/logo.jpg" alt="NEIGHBOR — TOKYO FILM ART"></div>
     <p>
