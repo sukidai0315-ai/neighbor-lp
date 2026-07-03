@@ -37,12 +37,8 @@ nav {
   background: rgba(255,255,255,0.97); border-bottom: 1px solid #e8e8e8;
   backdrop-filter: blur(10px);
 }
-.nav-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px; color: var(--dark);
-  letter-spacing: 3px; cursor: pointer;
-}
-.nav-logo span { color: var(--green); }
+.nav-logo { cursor: pointer; display: flex; align-items: center; }
+.nav-logo img { height: 36px; width: auto; border-radius: 8px; display: block; }
 .nav-cta {
   background: var(--green); color: #fff;
   border: none; padding: 10px 24px; border-radius: 30px;
@@ -360,11 +356,8 @@ footer {
   background: var(--black); color: rgba(255,255,255,0.5);
   padding: 3rem 20px; text-align: center;
 }
-.footer-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px; color: var(--white); letter-spacing: 4px; margin-bottom: 1rem;
-}
-.footer-logo span { color: var(--green); }
+.footer-logo { margin-bottom: 1rem; }
+.footer-logo img { height: 48px; width: auto; border-radius: 10px; display: inline-block; }
 footer p { font-size: 13px; line-height: 2; }
 .footer-copy { margin-top: 2rem; font-size: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem; }
 
@@ -423,7 +416,7 @@ footer p { font-size: 13px; line-height: 2; }
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo" onclick="goHome()">NEIGHBOR<span>.</span></div>
+  <div class="nav-logo" onclick="goHome()"><img src="img/logo.jpg" alt="NEIGHBOR — TOKYO FILM ART"></div>
   <button class="nav-cta" onclick="scrollToPlans()">今すぐ見積もる</button>
 </nav>
 
@@ -1142,7 +1135,7 @@ footer p { font-size: 13px; line-height: 2; }
 
   <!-- FOOTER -->
   <footer>
-    <div class="footer-logo">NEIGHBOR<span>.</span></div>
+    <div class="footer-logo"><img src="img/logo.jpg" alt="NEIGHBOR — TOKYO FILM ART"></div>
     <p>
       株式会社東京フィルムアート<br>
       〒156-0043 東京都世田谷区松原２丁目４６－９ 力蔵ビル２階<br>
