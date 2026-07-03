@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- ブースくん(ばんざい) -->
+  <!-- 両腕(ばんざい) -->
+  <path d="M50 92 Q28 74 26 50" stroke="#2B838C" stroke-width="13" stroke-linecap="round" fill="none"/>
+  <circle cx="26" cy="46" r="10" fill="#F7C948"/>
+  <path d="M150 92 Q172 74 174 50" stroke="#2B838C" stroke-width="13" stroke-linecap="round" fill="none"/>
+  <circle cx="174" cy="46" r="10" fill="#F7C948"/>
+  <!-- あし -->
+  <rect x="74" y="150" width="15" height="24" rx="7.5" fill="#26221E"/>
+  <rect x="111" y="150" width="15" height="24" rx="7.5" fill="#26221E"/>
+  <ellipse cx="79" cy="176" rx="14" ry="7" fill="#D93B48"/>
+  <ellipse cx="121" cy="176" rx="14" ry="7" fill="#D93B48"/>
+  <!-- からだ(ブース) -->
+  <rect x="44" y="60" width="112" height="96" rx="16" fill="#2B838C"/>
+  <rect x="57" y="74" width="86" height="70" rx="10" fill="#FFFFFF"/>
+  <!-- ヘルメット -->
+  <path d="M56 62 Q56 30 100 30 Q144 30 144 62 Z" fill="#F7C948"/>
+  <rect x="46" y="58" width="108" height="10" rx="5" fill="#E5B33B"/>
+  <rect x="93" y="30" width="14" height="8" rx="4" fill="#E5B33B"/>
+  <!-- かお(にっこり) -->
+  <path d="M75 98 Q82 92 89 98" stroke="#26221E" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M111 98 Q118 92 125 98" stroke="#26221E" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <circle cx="70" cy="113" r="6" fill="#F5A8A8"/>
+  <circle cx="130" cy="113" r="6" fill="#F5A8A8"/>
+  <path d="M86 112 Q100 128 114 112" stroke="#26221E" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <!-- キラキラ -->
+  <path d="M40 20 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 Z" fill="#D93B48"/>
+  <path d="M160 14 l2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 7 -2.5 Z" fill="#AEBF6F"/>
+</svg>
