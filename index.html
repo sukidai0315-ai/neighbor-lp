@@ -257,7 +257,18 @@ section { padding: 80px 20px; }
   font-weight: 900; line-height: 1.3; margin-bottom: 4px;
 }
 .card-catch { font-size: 14px; font-weight: 700; color: var(--green); line-height: 1.6; margin-bottom: 8px; }
-.card-price-range { font-size: 14px; color: var(--green); font-weight: 700; margin-bottom: 8px; }
+.card-price-range {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  background: var(--cream); border: 2px solid #E5E1D8; border-radius: 14px;
+  padding: 12px 16px; margin: 10px 0 12px;
+}
+.price-pre {
+  font-size: 12px; font-weight: 700; color: #fff;
+  background: var(--green); border-radius: 14px; padding: 3px 12px;
+  align-self: center;
+}
+.price-num { font-size: 36px; font-weight: 900; color: var(--red); line-height: 1; }
+.price-unit { font-size: 13px; font-weight: 700; color: var(--muted); }
 .card-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
 .card-select-btn {
   margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -773,7 +784,7 @@ footer p { font-size: 13px; line-height: 2; }
             <div class="card-body">
               <div class="card-name">システムブース</div>
               <div class="card-catch">選ぶだけで、展示会ブースが完成。</div>
-              <div class="card-price-range">¥150,000〜 (+税)</div>
+              <div class="card-price-range"><span class="price-pre">1小間</span><span class="price-num">¥150,000</span><span class="price-unit">〜 +税</span></div>
               <div class="card-desc">豊富なデザインテンプレートから選ぶだけ。お見積りから施工までスムーズに進められる、スピーディーなシステムブースです。</div>
               <div class="card-select-btn">このブースを選ぶ</div>
             </div>
@@ -786,7 +797,7 @@ footer p { font-size: 13px; line-height: 2; }
             <div class="card-body">
               <div class="card-name">木工ブース</div>
               <div class="card-catch">理想のブースを、もっと簡単に。</div>
-              <div class="card-price-range">¥390,000〜 (+税)</div>
+              <div class="card-price-range"><span class="price-pre">1小間</span><span class="price-num">¥390,000</span><span class="price-unit">〜 +税</span></div>
               <div class="card-desc">テンプレートをベースにした木工ブースだから、デザインも価格も分かりやすく安心です。</div>
               <div class="card-select-btn">このブースを選ぶ</div>
             </div>
