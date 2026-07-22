@@ -1755,15 +1755,45 @@ function submitLarge(e) {
   ];
 
   var subject = '【大型ブース相談】' + document.getElementById('lf-company').value.trim() + ' 様（' + baseLabel + ' / ' + document.getElementById('lf-koma').value + '）';
-  var mailto = 'mailto:info@t-filmart.co.jp'
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body=' + encodeURIComponent(lines.join('\n'));
 
   if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '大型ブース相談' });
-  window.location.href = mailto;
 
-  document.getElementById('large-form').style.display = 'none';
-  document.getElementById('large-success').style.display = 'block';
+  sendLead({
+    _subject: subject,
+    _replyto: document.getElementById('lf-email').value.trim(),
+    会社名: document.getElementById('lf-company').value.trim(),
+    担当者名: document.getElementById('lf-name').value.trim(),
+    電話番号: document.getElementById('lf-tel').value.trim(),
+    メールアドレス: document.getElementById('lf-email').value.trim(),
+    内容: lines.join('\n')
+  }, subject, lines, function () {
+    document.getElementById('large-form').style.display = 'none';
+    document.getElementById('large-success').style.display = 'block';
+  });
+}
+
+/* フォーム送信: FormSubmit経由でサーバー送信し、失敗時のみメーラー起動にフォールバック */
+var LEAD_ENDPOINT = 'https://formsubmit.co/ajax/info@t-filmart.co.jp';
+
+function sendLead(payload, subject, lines, onDone) {
+  fetch(LEAD_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function (res) {
+    if (!res.ok) throw new Error('send failed');
+    return res.json();
+  }).then(function (data) {
+    // FormSubmitはHTTP 200でも未有効化時などは success:"false" を返す
+    if (!data || String(data.success) !== 'true') throw new Error('rejected');
+    onDone();
+  }).catch(function () {
+    // 送信サービスに届かない場合は従来どおりメーラーを起動
+    window.location.href = 'mailto:info@t-filmart.co.jp'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(lines.join('\n'));
+    onDone();
+  });
 }
 
 function selectKoma(base, koma, el) {
@@ -1843,15 +1873,27 @@ function submitQuote(e) {
   lines.push('', '■ 概算合計金額', '¥' + calcTotal().toLocaleString('ja-JP') + '（+税）※映像制作は含みません');
 
   var subject = '【見積もり依頼】' + company + ' 様（' + baseLabel + ' / ' + (state.planName || '') + '）';
-  var mailto = 'mailto:info@t-filmart.co.jp'
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body=' + encodeURIComponent(lines.join('\n'));
 
   if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '見積もり依頼' });
-  window.location.href = mailto;
 
-  document.getElementById('quote-form').style.display = 'none';
-  document.getElementById('success-msg').style.display = 'block';
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = '送信中...';
+
+  sendLead({
+    _subject: subject,
+    _replyto: email,
+    会社名: company,
+    担当者名: name,
+    電話番号: tel,
+    メールアドレス: email,
+    内容: lines.join('\n')
+  }, subject, lines, function () {
+    btn.disabled = false;
+    btn.textContent = '見積書をメールで受け取る →';
+    document.getElementById('quote-form').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
+  });
 }
 </script>
 
