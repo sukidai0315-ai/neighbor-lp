@@ -142,7 +142,7 @@ nav {
   display: flex; justify-content: center; flex-wrap: wrap;
 }
 .stat {
-  padding: 1.5rem 3rem; text-align: center;
+  padding: 1.5rem 2rem; text-align: center;
   border-right: 1px solid rgba(255,255,255,0.2);
 }
 .stat:last-child { border-right: none; }
@@ -150,7 +150,12 @@ nav {
   font-family: 'Noto Sans JP', sans-serif;
   font-size: 42px; font-weight: 900; color: #fff; letter-spacing: 2px; line-height: 1;
 }
+.stat-num.stat-num-text {
+  font-size: 20px; letter-spacing: 0.5px; line-height: 1;
+  color: var(--gold); padding: 11px 0;
+}
 .stat-label { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 700; margin-top: 4px; }
+.stat-note { font-size: 10.5px; color: rgba(255,255,255,0.55); margin-top: 3px; }
 
 /* ========== SECTION COMMON ========== */
 section { padding: 80px 20px; }
@@ -340,6 +345,36 @@ section { padding: 80px 20px; }
 }
 .qty-btn:hover { border-color: var(--green); color: var(--green); }
 .qty-val { font-size: 16px; font-weight: 700; min-width: 20px; text-align: center; }
+
+/* VIDEO OPTION */
+.video-panel { background: var(--gray); border-radius: 16px; padding: 1.5rem; margin-top: 24px; }
+.video-panel h3 { font-size: 16px; font-weight: 900; margin-bottom: 6px; }
+.video-lead { font-size: 12.5px; color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+.video-plan {
+  position: relative; background: var(--white); border: 2px solid #ECEAE4;
+  border-radius: 16px; padding: 14px 16px; margin-bottom: 10px;
+}
+.video-plan.recommended { border-color: var(--orange); }
+.video-plan-badge {
+  position: absolute; top: -10px; right: 12px;
+  background: var(--orange); color: #fff; font-size: 10px; font-weight: 800;
+  padding: 3px 12px; border-radius: 20px; letter-spacing: 1px;
+}
+.video-plan-name { font-size: 14px; font-weight: 700; }
+.video-plan-price { font-size: 15px; font-weight: 900; color: var(--green); margin: 2px 0 6px; }
+.video-plan-price span { font-size: 11px; color: var(--muted); font-weight: 400; }
+.video-plan-desc { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+.video-plan-specs { font-size: 11px; color: var(--muted); }
+.video-plan-specs li { list-style: none; display: inline-block; background: var(--gray); border-radius: 20px; padding: 2px 10px; margin: 0 4px 4px 0; }
+.video-consult {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--white); border: 2px solid var(--green); border-radius: 16px;
+  padding: 12px 16px; margin-top: 4px; cursor: pointer;
+}
+.video-consult input { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
+.video-consult-label { font-size: 13px; font-weight: 700; }
+.video-consult-note { font-size: 11px; color: var(--muted); }
+.video-footnote { font-size: 11.5px; color: var(--muted); line-height: 1.8; margin-top: 12px; }
 
 /* QUOTE SIDEBAR */
 .quote-sidebar-panel {
@@ -626,7 +661,10 @@ footer p { font-size: 13px; line-height: 2; }
 
 @media (max-width: 600px) {
   nav { padding: 0 20px; }
-  .stat { padding: 1rem 1.5rem; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; }
+  .stat { padding: 1rem 0.75rem; border-right: none; }
+  .stat:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.2); }
+  .stat:nth-child(-n+2) { border-bottom: 1px solid rgba(255,255,255,0.2); }
   .polaroid img { height: 150px; }
 }
 </style>
@@ -718,10 +756,26 @@ gtag('config', 'G-JWR11T28R2');
   <!-- STATS -->
 
   <div class="stats">
-    <div class="stat"><div class="stat-num">12,000+</div><div class="stat-label">累計施工ブース数</div></div>
-    <div class="stat"><div class="stat-num">15年</div><div class="stat-label">展示会装飾の実績</div></div>
-    <div class="stat"><div class="stat-num">98%</div><div class="stat-label">顧客満足度</div></div>
-    <div class="stat"><div class="stat-num">即日</div><div class="stat-label">見積もり対応</div></div>
+    <div class="stat">
+      <div class="stat-num">12,000+</div>
+      <div class="stat-label">施工チーム累計ブース数</div>
+      <div class="stat-note">担当スタッフの通算施工実績</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15年</div>
+      <div class="stat-label">展示会装飾のキャリア</div>
+      <div class="stat-note">担当スタッフの実務経験年数</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num stat-num-text">部材単位で明細開示</div>
+      <div class="stat-label">「装飾一式」にしません</div>
+      <div class="stat-note">内訳が見える見積書をお出しします</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">即日</div>
+      <div class="stat-label">見積もり対応</div>
+      <div class="stat-note">選択内容から概算をその場で算出</div>
+    </div>
   </div>
 
   <!-- HOW IT WORKS -->
@@ -1269,6 +1323,44 @@ gtag('config', 'G-JWR11T28R2');
               <div class="option-item"><img class="opt-img" src="img/opt_chair.jpg" alt="チェア"><div class="option-info"><div class="opt-name">チェア</div><div class="opt-price">¥3,000 / 脚</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
               <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥35,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
             </div>
+
+            <!-- 映像制作オプション（意思表示のみ・概算合計には加算しない） -->
+            <div class="video-panel">
+              <h3>ブースで流す映像も、あわせて制作できます</h3>
+              <p class="video-lead">展示会場は音が聞き取りにくく、来場者が足を止める時間も限られます。テレビCMやWeb動画とは、必要な設計が違います。当社は映像制作会社を自社グループに持ち、会場で見られることを前提に映像をつくります。モニターの手配から当日の再生設定まで、まとめてお任せいただけます。</p>
+
+              <div class="video-plan">
+                <div class="video-plan-name">スライド映像</div>
+                <div class="video-plan-price">¥50,000〜 <span>+税</span></div>
+                <div class="video-plan-desc">お手元のパンフレットや製品画像から、ループ再生用の映像を構成します。撮影なしで、モニターを「映っている状態」にできます。</div>
+                <ul class="video-plan-specs"><li>既存素材を使用</li><li>1〜2分／ループ再生</li><li>納期 約1週間</li></ul>
+              </div>
+
+              <div class="video-plan recommended">
+                <span class="video-plan-badge">おすすめ</span>
+                <div class="video-plan-name">製品・会社紹介映像</div>
+                <div class="video-plan-price">¥300,000〜 <span>+税</span></div>
+                <div class="video-plan-desc">撮影から編集まで対応します。音が聞こえなくても伝わるよう、字幕とカット構成を会場向けに設計します。</div>
+                <ul class="video-plan-specs"><li>撮影・編集込み</li><li>2〜3分／字幕あり</li><li>展示会後もWebで使用可</li></ul>
+              </div>
+
+              <div class="video-plan">
+                <div class="video-plan-name">マルチスクリーン演出</div>
+                <div class="video-plan-price">¥1,000,000〜 <span>+税</span></div>
+                <div class="video-plan-desc">複数モニターの同期再生や、大画面を使った演出に対応します。再生機材の選定・設置まで当社で行います。</div>
+                <ul class="video-plan-specs"><li>複数面の同期再生</li><li>再生機材の手配・設置</li><li>当日の動作確認まで対応</li></ul>
+              </div>
+
+              <label class="video-consult">
+                <input type="checkbox" id="video-interest" onchange="setVideoInterest(this.checked)">
+                <span>
+                  <span class="video-consult-label">映像制作も相談したい</span><br>
+                  <span class="video-consult-note">概算合計金額には含まれません。担当者から別途ご案内します。</span>
+                </span>
+              </label>
+
+              <p class="video-footnote">映像だけのご依頼も承ります。すでにブースが決まっている場合や、他社で施工予定の場合でもご相談ください。モニターの台数やサイズが未定の段階からでも、あわせてご提案します。</p>
+            </div>
           </div>
           <div class="quote-sidebar-panel">
             <div class="qs-plan">選択中のプラン</div>
@@ -1464,8 +1556,13 @@ var state = {
   planStep: null,    // 's1' | 's2' | 'w1' | 'w2'
   planName: null,
   planPrice: 0,
-  qty: { opt1: 0, opt2: 0, opt3: 0, opt4: 0 }
+  qty: { opt1: 0, opt2: 0, opt3: 0, opt4: 0 },
+  videoInterest: false   // 映像制作の相談（金額には加算しない）
 };
+
+function setVideoInterest(checked) {
+  state.videoInterest = checked;
+}
 
 var OPTION_PRICES = { opt1: 30000, opt2: 8000, opt3: 3000, opt4: 35000 };
 var OPTION_NAMES  = { opt1: 'リース台', opt2: 'ハイテーブル', opt3: 'チェア', opt4: '43インチモニター' };
@@ -1532,6 +1629,8 @@ function goHome() {
     state.qty[k] = 0;
     document.getElementById('qty-' + k).textContent = '0';
   });
+  state.videoInterest = false;
+  document.getElementById('video-interest').checked = false;
   document.getElementById('qs-plan-name').textContent = '—';
   updateTotal();
   resetQuoteForm();
@@ -1659,7 +1758,8 @@ function submitQuote(e) {
     }
   });
   if (!hasOption) lines.push('なし');
-  lines.push('', '■ 概算合計金額', '¥' + calcTotal().toLocaleString('ja-JP') + '（+税）');
+  lines.push('', '■ 映像制作の相談', state.videoInterest ? 'あり（金額別途・担当者からご案内）' : 'なし');
+  lines.push('', '■ 概算合計金額', '¥' + calcTotal().toLocaleString('ja-JP') + '（+税）※映像制作は含みません');
 
   var subject = '【見積もり依頼】' + company + ' 様（' + baseLabel + ' / ' + (state.planName || '') + '）';
   var mailto = 'mailto:info@t-filmart.co.jp'
