@@ -630,6 +630,14 @@ footer p { font-size: 13px; line-height: 2; }
   .polaroid img { height: 150px; }
 }
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JWR11T28R2"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-JWR11T28R2');
+</script>
 </head>
 <body>
 
@@ -1571,6 +1579,7 @@ function submitLarge(e) {
     + '?subject=' + encodeURIComponent(subject)
     + '&body=' + encodeURIComponent(lines.join('\n'));
 
+  if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '大型ブース相談' });
   window.location.href = mailto;
 
   document.getElementById('large-form').style.display = 'none';
@@ -1657,6 +1666,7 @@ function submitQuote(e) {
     + '?subject=' + encodeURIComponent(subject)
     + '&body=' + encodeURIComponent(lines.join('\n'));
 
+  if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '見積もり依頼' });
   window.location.href = mailto;
 
   document.getElementById('quote-form').style.display = 'none';
