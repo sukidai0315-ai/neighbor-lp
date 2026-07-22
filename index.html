@@ -412,6 +412,30 @@ section { padding: 80px 20px; }
 .submit-btn:hover { background: #236E76; transform: scale(1.01); }
 .submit-btn:disabled { background: #666; cursor: not-allowed; transform: none; }
 
+/* WORKS */
+.works-card {
+  background: var(--white); border-radius: 16px; overflow: hidden;
+  border: 1px solid #E5E1D8; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transition: all 0.25s;
+}
+.works-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+.works-img {
+  position: relative; aspect-ratio: 4 / 3; background: #E5E1D8;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.works-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.works-img-note { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1px; }
+.works-tag {
+  position: absolute; top: 12px; left: 12px; z-index: 1;
+  background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+  padding: 4px 12px; border-radius: 20px;
+}
+.works-tag.wood { background: #7a5230; }
+.works-body { padding: 1.25rem; }
+.works-name { font-size: 15px; font-weight: 900; margin-bottom: 2px; }
+.works-meta { font-size: 12.5px; color: var(--muted); }
+.works-note { font-size: 12px; color: var(--muted); line-height: 1.8; margin-top: 20px; }
+
 /* SUCCESS */
 .success-msg {
   display: none; text-align: center; padding: 2rem;
@@ -1477,54 +1501,111 @@ gtag('config', 'G-JWR11T28R2');
     <div class="section-inner">
       <span class="section-eyebrow">WORKS</span>
       <h2 class="section-title" style="display:flex;align-items:center;gap:14px;">施工事例<img src="img/mascot_yay.svg" alt="" style="width:64px;height:64px;"></h2>
-      <p class="section-desc">実際に納品したブースの一部をご紹介します。</p>
+      <p class="section-desc">主要展示会での施工を継続的に担当しています。<br>出展社様との守秘のため、社名・製品名は伏せて掲載しています。</p>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="height:220px;overflow:hidden;position:relative;">
-            <img src="img/hero_popular.png" style="width:100%;height:100%;object-fit:cover;object-position:center;">
-            <span style="position:absolute;top:12px;left:12px;background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">システムブース</span>
+        <!-- 写真は img/works_01.jpg 〜 works_08.jpg（4:3）を置くと自動で表示される。
+             未配置の間は「写真準備中」プレースホルダーが表示される。
+             TODO: 各件のブース種別タグ（システム/木工）は写真確定時に修正 -->
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_01.jpg" alt="ものづくりワールド東京で施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
           </div>
-          <div style="padding:1.25rem;">
-            <div style="font-size:18px;font-weight:900;color:var(--green);margin-bottom:4px;">¥260,000 <span style="font-size:13px;color:var(--muted);font-weight:400;">+税</span></div>
-            <div style="font-size:13px;color:var(--muted);">1小間 / 王道プラン / 東京ビッグサイト</div>
-          </div>
-        </div>
-
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="height:220px;overflow:hidden;position:relative;">
-            <img src="img/base_wood.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;">
-            <span style="position:absolute;top:12px;left:12px;background:#7a5230;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">木工ブース</span>
-          </div>
-          <div style="padding:1.25rem;">
-            <div style="font-size:18px;font-weight:900;color:var(--green);margin-bottom:4px;">¥520,000 <span style="font-size:13px;color:var(--muted);font-weight:400;">+税</span></div>
-            <div style="font-size:13px;color:var(--muted);">2小間 / リッチ木工 / インテックス大阪</div>
+          <div class="works-body">
+            <div class="works-name">ものづくりワールド東京</div>
+            <div class="works-meta">東京ビッグサイト／製造業・精密加工</div>
           </div>
         </div>
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="height:220px;overflow:hidden;position:relative;">
-            <img src="img/s2_cospa.png" style="width:100%;height:100%;object-fit:cover;object-position:center;">
-            <span style="position:absolute;top:12px;left:12px;background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">システムブース</span>
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_02.jpg" alt="ネプコン ジャパンで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
           </div>
-          <div style="padding:1.25rem;">
-            <div style="font-size:18px;font-weight:900;color:var(--green);margin-bottom:4px;">¥280,000 <span style="font-size:13px;color:var(--muted);font-weight:400;">+税</span></div>
-            <div style="font-size:13px;color:var(--muted);">2小間 / コスパプラン / 幕張メッセ</div>
+          <div class="works-body">
+            <div class="works-name">ネプコン ジャパン ／ FACTORY INNOVATION WEEK</div>
+            <div class="works-meta">東京ビッグサイト／電子部品・生産設備</div>
           </div>
         </div>
 
-        <div style="background:var(--white);border-radius:16px;overflow:hidden;border:1px solid #E5E1D8;box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:all 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.06)'">
-          <div style="height:220px;overflow:hidden;position:relative;">
-            <img src="img/w1_simple.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;">
-            <span style="position:absolute;top:12px;left:12px;background:#7a5230;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">木工ブース</span>
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_03.jpg" alt="テクニカルショウヨコハマで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
           </div>
-          <div style="padding:1.25rem;">
-            <div style="font-size:18px;font-weight:900;color:var(--green);margin-bottom:4px;">¥390,000 <span style="font-size:13px;color:var(--muted);font-weight:400;">+税</span></div>
-            <div style="font-size:13px;color:var(--muted);">1小間 / シンプル木工 / 東京ビッグサイト</div>
+          <div class="works-body">
+            <div class="works-name">テクニカルショウヨコハマ</div>
+            <div class="works-meta">パシフィコ横浜／工業技術・部品加工</div>
+          </div>
+        </div>
+
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_04.jpg" alt="総務・人事・経理Weekで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
+          </div>
+          <div class="works-body">
+            <div class="works-name">総務・人事・経理Week</div>
+            <div class="works-meta">東京ビッグサイト／春・秋 継続施工</div>
+          </div>
+        </div>
+
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_05.jpg" alt="JPCA Showで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
+          </div>
+          <div class="works-body">
+            <div class="works-name">JPCA Show</div>
+            <div class="works-meta">東京ビッグサイト／電子回路・実装技術</div>
+          </div>
+        </div>
+
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_06.jpg" alt="テクノフロンティアで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
+          </div>
+          <div class="works-body">
+            <div class="works-name">テクノフロンティア</div>
+            <div class="works-meta">東京ビッグサイト／モータ・電源技術</div>
+          </div>
+        </div>
+
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_07.jpg" alt="メディカルジャパンで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
+          </div>
+          <div class="works-body">
+            <div class="works-name">メディカルジャパン</div>
+            <div class="works-meta">インテックス大阪／医療・介護</div>
+          </div>
+        </div>
+
+        <div class="works-card">
+          <div class="works-img">
+            <span class="works-img-note">写真準備中</span>
+            <img src="img/works_08.jpg" alt="リテールテック JAPANで施工したブース" onerror="this.remove()">
+            <span class="works-tag">システムブース</span>
+          </div>
+          <div class="works-body">
+            <div class="works-name">リテールテック JAPAN</div>
+            <div class="works-meta">東京ビッグサイト／流通・小売システム</div>
           </div>
         </div>
 
       </div>
+
+      <p class="works-note">掲載しているのは、当社が施工を担当したブースです。<br>企画・デザインを他社が担当した案件を含みます。</p>
 
     </div>
   </section>
