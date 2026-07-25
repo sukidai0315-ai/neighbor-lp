@@ -412,6 +412,20 @@ section { padding: 80px 20px; }
 .submit-btn:hover { background: #236E76; transform: scale(1.01); }
 .submit-btn:disabled { background: #666; cursor: not-allowed; transform: none; }
 
+/* 映像プラン選択 */
+.video-plan { cursor: pointer; }
+.video-plan.selected { outline: 2.5px solid var(--green); outline-offset: -2.5px; background: var(--green-light); }
+.vp-check { display: none; background: var(--green); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 12px; border-radius: 20px; margin-bottom: 6px; }
+.video-plan.selected .vp-check { display: inline-block; }
+.opt-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* FAQ */
+.faq-item { background: var(--white); border: 2px solid #E5E1D8; border-radius: 16px; padding: 20px 24px; margin: 24px auto 0; text-align: left; max-width: 720px; }
+.faq-q { font-size: 15px; font-weight: 900; margin-bottom: 8px; }
+.faq-q::before { content: "Q. "; color: var(--red); }
+.faq-a { font-size: 13.5px; color: var(--muted); line-height: 1.9; }
+.faq-a::before { content: "A. "; color: var(--green); font-weight: 900; }
+
 /* WORKS */
 .works-card {
   background: var(--white); border-radius: 16px; overflow: hidden;
@@ -791,9 +805,9 @@ gtag('config', 'G-JWR11T28R2');
       <div class="stat-note">担当スタッフの実務経験年数</div>
     </div>
     <div class="stat">
-      <div class="stat-num stat-num-text">部材単位で明細開示</div>
-      <div class="stat-label">「装飾一式」にしません</div>
-      <div class="stat-note">内訳が見える見積書をお出しします</div>
+      <div class="stat-num stat-num-text">目的から選べる</div>
+      <div class="stat-label">モノを売る／サービスを売る</div>
+      <div class="stat-note">目的に合わせて最適な構成をご提案</div>
     </div>
     <div class="stat">
       <div class="stat-num">即日</div>
@@ -813,22 +827,22 @@ gtag('config', 'G-JWR11T28R2');
       <p class="section-desc">ブースの発注って、もっとシンプルでいい。</p>
       <div class="flow-steps">
         <div class="flow-step">
-          <svg class="step-illust" viewBox="0 0 100 100"><rect x="8" y="30" width="40" height="46" rx="8" fill="#2B838C" stroke="#26221E" stroke-width="4"/><rect x="16" y="40" width="24" height="28" rx="4" fill="#fff"/><rect x="52" y="30" width="40" height="46" rx="8" fill="#D98452" stroke="#26221E" stroke-width="4"/><rect x="60" y="40" width="24" height="28" rx="4" fill="#fff"/><path d="M42 20 Q50 8 58 20" stroke="#D93B48" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="50" cy="24" r="4" fill="#D93B48"/></svg>
-          <div class="step-num">01</div>
-          <div class="step-title">ベースを選ぶ</div>
-          <div class="step-desc">システムブースか木工ブースか。まずここから。</div>
-        </div>
-        <div class="flow-step">
           <svg class="step-illust" viewBox="0 0 100 100"><rect x="12" y="20" width="34" height="34" rx="6" fill="#AEBF6F" stroke="#26221E" stroke-width="4"/><rect x="54" y="20" width="34" height="34" rx="6" fill="#fff" stroke="#26221E" stroke-width="4" stroke-dasharray="7 5"/><rect x="12" y="60" width="76" height="20" rx="6" fill="#F7C948" stroke="#26221E" stroke-width="4"/><text x="50" y="76" font-size="14" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">9m²</text></svg>
-          <div class="step-num">02</div>
+          <div class="step-num">01</div>
           <div class="step-title">小間数を選ぶ</div>
-          <div class="step-desc">出展スペースの広さに合わせて、1小間か2小間か。</div>
+          <div class="step-desc">出展申込の広さに合わせて、1〜3小間から。</div>
         </div>
         <div class="flow-step">
-          <svg class="step-illust" viewBox="0 0 100 100"><rect x="10" y="16" width="80" height="64" rx="8" fill="#fff" stroke="#26221E" stroke-width="4"/><circle cx="34" cy="38" r="8" fill="#F7C948"/><path d="M18 70 L42 48 L58 62 L72 50 L84 62 L84 72 a6 6 0 0 1 -6 6 L24 78 a6 6 0 0 1 -6 -6 Z" fill="#2B838C"/><path d="M62 84 l6 10 4 -7 8 1 Z" fill="#D93B48"/></svg>
+          <svg class="step-illust" viewBox="0 0 100 100"><rect x="14" y="38" width="34" height="30" rx="4" fill="#AEBF6F" stroke="#26221E" stroke-width="4"/><path d="M22 38 L31 24 L40 38" fill="none" stroke="#26221E" stroke-width="4" stroke-linejoin="round"/><rect x="54" y="28" width="34" height="26" rx="6" fill="#2B838C" stroke="#26221E" stroke-width="4"/><circle cx="64" cy="41" r="3" fill="#fff"/><circle cx="72" cy="41" r="3" fill="#fff"/><circle cx="80" cy="41" r="3" fill="#fff"/><path d="M62 54 L62 66 L74 54" fill="#2B838C" stroke="#26221E" stroke-width="3" stroke-linejoin="round"/></svg>
+          <div class="step-num">02</div>
+          <div class="step-title">目的を選ぶ</div>
+          <div class="step-desc">製品を見せるか、サービスを伝えるか。自社のことだから迷いません。</div>
+        </div>
+        <div class="flow-step">
+          <svg class="step-illust" viewBox="0 0 100 100"><rect x="8" y="30" width="40" height="46" rx="8" fill="#2B838C" stroke="#26221E" stroke-width="4"/><rect x="16" y="40" width="24" height="28" rx="4" fill="#fff"/><rect x="52" y="30" width="40" height="46" rx="8" fill="#D98452" stroke="#26221E" stroke-width="4"/><rect x="60" y="40" width="24" height="28" rx="4" fill="#fff"/><path d="M42 20 Q50 8 58 20" stroke="#D93B48" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="50" cy="24" r="4" fill="#D93B48"/></svg>
           <div class="step-num">03</div>
-          <div class="step-title">プランを選ぶ</div>
-          <div class="step-desc">イメージ図を見ながら、イメージに合うプランを選択。</div>
+          <div class="step-title">仕上げを選ぶ</div>
+          <div class="step-desc">システムか木工か。CGと価格を見ながら選択。</div>
         </div>
         <div class="flow-step">
           <svg class="step-illust" viewBox="0 0 100 100"><rect x="10" y="26" width="80" height="54" rx="8" fill="#F7C948" stroke="#26221E" stroke-width="4"/><path d="M12 32 L50 60 L88 32" stroke="#26221E" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="78" cy="24" r="13" fill="#D93B48" stroke="#26221E" stroke-width="3"/><text x="78" y="29" font-size="15" font-weight="bold" text-anchor="middle" fill="#fff" font-family="sans-serif">¥</text></svg>
@@ -856,474 +870,125 @@ gtag('config', 'G-JWR11T28R2');
         <div class="step-dot" id="dot3">3</div>
         <div class="step-line" id="line3"></div>
         <div class="step-dot" id="dot4">4</div>
-        <span style="font-size:13px;color:var(--muted);margin-left:8px;" id="step-label">ベースを選んでください</span>
+        <span style="font-size:13px;color:var(--muted);margin-left:8px;" id="step-label">小間数を選んでください</span>
       </div>
 
-      <!-- STEP1: ベース -->
-      <div id="step-base" class="view active">
-        <div class="base-cards">
-          <div class="base-card" onclick="selectBase('system')">
-            <div class="card-visual cv-system" style="padding:0;overflow:hidden;">
-              <img src="img/hero_popular.png" style="width:100%;height:100%;object-fit:cover;object-position:center;">
-              <span class="card-visual-label">SYSTEM BOOTH</span>
-            </div>
-            <div class="card-body">
-              <div class="card-name">システムブース</div>
-              <div class="card-catch">選ぶだけで、展示会ブースが完成。</div>
-              <div class="card-price-range"><span class="price-pre">1小間</span><span class="price-num">¥180,000</span><span class="price-unit">〜 +税</span></div>
-              <div class="card-desc">豊富なデザインテンプレートから選ぶだけ。お見積りから施工までスムーズに進められる、スピーディーなシステムブースです。</div>
-              <div class="card-select-btn">このブースを選ぶ</div>
-            </div>
-          </div>
-          <div class="base-card" onclick="selectBase('wood')">
-            <div class="card-visual cv-wood" style="padding:0;overflow:hidden;">
-              <img src="img/base_wood.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center 40%;">
-              <span class="card-visual-label">WOOD BOOTH</span>
-            </div>
-            <div class="card-body">
-              <div class="card-name">木工ブース</div>
-              <div class="card-catch">理想のブースを、もっと簡単に。</div>
-              <div class="card-price-range"><span class="price-pre">1小間</span><span class="price-num">¥720,000</span><span class="price-unit">〜 +税</span></div>
-              <div class="card-desc">テンプレートをベースにした木工ブースだから、デザインも価格も分かりやすく安心です。</div>
-              <div class="card-select-btn">このブースを選ぶ</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP2: コマ数（システム） -->
-      <div id="step-koma-system" class="view">
-        <button class="back-btn" onclick="goToStep(1)">← ベースを選び直す</button>
-        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">小間数を選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">システムブース</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">ブースの広さを選んでください。</p>
-        <div class="type-cards" style="grid-template-columns:1fr 1fr;">
-          <div class="type-card" onclick="selectKoma('system',1,this)">
+      <!-- STEP1: 小間数 -->
+      <div id="step-koma" class="view active">
+        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">何小間で出展しますか？</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">出展申込の小間数を選んでください。</p>
+        <div class="type-cards" style="grid-template-columns:repeat(3,1fr);">
+          <div class="type-card" onclick="selectKoma(1,this)">
             <svg viewBox="0 0 100 74" style="width:86px;height:auto;display:block;margin:0 auto 10px;"><rect x="20" y="12" width="60" height="52" fill="#EEF3F3"/><path d="M20 12 H80" stroke="#2B838C" stroke-width="8" fill="none"/><line x1="20" y1="10" x2="20" y2="64" stroke="#26221E" stroke-width="3"/><line x1="80" y1="10" x2="80" y2="64" stroke="#26221E" stroke-width="3"/><path d="M20 64 H80" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><text x="50" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">3×3m</text></svg>
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">1小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">9m²（3m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">コンパクトで取り回しやすい。はじめての展示会にも最適。</div>
             <div class="type-check">選択中</div>
           </div>
-          <div class="type-card" onclick="selectKoma('system',2,this)">
-            <svg viewBox="0 0 160 74" style="width:130px;height:auto;display:block;margin:0 auto 10px;"><rect x="14" y="12" width="132" height="52" fill="#EEF3F3"/><path d="M14 64 V12 H146" stroke="#D98452" stroke-width="8" fill="none"/><path d="M146 12 V64 H14" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><line x1="80" y1="16" x2="80" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><text x="80" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">6×3m</text></svg>
+          <div class="type-card" onclick="selectKoma(2,this)">
+            <svg viewBox="0 0 160 74" style="width:130px;height:auto;display:block;margin:0 auto 10px;"><rect x="14" y="12" width="132" height="52" fill="#EEF3F3"/><path d="M14 12 H146" stroke="#D98452" stroke-width="8" fill="none"/><line x1="14" y1="10" x2="14" y2="64" stroke="#26221E" stroke-width="3"/><line x1="146" y1="10" x2="146" y2="64" stroke="#26221E" stroke-width="3"/><path d="M14 64 H146" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><line x1="80" y1="16" x2="80" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><text x="80" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">6×3m</text></svg>
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">2小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">18m²（6m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">展示スペースと商談スペースを両立できる人気サイズ。</div>
             <div class="type-check">選択中</div>
           </div>
+          <div class="type-card" onclick="selectKoma(3,this)">
+            <svg viewBox="0 0 220 74" style="width:170px;height:auto;display:block;margin:0 auto 10px;"><rect x="14" y="12" width="192" height="52" fill="#EEF3F3"/><path d="M14 12 H206" stroke="#AEBF6F" stroke-width="8" fill="none"/><line x1="14" y1="10" x2="14" y2="64" stroke="#26221E" stroke-width="3"/><line x1="206" y1="10" x2="206" y2="64" stroke="#26221E" stroke-width="3"/><path d="M14 64 H206" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><line x1="78" y1="16" x2="78" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><line x1="142" y1="16" x2="142" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><text x="110" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">9×3m</text></svg>
+            <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">3小間</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;">27m²（9m × 3m）</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">ゆとりある展示と商談動線を確保。価格は個別にお見積もりします。</div>
+            <div class="type-check">選択中</div>
+          </div>
         </div>
         <div class="large-booth-banner" onclick="goToLarge()">
           <img src="img/mascot.svg" alt="" style="width:72px;height:72px;display:block;margin:0 auto 6px;">
-          <div class="lb-badge">3小間以上をご検討の方</div>
+          <div class="lb-badge">4小間以上をご検討の方</div>
           <div class="lb-title">大型ブースをご予定のお客様はこちら</div>
           <p class="lb-desc">ご要望をお伺いして、専任スタッフがぴったりのプランを個別にお見積もりします。</p>
           <div class="card-select-btn">大型ブースの相談にすすむ</div>
         </div>
       </div>
 
-      <!-- STEP2: コマ数（木工） -->
-      <div id="step-koma-wood" class="view">
-        <button class="back-btn" onclick="goToStep(1)">← ベースを選び直す</button>
-        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">小間数を選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">木工ブース</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">ブースの広さを選んでください。</p>
+      <!-- STEP2: 目的 -->
+      <div id="step-purpose" class="view">
+        <button class="back-btn" onclick="goToStep(1)">← 小間数を選び直す</button>
+        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">どんな展示にしますか？ <span id="purpose-summary" style="font-size:13px;color:var(--muted);font-weight:400;"></span></h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">自社に近いほうを選んでください。</p>
         <div class="type-cards" style="grid-template-columns:1fr 1fr;">
-          <div class="type-card" onclick="selectKoma('wood',1,this)">
-            <svg viewBox="0 0 100 74" style="width:86px;height:auto;display:block;margin:0 auto 10px;"><rect x="20" y="12" width="60" height="52" fill="#EEF3F3"/><path d="M20 12 H80" stroke="#2B838C" stroke-width="8" fill="none"/><line x1="20" y1="10" x2="20" y2="64" stroke="#26221E" stroke-width="3"/><line x1="80" y1="10" x2="80" y2="64" stroke="#26221E" stroke-width="3"/><path d="M20 64 H80" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><text x="50" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">3×3m</text></svg>
-            <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">1小間</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;">9m²（3m × 3m）</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6;">木の質感を活かした造作で、あたたかみのある空間をつくれます。</div>
+          <div class="type-card" onclick="selectPurpose('product',this)">
+            <svg viewBox="0 0 100 74" style="width:86px;height:auto;display:block;margin:0 auto 10px;"><rect x="18" y="44" width="64" height="8" fill="#26221E"/><rect x="24" y="52" width="6" height="14" fill="#26221E"/><rect x="70" y="52" width="6" height="14" fill="#26221E"/><rect x="32" y="22" width="22" height="22" rx="3" fill="#2B838C"/><path d="M36 22 L43 12 L50 22" fill="none" stroke="#26221E" stroke-width="3" stroke-linejoin="round"/><rect x="58" y="30" width="14" height="14" rx="3" fill="#D98452"/></svg>
+            <div style="font-size:20px;font-weight:900;margin-bottom:6px;">製品を見せたい</div>
+            <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">モノを展示する会社</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">展示台を中心に、実物を見て・手に取ってもらう構成にします。</div>
             <div class="type-check">選択中</div>
           </div>
-          <div class="type-card" onclick="selectKoma('wood',2,this)">
-            <svg viewBox="0 0 160 74" style="width:130px;height:auto;display:block;margin:0 auto 10px;"><rect x="14" y="12" width="132" height="52" fill="#EEF3F3"/><path d="M14 64 V12 H146" stroke="#D98452" stroke-width="8" fill="none"/><path d="M146 12 V64 H14" stroke="#26221E" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/><line x1="80" y1="16" x2="80" y2="60" stroke="#BFBFBF" stroke-width="2" stroke-dasharray="4 4"/><text x="80" y="45" font-size="13" font-weight="bold" text-anchor="middle" fill="#26221E" font-family="sans-serif">6×3m</text></svg>
-            <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">2小間</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;">18m²（6m × 3m）</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6;">木材で造作するため、曲面や段差など自由なデザインが可能です。</div>
+          <div class="type-card" onclick="selectPurpose('service',this)">
+            <svg viewBox="0 0 100 74" style="width:86px;height:auto;display:block;margin:0 auto 10px;"><rect x="22" y="14" width="40" height="28" rx="4" fill="#2B838C"/><circle cx="34" cy="28" r="3.5" fill="#fff"/><circle cx="46" cy="28" r="3.5" fill="#fff"/><circle cx="56" cy="28" r="3.5" fill="#fff"/><path d="M30 42 L30 52 L42 42" fill="#2B838C"/><circle cx="70" cy="46" r="7" fill="#D98452"/><path d="M60 68 a10 10 0 0 1 20 0 Z" fill="#D98452"/></svg>
+            <div style="font-size:20px;font-weight:900;margin-bottom:6px;">サービスを伝えたい</div>
+            <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">IT・サービス・人材など</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">モニターやグラフィックを中心に、説明と商談がしやすい構成にします。</div>
             <div class="type-check">選択中</div>
           </div>
         </div>
-        <div class="large-booth-banner" onclick="goToLarge()">
-          <img src="img/mascot.svg" alt="" style="width:72px;height:72px;display:block;margin:0 auto 6px;">
-          <div class="lb-badge">3小間以上をご検討の方</div>
-          <div class="lb-title">大型ブースをご予定のお客様はこちら</div>
-          <p class="lb-desc">ご要望をお伺いして、専任スタッフがぴったりのプランを個別にお見積もりします。</p>
-          <div class="card-select-btn">大型ブースの相談にすすむ</div>
+        <div style="text-align:center;margin-top:24px;">
+          <a href="javascript:void(0)" onclick="selectWallOnly()" style="font-size:13px;color:var(--green);font-weight:700;text-decoration:underline;text-underline-offset:3px;">壁面だけあれば十分な方はこちら →</a>
         </div>
       </div>
 
-      <!-- STEP3: プラン（s1） -->
-      <div id="step-plan-s1" class="view">
-        <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
-        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">システムブース 1小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:0.4rem;">イメージ図を見ながら、イメージに合うプランを選んでください。</p>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:1.5rem;">※照明は料金に含まれます。ターポリンやパネルなどの装飾は料金に含まれません（オプション画面でご相談いただけます）。</p>
-        <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('s1','kabe','シンプルプラン',180000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/hero_basic.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">SIMPLE</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">シンプルプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">シンプルで活用しやすい形でスペースを有効活用できる構成。自社製品の大きさや有無を問わず対応でき、コストを最小限に抑えたい方に。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥180,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('s1','rx','スタンダードプラン',520000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/hero_premium.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">STANDARD</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">スタンダードプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">上部サインを高くし、側面までグラフィックを展開。商談用のカウンターとストックスペースを備えた上位構成です。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥520,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('s1','odo','王道プラン',380000,this)"
-  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/hero_popular.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">王道プラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">壁面グラフィック、展示台2台、スポットライトを揃えた標準構成。遠くからでも何の会社か分かり、製品を見せながら話せます。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥380,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div></div>
-      </div>
-
-      <!-- STEP3: プラン（s2） -->
-      <div id="step-plan-s2" class="view">
-        <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
-        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">システムブース 2小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">イメージ図を見ながら、イメージに合うプランを選んでください。</p>
-        <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('s2','kabe','壁のみプラン',280000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/hero_basic.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">BASIC</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">壁のみプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">2小間分のアルミ壁面のみ。グラフィックや什器を自社でご用意される方、独自の演出を展開したい方に適した最小構成です。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥280,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('s2','cospa','コスパプラン',420000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/s2_cospa.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">STANDARD</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">コスパプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">背面グラフィックと基本什器で2小間を活用。展示と商談のスペースを分けて配置できます。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥420,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('s2','odo','王道プラン',580000,this)"
-  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/s2_odo.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">王道プラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">展示スペースと商談スペースを明確に分けた構成。2小間の広さを活かし、来場者の動線を設計しています。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥580,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('s2','rich','リッチプラン',780000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/s2_rich.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">PREMIUM</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">リッチプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">H3600のタワーサインで遠方からの視認性を確保。商談セットとストックルームを備えた上位構成です。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥780,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div></div>
-      </div>
-
-      <!-- STEP3: プラン（w1） -->
-      <div id="step-plan-w1" class="view">
-        <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
-        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">木工ブース 1小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">木工ブースはオーダーメイドです。ご要望に応じてカスタマイズ可能。</p>
-        <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('w1','simple','シンプル木工',720000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/w1_simple.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">STANDARD</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">シンプル木工</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">木の質感を活かした造作壁面。システムブースにはない、あたたかみのある空間をつくれます。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥720,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('w1','rich','リッチ木工',950000,this)"
-  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/w1_rich.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:var(--green);letter-spacing:2px;margin-bottom:6px;">PREMIUM</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">リッチ木工</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">造作棚と間接照明で世界観を作り込む構成。ブランドイメージを空間全体で表現できます。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥950,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div></div>
-      </div>
-
-      <!-- STEP3: プラン（w2） -->
-      <div id="step-plan-w2" class="view">
-        <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
-        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">木工ブース 2小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">2小間の木工ブースは、造作ならではの自由なレイアウトが可能です。</p>
-        <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('w2','cospa','コスパ木工',1050000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/base_wood.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">STANDARD</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">コスパ木工</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">2小間の木工造作をリーズナブルに。必要十分な構成で、木工ブースの質感を体感いただけます。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥1,050,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('w2','odo','王道木工',1350000,this)"
-  style="background:#fff;border:2px solid var(--orange);border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 8px 32px rgba(217,59,72,0.2);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 32px rgba(217,59,72,0.2)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/w1_simple.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    <span style="display:inline-block;background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:3px 12px;border-radius:20px;margin-bottom:8px;letter-spacing:1px;">人気No.1</span><br>
-    <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:6px;">POPULAR</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">王道木工</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">展示と商談を両立させた2小間の標準構成。造作ならではの自由なレイアウトが可能です。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥1,350,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('w2','rich','フルカスタム',1800000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/w2_rich.jpg" style="width:100%;height:220px;object-fit:cover;object-position:center;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">PREMIUM</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">フルカスタム</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">素材・デザイン・構成をすべてカスタマイズ。他社にない空間で、来場者の記憶に残るブースをつくります。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥1,800,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div></div>
+      <!-- STEP3: 仕上げ（システム / 木工） -->
+      <div id="step-finish" class="view">
+        <button class="back-btn" onclick="goToStep(2)">← 目的を選び直す</button>
+        <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">仕上げを選んでください <span id="finish-summary" style="font-size:13px;color:var(--muted);font-weight:400;"></span></h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">CGイメージと価格を見ながら、どちらのつくりにするか選んでください。</p>
+        <div class="base-cards">
+          <div class="base-card" onclick="selectFinish('system')">
+            <div class="card-visual cv-system" style="padding:0;overflow:hidden;">
+              <img id="finish-img-system" src="" alt="システムブースのCGイメージ" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+              <span class="card-visual-label">SYSTEM BOOTH</span>
+            </div>
+            <div class="card-body">
+              <div class="card-name">システムブース</div>
+              <div class="card-catch">規格部材・低価格・短納期</div>
+              <div class="card-price-range" id="finish-price-system"><span class="price-num">価格調整中</span></div>
+              <div class="card-desc">豊富なデザインテンプレートから選ぶだけ。お見積りから施工までスムーズに進められる、スピーディーなシステムブースです。</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.7;margin:10px 0 14px;">※照明は料金に含まれます。<br>※ターポリン・パネルなどの装飾（グラフィック）は含まれません。</div>
+              <div class="card-select-btn">このブースを選ぶ</div>
+            </div>
+          </div>
+          <div class="base-card" onclick="selectFinish('wood')">
+            <div class="card-visual cv-wood" style="padding:0;overflow:hidden;">
+              <img id="finish-img-wood" src="" alt="木工ブースのCGイメージ" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+              <span class="card-visual-label">WOOD BOOTH</span>
+            </div>
+            <div class="card-body">
+              <div class="card-name">木工ブース</div>
+              <div class="card-catch">造作・高級感・自由設計</div>
+              <div class="card-price-range" id="finish-price-wood"><span class="price-num">価格調整中</span></div>
+              <div class="card-desc">テンプレートをベースにした木工ブースだから、デザインも価格も分かりやすく安心です。</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.7;margin:10px 0 14px;">※参考価格です。仕様により変動します。<br>※照明は料金に含まれます。<br>※ターポリン・パネルなどの装飾（グラフィック）は含まれません。</div>
+              <div class="card-select-btn">このブースを選ぶ</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- STEP4: オプション & 見積もり -->
       <div id="step-quote" class="view">
-        <button class="back-btn" onclick="goToStep(3)">← プランを選び直す</button>
+        <button class="back-btn" onclick="quoteBack()">← 選び直す</button>
         <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">必要なオプションを追加して、見積もりを依頼してください。</p>
         <div class="quote-builder">
           <div>
             <div class="options-panel">
               <h3>追加オプション</h3>
-              <div class="option-item"><img class="opt-img" src="img/opt_wagon.jpg" alt="リース台"><div class="option-info"><div class="opt-name">リース台</div><div class="opt-price">¥30,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt1',-1)">−</button><span class="qty-val" id="qty-opt1">0</span><button class="qty-btn" onclick="changeQty('opt1',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_shelf.svg" alt="スチール棚"><div class="option-info"><div class="opt-name">スチール棚</div><div class="opt-price">¥36,000 / 台</div><div class="opt-note">品番 CO-230S</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt1',-1)">−</button><span class="qty-val" id="qty-opt1">0</span><button class="qty-btn" onclick="changeQty('opt1',1)">＋</button></div></div>
               <div class="option-item"><img class="opt-img" src="img/opt_hightable.jpg" alt="ハイテーブル"><div class="option-info"><div class="opt-name">ハイテーブル</div><div class="opt-price">¥8,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt2',-1)">−</button><span class="qty-val" id="qty-opt2">0</span><button class="qty-btn" onclick="changeQty('opt2',1)">＋</button></div></div>
-              <div class="option-item"><img class="opt-img" src="img/opt_chair.jpg" alt="チェア"><div class="option-info"><div class="opt-name">チェア</div><div class="opt-price">¥3,000 / 脚</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
-              <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥35,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_chair.jpg" alt="折りたたみチェア"><div class="option-info"><div class="opt-name">折りたたみチェア</div><div class="opt-price">¥4,000 / 脚</div><div class="opt-note">品番 BC-107BR</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_catalog.svg" alt="カタログスタンド"><div class="option-info"><div class="opt-name">カタログスタンド</div><div class="opt-price">¥8,000 / 台</div><div class="opt-note">品番 ES-446A</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥42,000 / 台</div><div class="opt-note">※映像制作をご依頼の場合、1台無料</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt5',-1)">−</button><span class="qty-val" id="qty-opt5">0</span><button class="qty-btn" onclick="changeQty('opt5',1)">＋</button></div></div>
             </div>
 
-            <!-- 装飾の相談（S1システムプラン選択時のみ表示・概算合計には加算しない） -->
-            <label class="video-consult" id="deco-consult-wrap" style="display:none;margin-top:16px;">
+            <!-- 装飾の相談（概算合計には加算しない） -->
+            <label class="video-consult" id="deco-consult-wrap" style="margin-top:16px;">
               <input type="checkbox" id="deco-interest" onchange="setDecoInterest(this.checked)">
               <span>
                 <span class="video-consult-label">装飾も相談したい（ターポリン・パネルなど）</span><br>
@@ -1331,50 +996,48 @@ gtag('config', 'G-JWR11T28R2');
               </span>
             </label>
 
-            <!-- 映像制作オプション（意思表示のみ・概算合計には加算しない） -->
+            <!-- 映像制作オプション（選択式・概算合計には加算しない。選択時はモニター1台無料） -->
             <div class="video-panel">
               <h3>ブースで流す映像も、あわせて制作できます</h3>
               <p class="video-lead">展示会場は音が聞き取りにくく、来場者が足を止める時間も限られます。テレビCMやWeb動画とは、必要な設計が違います。当社は映像制作会社を自社グループに持ち、会場で見られることを前提に映像をつくります。モニターの手配から当日の再生設定まで、まとめてお任せいただけます。</p>
+              <p style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:12px;">ご検討中のプランをクリックして選択してください（もう一度クリックで解除）。43インチモニター1台が無料になります。</p>
 
-              <div class="video-plan">
+              <div class="video-plan" id="vp-slide" onclick="selectVideoPlan('slide')">
+                <span class="vp-check">選択中</span>
                 <div class="video-plan-name">スライド映像</div>
                 <div class="video-plan-price">¥50,000〜 <span>+税</span></div>
                 <div class="video-plan-desc">お手元のパンフレットや製品画像から、ループ再生用の映像を構成します。撮影なしで、モニターを「映っている状態」にできます。</div>
                 <ul class="video-plan-specs"><li>既存素材を使用</li><li>1〜2分／ループ再生</li><li>納期 約1週間</li></ul>
               </div>
 
-              <div class="video-plan recommended">
+              <div class="video-plan recommended" id="vp-intro" onclick="selectVideoPlan('intro')">
                 <span class="video-plan-badge">おすすめ</span>
+                <span class="vp-check">選択中</span>
                 <div class="video-plan-name">製品・会社紹介映像</div>
                 <div class="video-plan-price">¥300,000〜 <span>+税</span></div>
                 <div class="video-plan-desc">撮影から編集まで対応します。音が聞こえなくても伝わるよう、字幕とカット構成を会場向けに設計します。</div>
                 <ul class="video-plan-specs"><li>撮影・編集込み</li><li>2〜3分／字幕あり</li><li>展示会後もWebで使用可</li></ul>
               </div>
 
-              <div class="video-plan">
+              <div class="video-plan" id="vp-multi" onclick="selectVideoPlan('multi')">
+                <span class="vp-check">選択中</span>
                 <div class="video-plan-name">マルチスクリーン演出</div>
                 <div class="video-plan-price">¥1,000,000〜 <span>+税</span></div>
                 <div class="video-plan-desc">複数モニターの同期再生や、大画面を使った演出に対応します。再生機材の選定・設置まで当社で行います。</div>
                 <ul class="video-plan-specs"><li>複数面の同期再生</li><li>再生機材の手配・設置</li><li>当日の動作確認まで対応</li></ul>
               </div>
 
-              <label class="video-consult">
-                <input type="checkbox" id="video-interest" onchange="setVideoInterest(this.checked)">
-                <span>
-                  <span class="video-consult-label">映像制作も相談したい</span><br>
-                  <span class="video-consult-note">概算合計金額には含まれません。担当者から別途ご案内します。</span>
-                </span>
-              </label>
-
-              <p class="video-footnote">映像だけのご依頼も承ります。すでにブースが決まっている場合や、他社で施工予定の場合でもご相談ください。モニターの台数やサイズが未定の段階からでも、あわせてご提案します。</p>
+              <p class="video-footnote">映像の金額は概算合計には含まれません。担当者から別途ご案内します。映像だけのご依頼も承ります。すでにブースが決まっている場合や、他社で施工予定の場合でもご相談ください。モニターの台数やサイズが未定の段階からでも、あわせてご提案します。</p>
             </div>
           </div>
           <div class="quote-sidebar-panel">
+            <img id="qs-img" src="" alt="選択中のブースイメージ" style="display:none;width:100%;border-radius:12px;margin-bottom:12px;background:#F3F6F6;">
             <div class="qs-plan">選択中のプラン</div>
             <div class="qs-plan-name" id="qs-plan-name">—</div>
             <div class="qs-total-label">概算合計金額</div>
             <div class="qs-total" id="qs-total">¥0</div>
-            <div class="qs-total-note">+税　※オプション込み</div>
+            <div class="qs-total-note" id="qs-total-note">+税　※オプション込み</div>
+            <div id="qs-discount" style="display:none;font-size:12px;font-weight:700;color:var(--red);margin-top:6px;">映像制作ご依頼特典: モニター1台無料 −¥42,000</div>
             <hr class="qs-divider">
             <form id="quote-form" onsubmit="submitQuote(event)">
               <label class="form-label">会社名 *</label>
@@ -1396,10 +1059,10 @@ gtag('config', 'G-JWR11T28R2');
         </div>
       </div>
 
-      <!-- 大型ブース（3小間以上）相談フォーム -->
+      <!-- 大型ブース（4小間以上）相談フォーム -->
       <div id="step-large" class="view">
-        <button class="back-btn" onclick="goToStep(2)">← 小間数選択にもどる</button>
-        <div class="lb-badge">3小間以上をご検討の方</div>
+        <button class="back-btn" onclick="goToStep(1)">← 小間数選択にもどる</button>
+        <div class="lb-badge">4小間以上をご検討の方</div>
         <h3 style="font-family:'Noto Sans JP', sans-serif;font-size:24px;margin-bottom:0.5rem;">大型ブースのご相談</h3>
         <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">ご予定の内容を教えてください。専任スタッフがぴったりのプランをお見積もりして、担当者よりご連絡します。</p>
         <div class="large-form-panel">
@@ -1409,7 +1072,6 @@ gtag('config', 'G-JWR11T28R2');
                 <label class="lf-label">コマ数<span class="req">必須</span></label>
                 <select class="lf-select" id="lf-koma" required>
                   <option value="">選択してください</option>
-                  <option>3小間（27m²）</option>
                   <option>4小間（36m²）</option>
                   <option>5小間（45m²）</option>
                   <option>6小間以上</option>
@@ -1593,6 +1255,18 @@ gtag('config', 'G-JWR11T28R2');
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section class="dots-bg" style="background:#fff;padding:80px 20px;">
+    <div class="section-inner">
+      <span class="section-eyebrow">FAQ</span>
+      <h2 class="section-title">よくあるご質問</h2>
+      <div class="faq-item">
+        <div class="faq-q">見積もりは「装飾一式」ですか？</div>
+        <div class="faq-a">いいえ。使用する部材や什器を明細でお出しします。何にいくらかかるかが分かる状態でご確認いただけます。</div>
+      </div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <div style="background:var(--gray);padding:20px 20px 0;text-align:center;">
     <img src="img/scene_nigiwai.svg" alt="にぎわう展示会のイラスト" style="width:100%;max-width:760px;height:auto;">
@@ -1616,19 +1290,70 @@ gtag('config', 'G-JWR11T28R2');
 <script>
 /* ========== 見積もりフロー ========== */
 var state = {
-  base: null,        // 'system' | 'wood'
-  koma: null,        // 1 | 2
-  planStep: null,    // 's1' | 's2' | 'w1' | 'w2'
-  planName: null,
-  planPrice: 0,
-  qty: { opt1: 0, opt2: 0, opt3: 0, opt4: 0 },
-  videoInterest: false,  // 映像制作の相談（金額には加算しない）
-  decoInterest: false    // 装飾の相談（金額には加算しない・S1のみ）
+  koma: null,          // 1 | 2 | 3
+  purpose: null,       // 'product' | 'service' | 'wall'
+  finish: null,        // 'system' | 'wood'（壁だけプランはsystem固定）
+  qty: { opt1: 0, opt2: 0, opt3: 0, opt4: 0, opt5: 0 },
+  videoPlan: null,     // 'slide' | 'intro' | 'multi' | null（概算には加算しない）
+  decoInterest: false  // 装飾の相談（概算には加算しない）
 };
 
-function setVideoInterest(checked) {
-  state.videoInterest = checked;
+/* 価格表: 仕上げ×目的×小間数。nullは確定待ち（画面には「価格調整中」と表示される）。
+   確定したらここの数値を書き換えるだけでよい。3小間は全て個別見積もり（koma===3で判定）。 */
+var PRICES = {
+  system: {
+    product: { 1: null, 2: null },
+    service: { 1: null, 2: null }
+  },
+  wood: {
+    product: { 1: null, 2: null },
+    service: { 1: null, 2: null }
+  },
+  wallOnly: { 1: 180000, 2: 280000 }
+};
+
+var OPTION_PRICES = { opt1: 36000, opt2: 8000, opt3: 4000, opt4: 8000, opt5: 42000 };
+var OPTION_NAMES  = { opt1: 'スチール棚', opt2: 'ハイテーブル', opt3: '折りたたみチェア', opt4: 'カタログスタンド', opt5: '43インチモニター' };
+var OPTION_CODES  = { opt1: 'CO-230S', opt3: 'BC-107BR', opt4: 'ES-446A' };
+var MONITOR_KEY = 'opt5';
+var MONITOR_FREE = 42000;  // 映像制作ご依頼時にモニター1台無料
+
+var VIDEO_PLANS = {
+  slide: { name: 'スライド映像', price: '¥50,000〜' },
+  intro: { name: '製品・会社紹介映像', price: '¥300,000〜' },
+  multi: { name: 'マルチスクリーン演出', price: '¥1,000,000〜' }
+};
+
+var PURPOSE_LABELS = { product: '製品を見せたい（製品向け）', service: 'サービスを伝えたい（サービス向け）', wall: '壁だけプラン' };
+var PURPOSE_SHORT  = { product: '製品向け', service: 'サービス向け', wall: '壁だけ' };
+var KOMA_SIZE = { 1: '9m²・3m×3m', 2: '18m²・6m×3m', 3: '27m²・9m×3m' };
+
+var CG_PLACEHOLDER = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 466"><rect width="700" height="466" fill="#F3F6F6"/><text x="350" y="243" font-size="30" font-family="sans-serif" fill="#8A8580" text-anchor="middle">CG画像 準備中</text></svg>');
+
+/* CG参照ロジック: img/sys_2koma_product.png のような命名規則（壁だけは wall_only.png） */
+function cgPath(finish) {
+  if (state.purpose === 'wall') return 'img/wall_only.png';
+  var prefix = finish === 'wood' ? 'wood' : 'sys';
+  return 'img/' + prefix + '_' + state.koma + 'koma_' + state.purpose + '.png';
 }
+
+function setCgImage(imgEl, finish) {
+  imgEl.onerror = function () { this.onerror = null; this.src = CG_PLACEHOLDER; };
+  imgEl.src = cgPath(finish);
+}
+
+/* 基本価格: {kind:'price',value} | {kind:'quote'}=個別見積もり | {kind:'tbd'}=価格調整中 | null=未選択 */
+function basePriceFor(finish) {
+  if (!state.koma || !state.purpose) return null;
+  if (state.koma === 3) return { kind: 'quote' };
+  if (state.purpose === 'wall') return { kind: 'price', value: PRICES.wallOnly[state.koma] };
+  if (!finish) return null;
+  var v = PRICES[finish][state.purpose][state.koma];
+  return v == null ? { kind: 'tbd' } : { kind: 'price', value: v };
+}
+
+function basePrice() { return basePriceFor(state.finish); }
 
 function setDecoInterest(checked) {
   state.decoInterest = checked;
@@ -1642,18 +1367,14 @@ function closeDecoPopup() {
   document.getElementById('deco-popup').style.display = 'none';
 }
 
-var OPTION_PRICES = { opt1: 30000, opt2: 8000, opt3: 3000, opt4: 35000 };
-var OPTION_NAMES  = { opt1: 'リース台', opt2: 'ハイテーブル', opt3: 'チェア', opt4: '43インチモニター' };
-
 var STEP_LABELS = {
-  1: 'ベースを選んでください',
-  2: '小間数を選んでください',
-  3: 'プランを選んでください',
+  1: '小間数を選んでください',
+  2: '展示の目的を選んでください',
+  3: '仕上げを選んでください',
   4: 'オプションを追加して見積もりを依頼'
 };
 
-var ALL_VIEWS = ['step-base', 'step-koma-system', 'step-koma-wood',
-                 'step-plan-s1', 'step-plan-s2', 'step-plan-w1', 'step-plan-w2', 'step-quote', 'step-large'];
+var ALL_VIEWS = ['step-koma', 'step-purpose', 'step-finish', 'step-quote', 'step-large'];
 
 function showView(id) {
   ALL_VIEWS.forEach(function (v) {
@@ -1674,12 +1395,9 @@ function updateIndicator(step) {
 }
 
 function viewForStep(step) {
-  if (step === 1) return 'step-base';
-  if (step === 2) return state.base === 'wood' ? 'step-koma-wood' : 'step-koma-system';
-  if (step === 3) {
-    var prefix = state.base === 'wood' ? 'w' : 's';
-    return 'step-plan-' + prefix + (state.koma || 1);
-  }
+  if (step === 1) return 'step-koma';
+  if (step === 2) return 'step-purpose';
+  if (step === 3) return 'step-finish';
   return 'step-quote';
 }
 
@@ -1687,10 +1405,21 @@ function scrollToPlans() {
   document.getElementById('plans-section').scrollIntoView({ behavior: 'smooth' });
 }
 
+/* GA4: ステップ到達の計測（どこで離脱するかを見る） */
+function trackStep(step) {
+  if (typeof gtag === 'function') gtag('event', 'step_view', {
+    step_number: step,
+    koma: state.koma || '',
+    purpose: state.purpose || '',
+    finish: state.finish || ''
+  });
+}
+
 function goToStep(step) {
   showView(viewForStep(step));
   updateIndicator(step);
   scrollToPlans();
+  trackStep(step);
 }
 
 function resetQuoteForm() {
@@ -1701,40 +1430,267 @@ function resetQuoteForm() {
 }
 
 function goHome() {
-  state.base = null; state.koma = null;
-  state.planStep = null; state.planName = null; state.planPrice = 0;
+  state.koma = null; state.purpose = null; state.finish = null;
   Object.keys(state.qty).forEach(function (k) {
     state.qty[k] = 0;
     document.getElementById('qty-' + k).textContent = '0';
   });
-  state.videoInterest = false;
-  document.getElementById('video-interest').checked = false;
+  setVideoPlanNone();
   state.decoInterest = false;
   document.getElementById('deco-interest').checked = false;
   document.getElementById('qs-plan-name').textContent = '—';
+  document.getElementById('qs-img').style.display = 'none';
   updateTotal();
   resetQuoteForm();
   goToStep(1);
 }
 
-function selectBase(base) {
-  state.base = base;
+function highlightCard(el) {
+  if (!el) return;
+  var cards = el.parentElement.querySelectorAll('.type-card');
+  cards.forEach(function (c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function selectKoma(koma, el) {
+  state.koma = koma;
+  highlightCard(el);
+  document.getElementById('purpose-summary').textContent = koma + '小間';
   goToStep(2);
+}
+
+function selectPurpose(purpose, el) {
+  state.purpose = purpose;
+  highlightCard(el);
+  renderFinish();
+  goToStep(3);
+}
+
+function selectWallOnly() {
+  state.purpose = 'wall';
+  state.finish = 'system';  // 壁だけプランはシステム固定
+  prepareQuote();
+  goToStep(4);
+  showDecoPopup();
+}
+
+function selectFinish(finish) {
+  state.finish = finish;
+  prepareQuote();
+  goToStep(4);
+  showDecoPopup();
+}
+
+function quoteBack() {
+  goToStep(state.purpose === 'wall' ? 2 : 3);
+}
+
+function renderFinish() {
+  document.getElementById('finish-summary').textContent =
+    state.koma + '小間・' + (PURPOSE_SHORT[state.purpose] || '');
+  ['system', 'wood'].forEach(function (f) {
+    setCgImage(document.getElementById('finish-img-' + f), f);
+    var el = document.getElementById('finish-price-' + f);
+    var bp = basePriceFor(f);
+    if (!bp) { el.innerHTML = ''; return; }
+    if (bp.kind === 'quote') {
+      el.innerHTML = '<span class="price-num" style="font-size:22px;">個別見積もり</span>';
+    } else if (bp.kind === 'tbd') {
+      el.innerHTML = '<span class="price-num" style="font-size:22px;">価格調整中</span>';
+    } else {
+      el.innerHTML = '<span class="price-pre">' + state.koma + '小間</span>'
+        + '<span class="price-num">¥' + bp.value.toLocaleString('ja-JP') + '</span>'
+        + '<span class="price-unit">〜 +税' + (f === 'wood' ? '（参考価格）' : '') + '</span>';
+    }
+  });
+}
+
+function prepareQuote() {
+  resetQuoteForm();
+  var label;
+  if (state.purpose === 'wall') {
+    label = '壁だけプラン ' + state.koma + '小間';
+  } else {
+    label = (state.finish === 'wood' ? '木工ブース' : 'システムブース')
+      + ' ' + state.koma + '小間（' + PURPOSE_SHORT[state.purpose] + '）';
+  }
+  document.getElementById('qs-plan-name').textContent = label;
+  var img = document.getElementById('qs-img');
+  setCgImage(img, state.finish);
+  img.style.display = 'block';
+  updateTotal();
+}
+
+function changeQty(key, delta) {
+  state.qty[key] = Math.max(0, state.qty[key] + delta);
+  document.getElementById('qty-' + key).textContent = state.qty[key];
+  updateTotal();
+}
+
+function setVideoPlanNone() {
+  state.videoPlan = null;
+  document.querySelectorAll('.video-plan').forEach(function (c) { c.classList.remove('selected'); });
+}
+
+function selectVideoPlan(key) {
+  if (state.videoPlan === key) {
+    setVideoPlanNone();
+  } else {
+    setVideoPlanNone();
+    state.videoPlan = key;
+    document.getElementById('vp-' + key).classList.add('selected');
+  }
+  updateTotal();
+}
+
+function monitorFreeApplies() {
+  return !!state.videoPlan && state.qty[MONITOR_KEY] > 0;
+}
+
+function optionsTotal() {
+  var total = 0;
+  Object.keys(state.qty).forEach(function (k) {
+    total += state.qty[k] * OPTION_PRICES[k];
+  });
+  if (monitorFreeApplies()) total -= MONITOR_FREE;
+  return total;
+}
+
+function calcTotal() {
+  var bp = basePrice();
+  if (!bp || bp.kind !== 'price') return null;
+  return bp.value + optionsTotal();
+}
+
+function updateTotal() {
+  var bp = basePrice();
+  var totalEl = document.getElementById('qs-total');
+  var noteEl = document.getElementById('qs-total-note');
+  document.getElementById('qs-discount').style.display = monitorFreeApplies() ? 'block' : 'none';
+  if (!bp) {
+    totalEl.textContent = '¥0';
+    noteEl.textContent = '+税　※オプション込み';
+    return;
+  }
+  if (bp.kind === 'quote') {
+    totalEl.textContent = '個別見積もり';
+    noteEl.textContent = '選択内容をもとに、担当者がお見積もりします';
+  } else if (bp.kind === 'tbd') {
+    totalEl.textContent = '価格調整中';
+    noteEl.textContent = '基本価格の確定後にご案内します';
+  } else {
+    totalEl.textContent = '¥' + calcTotal().toLocaleString('ja-JP');
+    noteEl.textContent = '+税　※オプション込み'
+      + (state.finish === 'wood' && state.purpose !== 'wall' ? '　※参考価格' : '');
+  }
+}
+
+function submitQuote(e) {
+  e.preventDefault();
+
+  var company = document.getElementById('f-company').value.trim();
+  var name    = document.getElementById('f-name').value.trim();
+  var tel     = document.getElementById('f-tel').value.trim();
+  var email   = document.getElementById('f-email').value.trim();
+
+  var finishLabel = state.purpose === 'wall'
+    ? 'システムブース（壁だけプラン）'
+    : (state.finish === 'wood' ? '木工ブース' : 'システムブース');
+
+  var bp = basePrice();
+  var basePriceLine;
+  if (bp && bp.kind === 'price') {
+    basePriceLine = '基本価格: ¥' + bp.value.toLocaleString('ja-JP') + '〜（+税）'
+      + (state.finish === 'wood' && state.purpose !== 'wall' ? '※参考価格' : '');
+  } else if (bp && bp.kind === 'quote') {
+    basePriceLine = '基本価格: 個別見積もり（3小間）';
+  } else {
+    basePriceLine = '基本価格: 価格調整中';
+  }
+
+  var lines = [
+    '【NEIGHBOR 見積もり依頼】' + (state.koma === 3 ? '【3小間・個別見積もり案件】' : ''),
+    '',
+    '■ お客様情報',
+    '会社名: ' + company,
+    '担当者名: ' + name,
+    '電話番号: ' + tel,
+    'メールアドレス: ' + email,
+    '',
+    '■ 選択内容',
+    '小間数: ' + state.koma + '小間（' + KOMA_SIZE[state.koma] + '）',
+    '目的: ' + PURPOSE_LABELS[state.purpose],
+    '仕上げ: ' + finishLabel,
+    basePriceLine,
+    '',
+    '■ オプション'
+  ];
+  var hasOption = false;
+  Object.keys(state.qty).forEach(function (k) {
+    if (state.qty[k] > 0) {
+      hasOption = true;
+      var codeNote = OPTION_CODES[k] ? '（品番 ' + OPTION_CODES[k] + '）' : '';
+      lines.push(OPTION_NAMES[k] + codeNote + ' × ' + state.qty[k] +
+        '（¥' + (state.qty[k] * OPTION_PRICES[k]).toLocaleString('ja-JP') + '）');
+    }
+  });
+  if (!hasOption) lines.push('なし');
+  if (monitorFreeApplies()) {
+    lines.push('映像制作ご依頼特典: 43インチモニター1台無料（−¥' + MONITOR_FREE.toLocaleString('ja-JP') + '）');
+  }
+
+  lines.push('', '■ 映像制作',
+    state.videoPlan
+      ? VIDEO_PLANS[state.videoPlan].name + '（' + VIDEO_PLANS[state.videoPlan].price + '・概算合計には含まれません）'
+      : 'なし');
+  lines.push('', '■ 装飾の相談（ターポリン・パネル等）',
+    state.decoInterest ? 'あり（金額別途・担当者からご案内）' : 'なし');
+
+  var total = calcTotal();
+  lines.push('', '■ 概算合計金額',
+    total != null
+      ? '¥' + total.toLocaleString('ja-JP') + '（+税）※映像制作・装飾は含みません'
+        + (state.finish === 'wood' && state.purpose !== 'wall' ? '※参考価格' : '')
+      : (bp && bp.kind === 'quote' ? '個別見積もり（担当者からご案内します）' : '価格調整中'));
+
+  var subject = '【見積もり依頼】' + company + ' 様（' + finishLabel + ' ' + state.koma + '小間'
+    + (state.purpose !== 'wall' ? '・' + PURPOSE_SHORT[state.purpose] : '') + '）';
+
+  if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '見積もり依頼' });
+
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = '送信中...';
+
+  sendLead({
+    _subject: subject,
+    _replyto: email,
+    会社名: company,
+    担当者名: name,
+    電話番号: tel,
+    メールアドレス: email,
+    内容: lines.join('\n')
+  }, subject, lines, function () {
+    btn.disabled = false;
+    btn.textContent = '見積書をメールで受け取る →';
+    document.getElementById('quote-form').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
+  });
 }
 
 function goToLarge() {
   resetQuoteForm();
   showView('step-large');
-  document.getElementById('step-label').textContent = '大型ブース（3小間以上）のご相談';
+  document.getElementById('step-label').textContent = '大型ブース（4小間以上）のご相談';
   scrollToPlans();
+  if (typeof gtag === 'function') gtag('event', 'step_view', { step_number: 'large', koma: state.koma || '', purpose: '', finish: '' });
 }
 
 function submitLarge(e) {
   e.preventDefault();
 
-  var baseLabel = state.base === 'wood' ? '木工ブース' : 'システムブース';
   var lines = [
-    '【NEIGHBOR 大型ブース相談（3小間以上）】',
+    '【NEIGHBOR 大型ブース相談（4小間以上）】',
     '',
     '■ お客様情報',
     '会社名: ' + document.getElementById('lf-company').value.trim(),
@@ -1743,7 +1699,6 @@ function submitLarge(e) {
     'メールアドレス: ' + document.getElementById('lf-email').value.trim(),
     '',
     '■ ご希望の内容',
-    'ベース: ' + baseLabel,
     'コマ数: ' + document.getElementById('lf-koma').value,
     '開放面: ' + document.getElementById('lf-open').value,
     'ストックルーム: ' + document.getElementById('lf-stock').value,
@@ -1753,7 +1708,7 @@ function submitLarge(e) {
     document.getElementById('lf-products').value.trim() || '（未記入）'
   ];
 
-  var subject = '【大型ブース相談】' + document.getElementById('lf-company').value.trim() + ' 様（' + baseLabel + ' / ' + document.getElementById('lf-koma').value + '）';
+  var subject = '【大型ブース相談】' + document.getElementById('lf-company').value.trim() + ' 様（' + document.getElementById('lf-koma').value + '）';
 
   if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '大型ブース相談' });
 
@@ -1794,120 +1749,6 @@ function sendLead(payload, subject, lines, onDone) {
     onDone();
   });
 }
-
-function selectKoma(base, koma, el) {
-  state.base = base;
-  state.koma = koma;
-  var cards = el.parentElement.querySelectorAll('.type-card');
-  cards.forEach(function (c) { c.classList.remove('selected'); });
-  el.classList.add('selected');
-  goToStep(3);
-}
-
-function selectPlan(step, key, name, price, el) {
-  state.planStep = step;
-  state.planName = name;
-  state.planPrice = price;
-  document.getElementById('qs-plan-name').textContent = name;
-  updateTotal();
-  resetQuoteForm();
-  // 装飾の相談チェックはS1（システム1小間）のみ表示
-  var decoWrap = document.getElementById('deco-consult-wrap');
-  if (step === 's1') {
-    decoWrap.style.display = 'flex';
-  } else {
-    decoWrap.style.display = 'none';
-    state.decoInterest = false;
-    document.getElementById('deco-interest').checked = false;
-  }
-  goToStep(4);
-  if (step === 's1') showDecoPopup();
-}
-
-function changeQty(key, delta) {
-  state.qty[key] = Math.max(0, state.qty[key] + delta);
-  document.getElementById('qty-' + key).textContent = state.qty[key];
-  updateTotal();
-}
-
-function calcTotal() {
-  var total = state.planPrice;
-  Object.keys(state.qty).forEach(function (k) {
-    total += state.qty[k] * OPTION_PRICES[k];
-  });
-  return total;
-}
-
-function updateTotal() {
-  document.getElementById('qs-total').textContent = '¥' + calcTotal().toLocaleString('ja-JP');
-}
-
-function submitQuote(e) {
-  e.preventDefault();
-
-  var company = document.getElementById('f-company').value.trim();
-  var name    = document.getElementById('f-name').value.trim();
-  var tel     = document.getElementById('f-tel').value.trim();
-  var email   = document.getElementById('f-email').value.trim();
-
-  var baseLabel = state.base === 'wood' ? '木工ブース' : 'システムブース';
-  var komaLabel = (state.koma || 1) + '小間（' + (state.koma === 2 ? '18' : '9') + 'm²）';
-
-  var lines = [
-    '【NEIGHBOR 見積もり依頼】',
-    '',
-    '■ お客様情報',
-    '会社名: ' + company,
-    '担当者名: ' + name,
-    '電話番号: ' + tel,
-    'メールアドレス: ' + email,
-    '',
-    '■ 選択内容',
-    'ベース: ' + baseLabel,
-    '小間数: ' + komaLabel,
-    'プラン: ' + (state.planName || '未選択') + '（¥' + state.planPrice.toLocaleString('ja-JP') + '〜）',
-    '',
-    '■ オプション'
-  ];
-  var hasOption = false;
-  Object.keys(state.qty).forEach(function (k) {
-    if (state.qty[k] > 0) {
-      hasOption = true;
-      lines.push(OPTION_NAMES[k] + ' × ' + state.qty[k] +
-        '（¥' + (state.qty[k] * OPTION_PRICES[k]).toLocaleString('ja-JP') + '）');
-    }
-  });
-  if (!hasOption) lines.push('なし');
-  lines.push('', '■ 映像制作の相談', state.videoInterest ? 'あり（金額別途・担当者からご案内）' : 'なし');
-  if (state.planStep === 's1') {
-    lines.push('', '■ 装飾の相談（ターポリン・パネル等）', state.decoInterest ? 'あり（金額別途・担当者からご案内）' : 'なし');
-  }
-  lines.push('', '■ 概算合計金額', '¥' + calcTotal().toLocaleString('ja-JP') + '（+税）' +
-    (state.planStep === 's1' ? '※映像制作・装飾は含みません' : '※映像制作は含みません'));
-
-  var subject = '【見積もり依頼】' + company + ' 様（' + baseLabel + ' / ' + (state.planName || '') + '）';
-
-  if (typeof gtag === 'function') gtag('event', 'generate_lead', { form_type: '見積もり依頼' });
-
-  var btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.textContent = '送信中...';
-
-  sendLead({
-    _subject: subject,
-    _replyto: email,
-    会社名: company,
-    担当者名: name,
-    電話番号: tel,
-    メールアドレス: email,
-    内容: lines.join('\n')
-  }, subject, lines, function () {
-    btn.disabled = false;
-    btn.textContent = '見積書をメールで受け取る →';
-    document.getElementById('quote-form').style.display = 'none';
-    document.getElementById('success-msg').style.display = 'block';
-  });
-}
 </script>
 
 
@@ -1915,7 +1756,7 @@ function submitQuote(e) {
   <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;max-width:440px;width:100%;padding:32px 28px;box-shadow:0 24px 60px rgba(0,0,0,0.3);text-align:center;">
     <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:2px;margin-bottom:10px;">DECORATION</div>
     <div style="font-size:18px;font-weight:900;margin-bottom:12px;">装飾もあわせてご依頼いただけます</div>
-    <p style="font-size:13px;color:#666;line-height:1.8;text-align:left;margin-bottom:20px;">照明は料金に含まれていますが、ターポリンやパネルなどの装飾は含まれておりません。ブースの印象を決める装飾も、ぜひあわせてご相談ください。次の画面で「装飾も相談したい」にチェックを入れると、担当者からご提案いたします。</p>
+    <p style="font-size:13px;color:#666;line-height:1.8;text-align:left;margin-bottom:20px;">照明は料金に含まれていますが、ターポリンやパネルなどの装飾は含まれておりません。ブースの印象を決める装飾も、ぜひあわせてご相談ください。この画面のオプション欄で「装飾も相談したい」にチェックを入れると、担当者からご提案いたします。</p>
     <button onclick="closeDecoPopup()" style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">オプション選択へ進む →</button>
   </div>
 </div>
