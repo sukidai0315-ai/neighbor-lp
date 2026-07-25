@@ -955,7 +955,8 @@ gtag('config', 'G-JWR11T28R2');
       <div id="step-plan-s1" class="view">
         <button class="back-btn" onclick="goToStep(2)">← コマ数を選び直す</button>
         <h3 style="font-size:18px;font-weight:900;margin-bottom:0.5rem;">プランを選ぶ <span style="font-size:13px;color:var(--muted);font-weight:400;">システムブース 1小間</span></h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">イメージ図を見ながら、イメージに合うプランを選んでください。</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:0.4rem;">イメージ図を見ながら、イメージに合うプランを選んでください。</p>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:1.5rem;">※照明は料金に含まれます。ターポリンやパネルなどの装飾は料金に含まれません（オプション画面でご相談いただけます）。</p>
         <div style="display:flex;flex-direction:column;gap:20px;"><div onclick="selectPlan('s1','kabe','シンプルプラン',180000,this)"
   style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
          transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
@@ -972,7 +973,7 @@ gtag('config', 'G-JWR11T28R2');
     
     <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">SIMPLE</div>
     <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">シンプルプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">アルミ壁面のみのシンプルな構成。グラフィックや什器を自社でご用意される方に。最小構成でコストを抑えられます。</div>
+    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">シンプルで活用しやすい形でスペースを有効活用できる構成。自社製品の大きさや有無を問わず対応でき、コストを最小限に抑えたい方に。</div>
     <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
       ¥180,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
     </div>
@@ -1002,33 +1003,6 @@ gtag('config', 'G-JWR11T28R2');
     <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">上部サインを高くし、側面までグラフィックを展開。商談用のカウンターとストックスペースを備えた上位構成です。</div>
     <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
       ¥520,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
-    </div>
-    <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
-                font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
-         onmouseover="this.style.background='#236E76'"
-         onmouseout="this.style.background='var(--green)'">
-      このプランで見積もる →
-    </div>
-  </div>
-</div><div onclick="selectPlan('s1','simple','ベーシックプラン',280000,this)"
-  style="background:#fff;border:2px solid #E5E1D8;border-radius:20px;overflow:hidden;cursor:pointer;
-         transition:all 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.07);display:flex;align-items:stretch;position:relative;"
-  onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 16px 40px rgba(217,59,72,0.28)'"
-  onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.07)'">
-
-  <!-- 画像エリア（左・60%） -->
-  <div style="flex:0 0 58%;background:#F3F6F6;display:flex;align-items:center;justify-content:center;padding:20px;border-right:1px solid #eee;">
-    <img src="img/hero_standard.png" style="width:100%;max-height:280px;object-fit:contain;">
-  </div>
-
-  <!-- テキストエリア（右・40%） -->
-  <div style="flex:1;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;">
-    
-    <div style="font-size:10px;font-weight:800;color:#aaa;letter-spacing:2px;margin-bottom:6px;">BASIC</div>
-    <div style="font-size:20px;font-weight:900;color:#1a1a1a;margin-bottom:10px;line-height:1.2;">ベーシックプラン</div>
-    <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">壁面に社名サインを追加し、展示台とハイテーブルを配置。製品を置いて立ち話ができる、最小限の接客導線をつくれます。</div>
-    <div style="font-size:28px;font-weight:900;color:var(--green);line-height:1;margin-bottom:20px;">
-      ¥280,000<span style="font-size:13px;color:#888;font-weight:400;"> 〜 +税</span>
     </div>
     <div style="background:var(--green);color:#fff;border-radius:10px;padding:12px 0;
                 font-size:14px;font-weight:700;text-align:center;transition:background 0.2s;"
@@ -1348,6 +1322,15 @@ gtag('config', 'G-JWR11T28R2');
               <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥35,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
             </div>
 
+            <!-- 装飾の相談（S1システムプラン選択時のみ表示・概算合計には加算しない） -->
+            <label class="video-consult" id="deco-consult-wrap" style="display:none;margin-top:16px;">
+              <input type="checkbox" id="deco-interest" onchange="setDecoInterest(this.checked)">
+              <span>
+                <span class="video-consult-label">装飾も相談したい（ターポリン・パネルなど）</span><br>
+                <span class="video-consult-note">装飾は料金に含まれません。概算合計には加算されず、担当者から別途ご提案します。</span>
+              </span>
+            </label>
+
             <!-- 映像制作オプション（意思表示のみ・概算合計には加算しない） -->
             <div class="video-panel">
               <h3>ブースで流す映像も、あわせて制作できます</h3>
@@ -1639,11 +1622,24 @@ var state = {
   planName: null,
   planPrice: 0,
   qty: { opt1: 0, opt2: 0, opt3: 0, opt4: 0 },
-  videoInterest: false   // 映像制作の相談（金額には加算しない）
+  videoInterest: false,  // 映像制作の相談（金額には加算しない）
+  decoInterest: false    // 装飾の相談（金額には加算しない・S1のみ）
 };
 
 function setVideoInterest(checked) {
   state.videoInterest = checked;
+}
+
+function setDecoInterest(checked) {
+  state.decoInterest = checked;
+}
+
+function showDecoPopup() {
+  document.getElementById('deco-popup').style.display = 'flex';
+}
+
+function closeDecoPopup() {
+  document.getElementById('deco-popup').style.display = 'none';
 }
 
 var OPTION_PRICES = { opt1: 30000, opt2: 8000, opt3: 3000, opt4: 35000 };
@@ -1713,6 +1709,8 @@ function goHome() {
   });
   state.videoInterest = false;
   document.getElementById('video-interest').checked = false;
+  state.decoInterest = false;
+  document.getElementById('deco-interest').checked = false;
   document.getElementById('qs-plan-name').textContent = '—';
   updateTotal();
   resetQuoteForm();
@@ -1813,7 +1811,17 @@ function selectPlan(step, key, name, price, el) {
   document.getElementById('qs-plan-name').textContent = name;
   updateTotal();
   resetQuoteForm();
+  // 装飾の相談チェックはS1（システム1小間）のみ表示
+  var decoWrap = document.getElementById('deco-consult-wrap');
+  if (step === 's1') {
+    decoWrap.style.display = 'flex';
+  } else {
+    decoWrap.style.display = 'none';
+    state.decoInterest = false;
+    document.getElementById('deco-interest').checked = false;
+  }
   goToStep(4);
+  if (step === 's1') showDecoPopup();
 }
 
 function changeQty(key, delta) {
@@ -1871,7 +1879,11 @@ function submitQuote(e) {
   });
   if (!hasOption) lines.push('なし');
   lines.push('', '■ 映像制作の相談', state.videoInterest ? 'あり（金額別途・担当者からご案内）' : 'なし');
-  lines.push('', '■ 概算合計金額', '¥' + calcTotal().toLocaleString('ja-JP') + '（+税）※映像制作は含みません');
+  if (state.planStep === 's1') {
+    lines.push('', '■ 装飾の相談（ターポリン・パネル等）', state.decoInterest ? 'あり（金額別途・担当者からご案内）' : 'なし');
+  }
+  lines.push('', '■ 概算合計金額', '¥' + calcTotal().toLocaleString('ja-JP') + '（+税）' +
+    (state.planStep === 's1' ? '※映像制作・装飾は含みません' : '※映像制作は含みません'));
 
   var subject = '【見積もり依頼】' + company + ' 様（' + baseLabel + ' / ' + (state.planName || '') + '）';
 
@@ -1897,6 +1909,16 @@ function submitQuote(e) {
   });
 }
 </script>
+
+
+<div id="deco-popup" onclick="closeDecoPopup()" style="display:none;position:fixed;inset:0;background:rgba(38,34,30,0.55);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;max-width:440px;width:100%;padding:32px 28px;box-shadow:0 24px 60px rgba(0,0,0,0.3);text-align:center;">
+    <div style="font-size:10px;font-weight:800;color:var(--red);letter-spacing:2px;margin-bottom:10px;">DECORATION</div>
+    <div style="font-size:18px;font-weight:900;margin-bottom:12px;">装飾もあわせてご依頼いただけます</div>
+    <p style="font-size:13px;color:#666;line-height:1.8;text-align:left;margin-bottom:20px;">照明は料金に含まれていますが、ターポリンやパネルなどの装飾は含まれておりません。ブースの印象を決める装飾も、ぜひあわせてご相談ください。次の画面で「装飾も相談したい」にチェックを入れると、担当者からご提案いたします。</p>
+    <button onclick="closeDecoPopup()" style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">オプション選択へ進む →</button>
+  </div>
+</div>
 
 </body>
 </html>
