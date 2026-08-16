@@ -1331,9 +1331,9 @@ var KOMA_SIZE = { 1: '9m²・3m×3m', 2: '18m²・6m×3m', 3: '27m²・9m×3m' }
 var CG_PLACEHOLDER = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 466"><rect width="700" height="466" fill="#F3F6F6"/><text x="350" y="243" font-size="30" font-family="sans-serif" fill="#8A8580" text-anchor="middle">CG画像 準備中</text></svg>');
 
-/* CG参照ロジック: img/sys_2koma_product.png のような命名規則（壁だけは wall_only.png） */
+/* CG参照ロジック: img/sys_2koma_product.png のような命名規則（壁だけは小間数別の wall_Nkoma.png） */
 function cgPath(finish) {
-  if (state.purpose === 'wall') return 'img/wall_only.png';
+  if (state.purpose === 'wall') return 'img/wall_' + (state.koma || 1) + 'koma.png';
   var prefix = finish === 'wood' ? 'wood' : 'sys';
   return 'img/' + prefix + '_' + state.koma + 'koma_' + state.purpose + '.png';
 }
