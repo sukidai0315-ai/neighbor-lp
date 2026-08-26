@@ -638,6 +638,18 @@ footer {
 .footer-logo { margin-bottom: 1rem; }
 .footer-logo img { height: 48px; width: auto; border-radius: 10px; display: inline-block; }
 footer p { font-size: 13px; line-height: 2; }
+.footer-site-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  margin-top: 1.75rem; padding: 0.85rem 1.75rem;
+  border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
+  color: rgba(255,255,255,0.82); text-decoration: none;
+  font-size: 14px; font-weight: 700; line-height: 1; white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.footer-site-link:hover, .footer-site-link:focus-visible {
+  background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.55); color: #fff;
+}
+.footer-site-link .arrow { font-size: 12px; opacity: 0.7; }
 .footer-copy { margin-top: 2rem; font-size: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.5rem; }
 
 /* ANIMATIONS */
@@ -1484,6 +1496,7 @@ gtag('config', 'G-JWR11T28R2');
       TEL: 080-1238-9414　平日・土日・祝 9:00-21:00<br>
       対応エリア: 首都圏・中部・関西の展示会（その他の会場もご相談ください）
     </p>
+    <a class="footer-site-link" href="https://t-filmart.co.jp/">コーポレートサイトへ<span class="arrow">&#9656;</span></a>
     <div class="footer-copy">© TOKYOFILMART. All Rights Reserved.<br>
       <span style="font-size:10px;opacity:0.6;">Photo: "Tokyo Big Sight" by Masahiko OHKUBO (CC BY 2.0)</span>
     </div>
