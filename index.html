@@ -240,10 +240,14 @@ section { padding: 80px 20px; }
 .base-card {
   background: var(--white);
   border: 2px solid #E5E1D8; border-radius: 22px;
-  overflow: hidden; cursor: pointer;
+  overflow: hidden; cursor: pointer; position: relative;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.base-card:hover { border-color: var(--green); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(43,131,140,0.15); }
+.base-card:hover, .base-card:focus-visible {
+  border-color: var(--green); transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(43,131,140,0.18); outline: none;
+}
 .base-card.selected { border-color: var(--green); box-shadow: 0 0 0 4px rgba(43,131,140,0.12); }
 .card-visual {
   height: 180px; display: flex; align-items: center; justify-content: center;
@@ -300,22 +304,52 @@ section { padding: 80px 20px; }
 }
 .type-card {
   background: var(--white);
-  border: 2px solid #E5E1D8; border-radius: 18px; padding: 1.5rem;
+  border: 2px solid #E5E1D8; border-radius: 18px; padding: 1.5rem 1.5rem 1.25rem;
   cursor: pointer; transition: all 0.2s; position: relative;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  display: flex; flex-direction: column;
 }
-.type-card:hover { border-color: var(--green); background: var(--green-light); }
-.type-card.selected { border-color: var(--green); background: var(--green-light); }
+.type-card:hover, .type-card:focus-visible {
+  border-color: var(--green); background: var(--green-light);
+  transform: translateY(-3px); box-shadow: 0 12px 28px rgba(43,131,140,0.18);
+  outline: none;
+}
+.type-card.selected {
+  border-color: var(--green); background: var(--green-light);
+  box-shadow: 0 0 0 4px rgba(43,131,140,0.12);
+}
+.type-select-btn {
+  margin-top: auto; padding-top: 14px;
+}
+.type-select-btn span {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--white); color: var(--green);
+  border: 2px solid var(--green); border-radius: 30px;
+  font-size: 13.5px; font-weight: 800; padding: 11px 12px;
+  transition: background 0.2s, color 0.2s;
+}
+.type-select-btn span::after {
+  content: ''; width: 7px; height: 10px; background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.type-card:hover .type-select-btn span { background: var(--green); color: var(--white); }
+.type-card.selected .type-select-btn span { background: var(--green); color: var(--white); }
 .type-icon { font-size: 32px; margin-bottom: 12px; }
 .type-name { font-size: 15px; font-weight: 900; margin-bottom: 6px; }
 .type-price { font-size: 13px; color: var(--green); font-weight: 700; margin-bottom: 8px; }
 .type-desc { font-size: 12px; color: var(--muted); line-height: 1.7; }
 .type-check {
-  position: absolute; top: 12px; right: 12px;
-  width: 22px; height: 22px; border-radius: 50%;
+  position: absolute; top: 10px; right: 10px;
+  border-radius: 20px; padding: 4px 12px 4px 9px;
   background: var(--green); color: #fff;
-  display: none; align-items: center; justify-content: center; font-size: 12px;
+  display: none; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.02em;
 }
-.type-card.selected .type-check { display: flex; }
+.type-check::before {
+  content: ''; width: 11px; height: 7px; border-left: 2.5px solid #fff;
+  border-bottom: 2.5px solid #fff; transform: rotate(-45deg) translate(1px, -2px);
+}
+.type-card.selected .type-check { display: inline-flex; }
 
 /* QUOTE BUILDER */
 .quote-builder {
@@ -331,7 +365,14 @@ section { padding: 80px 20px; }
   display: flex; align-items: center; gap: 14px;
   background: var(--white); border-radius: 16px; padding: 12px 16px;
   margin-bottom: 10px; border: 2px solid #ECEAE4;
+  transition: border-color 0.2s, background 0.2s;
 }
+.option-item.has-qty { border-color: var(--green); background: var(--green-light); }
+.option-item .opt-selected {
+  display: none; font-size: 11px; font-weight: 800; color: var(--green);
+  margin-top: 3px;
+}
+.option-item.has-qty .opt-selected { display: block; }
 .opt-img {
   width: 64px; height: 64px; object-fit: contain;
   background: #fff; border-radius: 12px;
@@ -344,13 +385,14 @@ section { padding: 80px 20px; }
   display: flex; align-items: center; gap: 10px;
 }
 .qty-btn {
-  width: 30px; height: 30px; border-radius: 50%;
-  border: 1.5px solid #ddd; background: var(--white);
-  font-size: 16px; cursor: pointer; display: flex;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid #ddd; background: var(--white);
+  font-size: 17px; cursor: pointer; display: flex;
   align-items: center; justify-content: center; font-weight: 700;
-  transition: all 0.15s;
+  transition: all 0.15s; flex-shrink: 0;
 }
-.qty-btn:hover { border-color: var(--green); color: var(--green); }
+.qty-btn:hover, .qty-btn:focus-visible { border-color: var(--green); color: var(--green); background: var(--green-light); outline: none; }
+@media (max-width: 640px) { .qty-btn { width: 44px; height: 44px; } }
 .qty-val { font-size: 16px; font-weight: 700; min-width: 20px; text-align: center; }
 
 /* VIDEO OPTION */
@@ -969,6 +1011,7 @@ gtag('config', 'G-JWR11T28R2');
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">1小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">9m²（3m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">コンパクトで取り回しやすい。はじめての展示会にも最適。</div>
+            <div class="type-select-btn"><span>選ぶ</span></div>
             <div class="type-check">選択中</div>
           </div>
           <div class="type-card" onclick="selectKoma(2,this)">
@@ -976,6 +1019,7 @@ gtag('config', 'G-JWR11T28R2');
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">2小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">18m²（6m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">展示スペースと商談スペースを両立できる人気サイズ。</div>
+            <div class="type-select-btn"><span>選ぶ</span></div>
             <div class="type-check">選択中</div>
           </div>
           <div class="type-card" onclick="selectKoma(3,this)">
@@ -983,6 +1027,7 @@ gtag('config', 'G-JWR11T28R2');
             <div style="font-size:28px;font-weight:900;color:var(--green);margin-bottom:8px;">3小間</div>
             <div style="font-size:13px;font-weight:700;margin-bottom:6px;">27m²（9m × 3m）</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">ゆとりある展示と商談動線を確保。価格は個別にお見積もりします。</div>
+            <div class="type-select-btn"><span>選ぶ</span></div>
             <div class="type-check">選択中</div>
           </div>
         </div>
@@ -1006,6 +1051,7 @@ gtag('config', 'G-JWR11T28R2');
             <div style="font-size:20px;font-weight:900;margin-bottom:6px;">製品を見せたい</div>
             <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">モノを展示する会社</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">展示台を中心に、実物を見て・手に取ってもらう構成にします。</div>
+            <div class="type-select-btn"><span>選ぶ</span></div>
             <div class="type-check">選択中</div>
           </div>
           <div class="type-card" onclick="selectPurpose('service',this)">
@@ -1013,6 +1059,7 @@ gtag('config', 'G-JWR11T28R2');
             <div style="font-size:20px;font-weight:900;margin-bottom:6px;">サービスを伝えたい</div>
             <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">IT・サービス・人材など</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.6;">モニターやグラフィックを中心に、説明と商談がしやすい構成にします。</div>
+            <div class="type-select-btn"><span>選ぶ</span></div>
             <div class="type-check">選択中</div>
           </div>
         </div>
@@ -1066,11 +1113,11 @@ gtag('config', 'G-JWR11T28R2');
           <div>
             <div class="options-panel">
               <h3>追加オプション</h3>
-              <div class="option-item"><img class="opt-img" src="img/opt_shelf.jpg" alt="スチール棚"><div class="option-info"><div class="opt-name">スチール棚</div><div class="opt-price">¥36,000 / 台</div><div class="opt-note">品番 CO-230S</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt1',-1)">−</button><span class="qty-val" id="qty-opt1">0</span><button class="qty-btn" onclick="changeQty('opt1',1)">＋</button></div></div>
-              <div class="option-item"><img class="opt-img" src="img/opt_hightable.jpg" alt="ハイテーブル"><div class="option-info"><div class="opt-name">ハイテーブル</div><div class="opt-price">¥8,000 / 台</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt2',-1)">−</button><span class="qty-val" id="qty-opt2">0</span><button class="qty-btn" onclick="changeQty('opt2',1)">＋</button></div></div>
-              <div class="option-item"><img class="opt-img" src="img/opt_chair.jpg" alt="折りたたみチェア"><div class="option-info"><div class="opt-name">折りたたみチェア</div><div class="opt-price">¥4,000 / 脚</div><div class="opt-note">品番 BC-107BR</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
-              <div class="option-item"><img class="opt-img" src="img/opt_catalog.jpg" alt="カタログスタンド"><div class="option-info"><div class="opt-name">カタログスタンド</div><div class="opt-price">¥8,000 / 台</div><div class="opt-note">品番 ES-446A</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
-              <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥42,000 / 台</div><div class="opt-note">※映像制作をご依頼の場合、1台無料</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt5',-1)">−</button><span class="qty-val" id="qty-opt5">0</span><button class="qty-btn" onclick="changeQty('opt5',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_shelf.jpg" alt="スチール棚"><div class="option-info"><div class="opt-name">スチール棚</div><div class="opt-price">¥36,000 / 台</div><div class="opt-note">品番 CO-230S</div><div class="opt-selected" id="sel-opt1">選択中</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt1',-1)">−</button><span class="qty-val" id="qty-opt1">0</span><button class="qty-btn" onclick="changeQty('opt1',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_hightable.jpg" alt="ハイテーブル"><div class="option-info"><div class="opt-name">ハイテーブル</div><div class="opt-price">¥8,000 / 台</div><div class="opt-selected" id="sel-opt2">選択中</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt2',-1)">−</button><span class="qty-val" id="qty-opt2">0</span><button class="qty-btn" onclick="changeQty('opt2',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_chair.jpg" alt="折りたたみチェア"><div class="option-info"><div class="opt-name">折りたたみチェア</div><div class="opt-price">¥4,000 / 脚</div><div class="opt-note">品番 BC-107BR</div><div class="opt-selected" id="sel-opt3">選択中</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt3',-1)">−</button><span class="qty-val" id="qty-opt3">0</span><button class="qty-btn" onclick="changeQty('opt3',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_catalog.jpg" alt="カタログスタンド"><div class="option-info"><div class="opt-name">カタログスタンド</div><div class="opt-price">¥8,000 / 台</div><div class="opt-note">品番 ES-446A</div><div class="opt-selected" id="sel-opt4">選択中</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt4',-1)">−</button><span class="qty-val" id="qty-opt4">0</span><button class="qty-btn" onclick="changeQty('opt4',1)">＋</button></div></div>
+              <div class="option-item"><img class="opt-img" src="img/opt_monitor.svg" alt="43インチモニター"><div class="option-info"><div class="opt-name">43インチモニター</div><div class="opt-price">¥42,000 / 台</div><div class="opt-note">※映像制作をご依頼の場合、1台無料</div><div class="opt-selected" id="sel-opt5">選択中</div></div><div class="qty-control"><button class="qty-btn" onclick="changeQty('opt5',-1)">−</button><span class="qty-val" id="qty-opt5">0</span><button class="qty-btn" onclick="changeQty('opt5',1)">＋</button></div></div>
             </div>
 
             <!-- 装飾の相談（概算合計には加算しない） -->
@@ -1494,6 +1541,26 @@ function scrollToPlans() {
   document.getElementById('plans-section').scrollIntoView({ behavior: 'smooth' });
 }
 
+/* 選択カードをキーボード操作・支援技術に対応させる（押せる要素であることを明示） */
+(function () {
+  function enhance() {
+    document.querySelectorAll('.type-card[onclick], .base-card[onclick]').forEach(function (el) {
+      if (el.getAttribute('data-enhanced')) return;
+      el.setAttribute('data-enhanced', '1');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enhance);
+  else enhance();
+})();
+
 /* GA4: つかみブロックの表示回数（フロー開始率の分母として使う） */
 (function () {
   var el = document.getElementById('hook-block');
@@ -1540,6 +1607,7 @@ function goHome() {
   Object.keys(state.qty).forEach(function (k) {
     state.qty[k] = 0;
     document.getElementById('qty-' + k).textContent = '0';
+    syncOptionSelected(k);
   });
   setVideoPlanNone();
   state.decoInterest = false;
@@ -1558,7 +1626,15 @@ function highlightCard(el) {
   el.classList.add('selected');
 }
 
+var flowStarted = false;
+function trackFlowStart() {
+  if (flowStarted) return;
+  flowStarted = true;
+  if (typeof gtag === 'function') gtag('event', 'flow_start', { first_step: 'koma' });
+}
+
 function selectKoma(koma, el) {
+  trackFlowStart();
   state.koma = koma;
   highlightCard(el);
   document.getElementById('purpose-summary').textContent = koma + '小間';
@@ -1630,7 +1706,18 @@ function prepareQuote() {
 function changeQty(key, delta) {
   state.qty[key] = Math.max(0, state.qty[key] + delta);
   document.getElementById('qty-' + key).textContent = state.qty[key];
+  syncOptionSelected(key);
   updateTotal();
+}
+
+/* オプション行に「選択中 × N」を出し、行の見た目も選択状態にする */
+function syncOptionSelected(key) {
+  var label = document.getElementById('sel-' + key);
+  if (!label) return;
+  var row = label.closest('.option-item');
+  var n = state.qty[key];
+  label.textContent = '選択中 × ' + n;
+  if (row) row.classList.toggle('has-qty', n > 0);
 }
 
 function setVideoPlanNone() {
