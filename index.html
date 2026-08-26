@@ -480,6 +480,17 @@ section { padding: 80px 20px; }
   .hook-sep { display: none; }
 }
 
+.form-assure {
+  font-size: 11.5px; line-height: 1.7; color: var(--muted);
+  text-align: center; margin-top: 10px;
+}
+.form-assure strong { color: var(--green); font-weight: 800; }
+.form-free-badge {
+  display: inline-block; background: var(--green-light); color: var(--green);
+  font-size: 11.5px; font-weight: 800; border-radius: 20px;
+  padding: 3px 12px; margin-bottom: 10px;
+}
+
 /* WORKS */
 .works-card {
   background: var(--white); border-radius: 16px; overflow: hidden;
@@ -1114,6 +1125,7 @@ gtag('config', 'G-JWR11T28R2');
             <div class="qs-total-note" id="qs-total-note">+税　※オプション込み</div>
             <div id="qs-discount" style="display:none;font-size:12px;font-weight:700;color:var(--red);margin-top:6px;">映像制作ご依頼特典: モニター1台無料 −¥42,000</div>
             <hr class="qs-divider">
+            <div class="form-free-badge">お見積もりは無料です</div>
             <form id="quote-form" onsubmit="submitQuote(event)">
               <label class="form-label">会社名 *</label>
               <input class="form-input" id="f-company" type="text" placeholder="株式会社〇〇" required>
@@ -1123,12 +1135,13 @@ gtag('config', 'G-JWR11T28R2');
               <input class="form-input" id="f-tel" type="tel" placeholder="080-0000-0000" required>
               <label class="form-label">メールアドレス *</label>
               <input class="form-input" id="f-email" type="email" placeholder="example@mail.com" required>
-              <button type="submit" class="submit-btn" id="submit-btn">見積書をメールで受け取る →</button>
+              <button type="submit" class="submit-btn" id="submit-btn">無料で見積書をメールで受け取る →</button>
+              <p class="form-assure"><strong>送信は無料</strong>・費用は一切かかりません。<br>しつこい営業はいたしません。</p>
             </form>
             <div class="success-msg" id="success-msg">
               <img src="img/mascot_yay.svg" alt="" style="width:90px;height:90px;display:block;margin:0 auto 8px;">
               <h3>送信完了！</h3>
-              <p>担当者より改めてご連絡します。</p>
+              <p>担当者より改めてご連絡します。<br>お見積もりは無料です。しつこい営業はいたしません。</p>
             </div>
           </div>
         </div>
@@ -1203,12 +1216,13 @@ gtag('config', 'G-JWR11T28R2');
                 <input class="lf-input" id="lf-email" type="email" placeholder="example@mail.com" required>
               </div>
             </div>
-            <button type="submit" class="submit-btn" style="margin-top:1.5rem;">この内容で相談する →</button>
+            <button type="submit" class="submit-btn" style="margin-top:1.5rem;">無料でこの内容を相談する →</button>
+            <p class="form-assure"><strong>ご相談・お見積もりは無料</strong>です。しつこい営業はいたしません。</p>
           </form>
           <div class="success-msg" id="large-success">
             <img src="img/mascot_yay.svg" alt="" style="width:90px;height:90px;display:block;margin:0 auto 8px;">
             <h3>送信完了！</h3>
-            <p>担当者より改めてご連絡します。</p>
+            <p>担当者より改めてご連絡します。<br>ご相談・お見積もりは無料です。</p>
           </div>
         </div>
       </div>
@@ -1764,7 +1778,7 @@ function submitQuote(e) {
     内容: lines.join('\n')
   }, subject, lines, function () {
     btn.disabled = false;
-    btn.textContent = '見積書をメールで受け取る →';
+    btn.textContent = '無料で見積書をメールで受け取る →';
     document.getElementById('quote-form').style.display = 'none';
     document.getElementById('success-msg').style.display = 'block';
   });
