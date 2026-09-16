@@ -1,0 +1,5 @@
+# https://neighbor-booth.jp/
+User-agent: *
+Allow: /
+
+Sitemap: https://neighbor-booth.jp/sitemap.xml
