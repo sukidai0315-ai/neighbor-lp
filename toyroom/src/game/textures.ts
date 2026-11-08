@@ -177,3 +177,43 @@ export function doodlePaper(i: number) {
   }
   return c;
 }
+
+/** 壁のポスター。kind 0: ロケット、1: きょうりゅう */
+export function poster(kind: number) {
+  const c = canvas(256, 352), ctx = c.getContext('2d')!;
+  ctx.fillStyle = kind === 0 ? '#1f2a4a' : '#f3e6c4'; ctx.fillRect(0, 0, 256, 352);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (kind === 0) {
+    for (let i = 0; i < 60; i++) { ctx.fillStyle = 'rgba(255,255,255,' + (0.3 + Math.random() * 0.7) + ')'; ctx.fillRect(Math.random() * 256, Math.random() * 352, 2, 2); }
+    ctx.fillStyle = '#f0f0f0'; ctx.beginPath(); ctx.moveTo(128, 60); ctx.quadraticCurveTo(178, 130, 170, 250); ctx.lineTo(86, 250); ctx.quadraticCurveTo(78, 130, 128, 60); ctx.fill();
+    ctx.fillStyle = '#d8443a'; ctx.beginPath(); ctx.moveTo(86, 200); ctx.lineTo(50, 270); ctx.lineTo(90, 250); ctx.fill(); ctx.beginPath(); ctx.moveTo(170, 200); ctx.lineTo(206, 270); ctx.lineTo(166, 250); ctx.fill();
+    ctx.fillStyle = '#3b6fc4'; ctx.beginPath(); ctx.arc(128, 150, 22, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffb347'; ctx.beginPath(); ctx.moveTo(100, 252); ctx.lineTo(128, 320); ctx.lineTo(156, 252); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = '700 28px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('うちゅうへ！', 128, 40);
+  } else {
+    ctx.fillStyle = '#3da36b'; ctx.beginPath(); ctx.ellipse(128, 210, 80, 48, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(70, 150, 34, 30, 0, 0, Math.PI * 2); ctx.fill(); ctx.fillRect(40, 150, 40, 40);
+    for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.moveTo(80 + i * 22, 168); ctx.lineTo(91 + i * 22, 140); ctx.lineTo(102 + i * 22, 168); ctx.fill(); }
+    ctx.fillStyle = '#2b2725'; ctx.beginPath(); ctx.arc(60, 142, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#3da36b'; ctx.fillRect(90, 240, 18, 40); ctx.fillRect(150, 240, 18, 40);
+    ctx.fillStyle = '#2b2725'; ctx.font = '700 30px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('きょうりゅう', 128, 320);
+  }
+  return c;
+}
+
+/** 棚の裏の写真: 子どもと主人公のフィギュア */
+export function photoPaper() {
+  const c = canvas(256, 192), ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#fdfaf3'; ctx.fillRect(0, 0, 256, 192); ctx.fillStyle = '#cfe6f3'; ctx.fillRect(14, 14, 228, 150);
+  ctx.fillStyle = '#9ccc8a'; ctx.fillRect(14, 120, 228, 44);
+  ctx.fillStyle = '#f0c8a8'; ctx.beginPath(); ctx.arc(110, 70, 26, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3e2a1c'; ctx.beginPath(); ctx.arc(110, 60, 27, Math.PI, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#d8443a'; ctx.fillRect(84, 96, 52, 44);
+  ctx.fillStyle = '#2b2725'; ctx.beginPath(); ctx.arc(100, 70, 3, 0, Math.PI * 2); ctx.arc(120, 70, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#2b2725'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(110, 78, 10, 0.2, Math.PI - 0.2); ctx.stroke();
+  // フィギュア（手に持っている）
+  ctx.fillStyle = '#e7b58d'; ctx.beginPath(); ctx.arc(150, 108, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#f4f1ea'; ctx.fillRect(144, 115, 12, 14); ctx.fillStyle = '#4f6279'; ctx.fillRect(144, 129, 12, 12);
+  ctx.fillStyle = '#7a6a5a'; ctx.font = '14px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'right'; ctx.fillText('そうた と パーカー', 236, 184);
+  return c;
+}

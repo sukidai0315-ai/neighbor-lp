@@ -171,6 +171,20 @@ export class Hero {
     this.vel.y -= (this.vel.y > 0 ? G_UP : G_DOWN) * dt;
     this.pos.x += this.vel.x * dt; this.pos.z += this.vel.z * dt; this.pos.y += this.vel.y * dt;
     this.resolve(colliders, ramps, bounds);
+    // ふちに手をかけてよじ登る: 空中で、胸〜頭上あたりに箱の上面があり、そちらへ入力していれば乗り上げる
+    if (!this.onGround && !this.ride && this.vel.y < 1.5 && inp.l > 0.2) {
+      const p = this.pos, RADIUS = this.radius;
+      for (const b of colliders) {
+        const top = b.max.y; if (top < p.y + 0.6 || top > p.y + this.height + 0.9) continue; // 頭より少し上まで手が届く
+        if (b.max.x - b.min.x < 0.5 || b.max.z - b.min.z < 0.5) continue; // 立てない細い物
+        const nx = clamp(p.x, b.min.x, b.max.x), nz = clamp(p.z, b.min.z, b.max.z);
+        const dx = nx - p.x, dz = nz - p.z, d = Math.hypot(dx, dz); if (d < 1e-4 || d > RADIUS + 0.4) continue;
+        if ((wish.x * dx + wish.z * dz) / d < 0.3) continue;
+        p.y = top; p.x = nx + dx / d * (RADIUS + 0.1); p.z = nz + dz / d * (RADIUS + 0.1);
+        this.vel.set(0, 0, 0); this.speed = 0; this.onGround = true; this.groundY = top; this.squash = 0.45; this.events.onPush?.();
+        break;
+      }
+    }
 
     const wasAir = !this.onGround;
     if (!this.onGround) { this.airTime += dt; this.peakFall = Math.min(this.peakFall, this.vel.y); }

@@ -18,6 +18,9 @@ export interface RoomPoints {
   rabbit: THREE.Vector3;
   childHead: THREE.Vector3;
   repairSpot: THREE.Vector3;
+  lightSwitch: THREE.Vector3;
+  vent: THREE.Vector3;
+  photo: THREE.Vector3;
 }
 
 /** 斜面。x 方向に高さが変わる長方形の板 */
@@ -58,6 +61,10 @@ export class Room {
   private bedLampMat!: THREE.MeshStandardMaterial;
   private clouds: THREE.Group[] = [];
   private childLump!: THREE.Mesh;
+  private ceilingLight!: THREE.PointLight;
+  private ceilingMat!: THREE.MeshStandardMaterial;
+  private switchKnob!: THREE.Mesh;
+  ceilingOn = false;
   /** 枕元に置いた賞（貼り直し演出用）。最初は非表示 */
   readonly repairPaper: THREE.Mesh;
   readonly award = new T.AwardCanvas();
@@ -311,6 +318,63 @@ export class Room {
     this.sky = new THREE.HemisphereLight(0xdfe9ff, 0x7a5a3c, .2); this.group.add(this.sky);
     this.nightLight = new THREE.PointLight(0xffb060, 110 * S * S, 40 * S, 2); this.nightLight.position.set(-18.6, 2.6, 12); this.nightLight.castShadow = !lowTier; this.nightLight.shadow.mapSize.set(1024, 1024); this.nightLight.shadow.bias = -.002; this.group.add(this.nightLight);
     this.fill = new THREE.PointLight(0xffe2c0, 10 * S * S, 40 * S, 2); this.fill.position.set(4, 9, 6); this.group.add(this.fill);
+    // ---- 壁のもの: 登れる壁付け棚、スイッチ、ポスター、時計、排気口 ----
+    const shelfWood = new THREE.MeshPhysicalMaterial({ ...T.pbr(woodP, { repeat: 1.5, normalStrength: 1, aniso }), color: 0xf2e8d8, roughness: .5, clearcoat: .2 });
+    const bracketMat = new THREE.MeshStandardMaterial({ color: 0x5a5a60, roughness: .5, metalness: .6 });
+    const wallZ = -12;
+    const shelf = (x0: number, x1: number, y: number, depth = 1.2) => {
+      const w = x1 - x0, cx = (x0 + x1) / 2;
+      add(new RoundedBoxGeometry(w, 0.18, depth, 2, .03), shelfWood, [cx, y - 0.09, wallZ + depth / 2], undefined, { solid: true });
+      add(new THREE.BoxGeometry(w, 0.5, 0.12), shelfWood, [cx, y + 0.16, wallZ + 0.07]); // 背板
+      for (const bx of [x0 + 0.3, x1 - 0.3]) add(new THREE.BoxGeometry(0.1, 0.5, depth * 0.8), bracketMat, [bx, y - 0.4, wallZ + depth * 0.4]);
+    };
+    // 机の左: 段ボール → 段違いの棚 → 机
+    // 登り口: 本 → 段ボール → 小箱 → 左右2列の棚を交互に（1段 1.0 以下、棚の真下に立つ場所の上は 2.0 以上あける）→ 机
+    add(new RoundedBoxGeometry(2.6, 0.45, 2.2, 2, .03), new THREE.MeshStandardMaterial({ color: 0x3b6fc4, roughness: .6 }), [3.7, 0.225, -7.8], [0, 0.06, 0], { solid: true });
+    add(new THREE.BoxGeometry(3.0, 1.3, 2.6), cardMat, [3.7, 0.65, -10.3], undefined, { solid: true });
+    add(new THREE.BoxGeometry(2.0, 0.8, 1.0), cardMat, [3.7, 1.7, -11.1], [0, -0.06, 0], { solid: true });
+    shelf(5.0, 8.2, 3.1); shelf(2.4, 5.6, 4.1); shelf(5.0, 8.2, 5.1); shelf(2.4, 5.6, 6.1); shelf(5.0, 8.2, 7.0); // 左右の列を少し重ねて跳び移りやすく
+    // 棚の上の小さなおもちゃ
+    add(new THREE.SphereGeometry(.3, 14, 10), new THREE.MeshPhysicalMaterial({ color: 0xe36fa0, roughness: .4, clearcoat: .5 }), [7.6, 3.4, -11.3]);
+    add(new RoundedBoxGeometry(.5, .7, .4, 2, .05), new THREE.MeshPhysicalMaterial({ color: 0x3da36b, roughness: .45, clearcoat: .4 }), [2.8, 4.45, -11.3]);
+    add(new THREE.CylinderGeometry(.25, .2, .5, 12), new THREE.MeshPhysicalMaterial({ color: 0xf6f1e6, roughness: .4, clearcoat: .6 }), [7.7, 5.35, -11.3]);
+    // 電気のスイッチ（右列の棚から押せる高さ）
+    add(new RoundedBoxGeometry(0.9, 1.3, 0.12, 2, .03), new THREE.MeshStandardMaterial({ color: 0xf6f3ec, roughness: .5 }), [6.7, 4.2, wallZ + 0.06]);
+    this.switchKnob = add(new RoundedBoxGeometry(0.4, 0.6, 0.16, 2, .03), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .45 }), [6.7, 4.2, wallZ + 0.16]);
+    this.switchKnob.rotation.x = 0.35;
+    // ポスター2枚と時計
+    const frame = (x: number, y: number, w: number, h: number, tex: HTMLCanvasElement) => {
+      add(new THREE.BoxGeometry(w + 0.3, h + 0.3, 0.12), new THREE.MeshStandardMaterial({ color: 0x3a2a1e, roughness: .6 }), [x, y, wallZ + 0.06]);
+      add(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: T.tex(tex, { srgb: true, aniso }), roughness: .9 }), [x, y, wallZ + 0.13], undefined, { shadow: false });
+    };
+    frame(3.0, 10.5, 3.6, 5.0, T.poster(0)); frame(8.6, 11.2, 3.6, 5.0, T.poster(1));
+    const clock = new THREE.Group(); clock.position.set(-10, 16, wallZ + 0.2); this.group.add(clock);
+    const ck2 = (g: THREE.BufferGeometry, m: THREE.Material, p: [number, number, number], r?: [number, number, number]) => { const o = new THREE.Mesh(g, m); o.position.set(...p); if (r) o.rotation.set(...r); o.castShadow = true; clock.add(o); return o; };
+    ck2(new THREE.CylinderGeometry(1.6, 1.6, 0.3, 32), new THREE.MeshStandardMaterial({ color: 0xd8443a, roughness: .4 }), [0, 0, 0], [Math.PI / 2, 0, 0]);
+    ck2(new THREE.CylinderGeometry(1.35, 1.35, 0.1, 32), new THREE.MeshStandardMaterial({ color: 0xfdfaf3, roughness: .6 }), [0, 0, 0.15], [Math.PI / 2, 0, 0]);
+    ck2(new THREE.BoxGeometry(0.08, 0.9, 0.04), new THREE.MeshStandardMaterial({ color: 0x2b2725 }), [0.2, 0.3, 0.22], [0, 0, -0.6]);
+    ck2(new THREE.BoxGeometry(0.08, 1.2, 0.04), new THREE.MeshStandardMaterial({ color: 0x2b2725 }), [-0.3, 0.45, 0.22], [0, 0, 0.5]);
+    // 机の上の壁: 辞書 → 棚を左右に重ねて排気口へ。棚の裏に写真
+    add(new RoundedBoxGeometry(1.6, 1.0, 2.2, 2, .05), new THREE.MeshStandardMaterial({ color: 0x8b4bb8, roughness: .6 }), [12.8, deskTop + 0.5, -10.4], undefined, { solid: true }); // 辞書（上面 8.2）
+    shelf(13.3, 17.0, 9.1); shelf(11.0, 13.9, 10.2); shelf(13.3, 17.0, 11.2);
+    add(new RoundedBoxGeometry(.6, .9, .5, 2, .05), new THREE.MeshPhysicalMaterial({ color: 0x3b6fc4, roughness: .4, clearcoat: .5 }), [16.6, 9.55, -11.3]);
+    add(new THREE.PlaneGeometry(1.0, 0.75), new THREE.MeshStandardMaterial({ map: T.tex(T.photoPaper(), { srgb: true, aniso }), roughness: .9, side: THREE.DoubleSide }), [15.3, 9.65, wallZ + 0.05], [0, 0, 0.12], { shadow: false });
+    // 排気口: 格子と、壁の中の小部屋（ひみつきち）。右列の最上段から入る
+    const ventX = 14.8, ventY = 12.4, ventW = 2.6, ventH = 1.6;
+    const ductMat = new THREE.MeshStandardMaterial({ color: 0x9a9ca3, roughness: .5, metalness: .5, side: THREE.BackSide });
+    add(new THREE.BoxGeometry(ventW, ventH, 4.0), ductMat, [ventX, ventY, wallZ - 2.0], undefined, { shadow: false }); // 内側だけ見える箱
+    add(new THREE.BoxGeometry(ventW + 0.3, ventH + 0.3, 0.1), bracketMat, [ventX, ventY, wallZ + 0.06]); // 枠
+    for (let i = 0; i < 5; i++) add(new THREE.BoxGeometry(ventW - 0.2, 0.08, 0.06), bracketMat, [ventX, ventY - ventH / 2 + 0.25 + i * 0.28, wallZ + 0.12], [0.5, 0, 0]);
+    add(new THREE.BoxGeometry(ventW - 0.1, 0.1, 3.9), new THREE.MeshStandardMaterial({ color: 0x80838a, roughness: .6, metalness: .4 }), [ventX, ventY - ventH / 2 + 0.05, wallZ - 2.0], undefined, { solid: true }); // 床（上面 11.65）
+    // ひみつきちの中身: 懐中電灯（ついている）とビー玉
+    add(new THREE.CylinderGeometry(.22, .18, 1.1, 12), new THREE.MeshPhysicalMaterial({ color: 0xe3a21a, roughness: .4, clearcoat: .5 }), [ventX - 0.7, ventY - ventH / 2 + 0.3, wallZ - 3.0], [0, 0, Math.PI / 2 - 0.3]);
+    const torch = new THREE.PointLight(0xffe8b0, 6 * S * S, 10 * S, 2); torch.position.set(ventX - 0.2, ventY - ventH / 2 + 0.4, wallZ - 3.0); this.group.add(torch);
+    for (let i = 0; i < 5; i++) add(new THREE.SphereGeometry(.12, 12, 10), new THREE.MeshPhysicalMaterial({ color: [0x3b6fc4, 0xd8443a, 0x3da36b, 0xe3a21a, 0xffffff][i], roughness: .1, clearcoat: 1, transmission: .3 }), [ventX + 0.3 + (i % 3) * 0.3, ventY - ventH / 2 + 0.22, wallZ - 2.4 - Math.floor(i / 3) * 0.3]);
+    // 天井の照明（スイッチで点く）
+    this.ceilingMat = new THREE.MeshStandardMaterial({ color: 0xfdfaf3, roughness: .8, emissive: 0xfff2d0, emissiveIntensity: 0 });
+    add(new THREE.CylinderGeometry(2.6, 2.2, 0.7, 32), this.ceilingMat, [0, 25.6, 2], undefined, { shadow: false });
+    this.ceilingLight = new THREE.PointLight(0xfff0d8, 0, 60 * S, 2); this.ceilingLight.position.set(0, 24.6, 2); this.group.add(this.ceilingLight);
+
     // 散らかった小物（通り道は避ける）
     scatterProps(this.group, this.colliders, S, aniso, lowTier);
 
@@ -325,6 +389,9 @@ export class Room {
       rabbit: this.rabbit.position.clone().multiplyScalar(S),
       childHead: new THREE.Vector3(-16.2, 6.75, -0.9).multiplyScalar(S),
       repairSpot: new THREE.Vector3(-13.6, 5.75, -1.0).multiplyScalar(S),
+      lightSwitch: new THREE.Vector3(6.7, 3.6, -11.3).multiplyScalar(S),
+      vent: new THREE.Vector3(14.8, 11.65, -12.8).multiplyScalar(S),
+      photo: new THREE.Vector3(15.3, 9.1, -11.2).multiplyScalar(S),
     };
   }
 
@@ -351,6 +418,15 @@ export class Room {
     const bg = night ? 0x262838 : morning ? 0xf6e9d6 : 0xf0d7b8;
     this.scene.background = new THREE.Color(bg); this.scene.fog = new THREE.FogExp2(bg, (night ? 0.016 : 0.010) / S);
     this.bulbMat.emissiveIntensity = night ? 2.4 : 0;
+  }
+
+  /** 天井の明かり。スイッチで切り替え */
+  toggleCeiling() {
+    this.ceilingOn = !this.ceilingOn;
+    this.ceilingLight.intensity = this.ceilingOn ? 180 * S * S : 0;
+    this.ceilingMat.emissiveIntensity = this.ceilingOn ? 2.2 : 0;
+    this.switchKnob.rotation.x = this.ceilingOn ? -0.35 : 0.35;
+    this.sky.intensity = this.ceilingOn ? 0.8 : 0.44;
   }
 
   /** 朝へ、時間をかけて切り替える（0..1） */

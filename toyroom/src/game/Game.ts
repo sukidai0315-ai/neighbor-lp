@@ -57,6 +57,7 @@ export class Game {
     this.setupInteractables();
     for (const it of this.interactables) {
       const kind = it.label === 'はなす' ? 'talk' : it.label === 'のる' ? 'ride' : 'item';
+      if (it.id === 'vent' || it.id === 'photo') { it.show = () => this.hero.pos.distanceTo(it.pos) < 30; } // 隠し要素は近くまで来たときだけ目印が出る
       it.marker = this.makeMarker(kind); it.marker.visible = false; this.scene.add(it.marker);
     }
     this.setObjective('ラグの クマ（ボロ）に はなす');
@@ -116,6 +117,16 @@ export class Game {
         this.dialogue.start('repair', spot, this.hero.pos.clone(), () => this.finish(), cam);
       },
     });
+    this.interactables.push({
+      id: 'switch', pos: points.lightSwitch, radius: 6.5, label: 'おす', markerY: 6,
+      onUse: () => { this.room.toggleCeiling(); this.toast(this.room.ceilingOn ? 'でんきが ついた' : 'でんきを けした'); },
+    });
+    const look = (id: string, pos: THREE.Vector3, radius: number, first: string, again: string, label: string, markerY: number) => {
+      let seen = false;
+      this.interactables.push({ id, pos, radius, label, markerY, onUse: () => { this.hero.stop(); const key = seen ? again : first; seen = true; this.dialogue.start(key, pos.clone().add(new THREE.Vector3(0, 0.5, 0)), this.hero.pos.clone()); } });
+    };
+    look('vent', points.vent, 3.5, 'vent', 'vent_again', 'のぞく', 5);
+    look('photo', points.photo, 2.6, 'photo', 'photo_again', 'みる', 4);
     this.interactables.push({
       id: 'award', pos: points.award, radius: 3, label: 'ひろう', markerY: 4,
       onUse: () => {
