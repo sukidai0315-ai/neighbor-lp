@@ -8,8 +8,9 @@ import type { Ramp } from './Room';
 // 主人公「パーカー」。20歳くらいのスケーター青年のプラスチックフィギュア、身長 12cm。
 // 仮モデル（手続き生成）と、歩き／スケボーの移動、手続きアニメーション。
 
-const WALK_SPEED = 3.0, SKATE_MAX = 10, JUMP_V = 7.8, G_UP = 19, G_DOWN = 27;
-const CAR_MAX = 14, CAR_ACCEL = 14, CAR_REVERSE = 5;
+// 部屋が5倍なので、本（高さ2.5）に飛び乗れる跳躍力にしてある
+const WALK_SPEED = 3.4, SKATE_MAX = 12, JUMP_V = 10.6, G_UP = 20, G_DOWN = 30;
+const CAR_MAX = 18, CAR_ACCEL = 18, CAR_REVERSE = 6;
 const PUSH_IMPULSE = 2.6, PUSH_INTERVAL = 0.42;
 const { lerp, clamp } = T;
 
@@ -26,8 +27,8 @@ export class Hero {
   events: HeroEvents = {};
   /** 乗っているラジコン。前が +x のモデル */
   ride: THREE.Group | null = null;
-  private get radius() { return this.ride ? 1.9 : 0.22; }
-  private get height() { return this.ride ? 3.0 : 1.75; }
+  private get radius() { return this.ride ? 4.6 : 0.22; }
+  private get height() { return this.ride ? 7.0 : 1.75; }
   private steer = 0; private phase = 0; private kick = 0; private groundY = 0;
   private body = new THREE.Group(); private lean = new THREE.Group(); private hips = new THREE.Group();
   private legL = new THREE.Group(); private legR = new THREE.Group(); private armL = new THREE.Group(); private armR = new THREE.Group(); private head = new THREE.Group();
@@ -87,9 +88,15 @@ export class Hero {
   private resolve(colliders: THREE.Box3[], ramps: Ramp[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
     const p = this.pos; let ground = 0; const RADIUS = this.radius, HEIGHT = this.height;
     for (const r of ramps) {
-      if (p.x < r.minX - RADIUS * .5 || p.x > r.maxX + RADIUS * .5 || p.z < r.minZ || p.z > r.maxZ) continue;
+      const inX = p.x > r.minX - RADIUS && p.x < r.maxX + RADIUS, inZ = p.z > r.minZ - RADIUS && p.z < r.maxZ + RADIUS;
+      if (!inX || !inZ) continue;
       const t = clamp((p.x - r.minX) / (r.maxX - r.minX), 0, 1), h = lerp(r.hAtMinX, r.hAtMaxX, t);
-      if (p.y >= h - 0.45) ground = Math.max(ground, h);
+      if (p.y >= h - 0.45) { ground = Math.max(ground, h); continue; } // 上に乗っている
+      if (p.y + HEIGHT <= Math.min(r.hAtMinX, r.hAtMaxX) - 0.5) continue; // 完全に下をくぐっている
+      // 横や下から入ったら壁として押し返す（斜面の下側にはもぐれない）
+      const px = Math.min(p.x - (r.minX - RADIUS), (r.maxX + RADIUS) - p.x), pz = Math.min(p.z - (r.minZ - RADIUS), (r.maxZ + RADIUS) - p.z);
+      if (px < pz) { p.x += (p.x < (r.minX + r.maxX) / 2 ? -px : px); this.vel.x = 0; } else { p.z += (p.z < (r.minZ + r.maxZ) / 2 ? -pz : pz); this.vel.z = 0; }
+      if (this.skate) this.speed *= .3;
     }
     for (const b of colliders) {
       const inX = p.x > b.min.x - RADIUS && p.x < b.max.x + RADIUS, inZ = p.z > b.min.z - RADIUS && p.z < b.max.z + RADIUS;
@@ -99,7 +106,7 @@ export class Hero {
         if (feet >= b.max.y - .01 && p.x > b.min.x - RADIUS * .4 && p.x < b.max.x + RADIUS * .4 && p.z > b.min.z - RADIUS * .4 && p.z < b.max.z + RADIUS * .4) ground = Math.max(ground, b.max.y);
         continue;
       }
-      if (b.max.y - feet < .32 && this.vel.y <= 0) { ground = Math.max(ground, b.max.y); continue; } // 低い段差は乗る
+      if (b.max.y - feet < .7 && this.vel.y <= 0) { ground = Math.max(ground, b.max.y); continue; } // 低い段差（クレヨンなど）は乗る
       const px = Math.min(p.x - (b.min.x - RADIUS), (b.max.x + RADIUS) - p.x), pz = Math.min(p.z - (b.min.z - RADIUS), (b.max.z + RADIUS) - p.z);
       if (px < pz) { p.x += (p.x < (b.min.x + b.max.x) / 2 ? -px : px); this.vel.x = 0; } else { p.z += (p.z < (b.min.z + b.max.z) / 2 ? -pz : pz); this.vel.z = 0; }
       if (this.skate) this.speed *= .3;
@@ -188,12 +195,12 @@ export class Hero {
     if (this.ride) {
       const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
       const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
-      this.root.position.addScaledVector(face, -0.5).y += 2.3; // キャビンの上に座る（車は2倍サイズ）
+      this.root.position.addScaledVector(face, -1.2).y += 5.6; // キャビンの上に座る（車は5倍サイズ）
       body.rotation.y = lerp(body.rotation.y, 0, e(10)); lean.rotation.z = lerp(lean.rotation.z, -this.steer * 0.15, e(8)); lean.rotation.x = lerp(lean.rotation.x, 0.1, e(8));
       legL.position.set(-.16, .72, 0); legR.position.set(.16, .72, 0); legL.rotation.set(-1.35, 0, 0); legR.rotation.set(-1.35, 0, 0);
       armL.rotation.set(-1.0, 0, .25); armR.rotation.set(-1.0, 0, -.25); hips.position.y = -0.1;
       head.rotation.y = lerp(head.rotation.y, this.steer * 0.3, e(6));
-      board.position.copy(this.root.position).add(new THREE.Vector3(Math.cos(this.yaw) * .36, .9, -Math.sin(this.yaw) * .36)); board.rotation.set(0, this.yaw, Math.PI / 2 - .2);
+      board.position.copy(this.root.position).add(new THREE.Vector3(Math.cos(this.yaw) * .36, .9, -Math.sin(this.yaw) * .36)); board.rotation.order = 'YXZ'; board.rotation.set(0, this.yaw, Math.PI / 2 - .2);
       return;
     }
     if (!this.skate) {
@@ -205,7 +212,7 @@ export class Hero {
       if (!this.onGround) { const fall = clamp(-this.vel.y / 8, 0, 1); legL.rotation.x = .5 - fall * .3; legR.rotation.x = -.2 + fall * .4; armL.rotation.z = .1 + fall * 1.2; armR.rotation.z = -.1 - fall * 1.2; }
       head.rotation.y = lerp(head.rotation.y, 0, e(6));
       board.position.copy(this.pos).add(new THREE.Vector3(Math.cos(this.yaw) * .36, .95 + hips.position.y, -Math.sin(this.yaw) * .36));
-      board.rotation.set(0, this.yaw, Math.PI / 2 - .2);
+      board.rotation.order = 'YXZ'; board.rotation.set(0, this.yaw, Math.PI / 2 - .2);
     } else {
       body.rotation.y = lerp(body.rotation.y, -1.15, e(8));
       lean.rotation.z = lerp(lean.rotation.z, this.steer * .4, e(8)); lean.rotation.x = lerp(lean.rotation.x, .05 + Math.min(.22, this.speed * .03), e(8));
@@ -216,7 +223,8 @@ export class Hero {
       hips.position.y = .17 + (this.onGround ? 0 : .12);
       if (!this.onGround) { legL.rotation.x = .6; legR.rotation.x = .6; }
       head.rotation.y = lerp(head.rotation.y, .9, e(6));
-      board.position.copy(this.pos); board.position.y = this.pos.y + (this.onGround ? 0 : .1); board.rotation.set(0, this.yaw, lean.rotation.z * .5);
+      board.position.copy(this.pos); board.position.y = this.pos.y + (this.onGround ? 0 : .1);
+      board.rotation.order = 'YXZ'; board.rotation.set(lean.rotation.z * .5, this.yaw - Math.PI / 2, 0); // 板の長手（+x）を進行方向へ
     }
   }
 }

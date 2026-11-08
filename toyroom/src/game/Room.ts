@@ -21,7 +21,7 @@ export interface RoomPoints {
 export interface Ramp { minX: number; maxX: number; minZ: number; maxZ: number; hAtMinX: number; hAtMaxX: number }
 
 /** 部屋の倍率。主人公は等倍のまま部屋だけ大きくして「自分が小さい」感じを出す */
-export const S = 2;
+export const S = 5; // 面積は元の25倍（2倍版の約6倍）
 
 export class Room {
   readonly group = new THREE.Group();
@@ -180,12 +180,16 @@ export class Room {
 
     // ---- 本のスロープ（ベッドへ） ----
     const rampMat = new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 });
-    const ramp = { x0: -0.2, x1: -6.4, z0: 8.2, z1: 11.4, h0: 0.0, h1: 4.0 };
+    const ramp = { x0: 0.4, x1: -6.8, z0: 7.6, z1: 12.6, h0: 0.0, h1: 4.5 }; // 低い側は床に接し、高い側はベッドの上面にそのままつながる
     const len = Math.hypot(ramp.x1 - ramp.x0, ramp.h1 - ramp.h0), ang = Math.atan2(ramp.h1 - ramp.h0, ramp.x0 - ramp.x1);
     const rampMesh = add(new RoundedBoxGeometry(len + 0.4, 0.5, ramp.z1 - ramp.z0, 2, .05), rampMat, [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 - 0.22, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
     const pages = new THREE.Mesh(new THREE.BoxGeometry(len + 0.25, 0.42, ramp.z1 - ramp.z0 - 0.15), new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .9 })); pages.position.copy(rampMesh.position); pages.rotation.copy(rampMesh.rotation); pages.receiveShadow = true; this.group.add(pages);
     this.ramps.push({ minX: Math.min(ramp.x0, ramp.x1) * S, maxX: Math.max(ramp.x0, ramp.x1) * S, minZ: ramp.z0 * S, maxZ: ramp.z1 * S, hAtMinX: ramp.h1 * S, hAtMaxX: ramp.h0 * S });
-    add(new RoundedBoxGeometry(2.6, 0.5, 2.0, 2, .03), new THREE.MeshStandardMaterial({ color: 0xd8443a, roughness: .6 }), [-5.6, 3.4, 9.8], [0, 0.1, 0]); // 支えの本（見た目）
+    // 支えの本の山（当たり判定あり）。スロープの下に積んである
+    // 見た目だけ（当たり判定はスロープ側が持つ。本が斜面から突き出るとそこで引っかかるため）
+    add(new RoundedBoxGeometry(2.4, 1.2, 5.0, 2, .04), new THREE.MeshStandardMaterial({ color: 0xd8443a, roughness: .6 }), [-4.6, 0.6, 10.1], [0, 0.05, 0]);
+    add(new RoundedBoxGeometry(2.0, 1.2, 4.8, 2, .04), new THREE.MeshStandardMaterial({ color: 0x3da36b, roughness: .6 }), [-5.4, 1.8, 10.1], [0, -0.08, 0]);
+    add(new RoundedBoxGeometry(1.6, 1.0, 4.6, 2, .04), new THREE.MeshStandardMaterial({ color: 0xe3a21a, roughness: .6 }), [-5.9, 2.9, 10.1], [0, 0.04, 0]);
 
     // ---- ウサギ「ミミ」（ベッドの上、枕のそば） ----
     const bunnyMat = new THREE.MeshPhysicalMaterial({ ...scanned('cotton_jersey', { repeat: [2, 2], aniso }), color: 0xf0c9c9, roughness: 1, sheen: 1, sheenRoughness: .7 });

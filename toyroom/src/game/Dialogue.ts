@@ -27,9 +27,9 @@ export class Dialogue {
     const mid = heroPos.clone().add(speakerPos).multiplyScalar(0.5);
     const dir = speakerPos.clone().sub(heroPos).setY(0).normalize();
     const side = new THREE.Vector3(-dir.z, 0, dir.x);
-    const dist = Math.max(3.6, heroPos.distanceTo(speakerPos) * 1.6);
-    this.camPos.copy(mid).addScaledVector(side, dist).add(new THREE.Vector3(0, 1.3, 0));
-    this.camLook.copy(mid).add(new THREE.Vector3(0, 1.1, 0));
+    const dist = Math.max(4.5, heroPos.distanceTo(speakerPos) * 1.5);
+    this.camPos.copy(mid).addScaledVector(side, dist).add(new THREE.Vector3(0, 1.8, 0));
+    this.camLook.copy(mid).add(new THREE.Vector3(0, 1.4, 0));
     this.run('start');
     return true;
   }
