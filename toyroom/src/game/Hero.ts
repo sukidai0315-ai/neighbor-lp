@@ -4,6 +4,7 @@ import * as T from './textures';
 import { scanned } from './assets';
 import type { Frame } from './Input';
 import type { Ramp } from './Room';
+import { loadModel } from './Models';
 
 // 主人公「パーカー」。20歳くらいのスケーター青年のプラスチックフィギュア、身長 12cm。
 // 仮モデル（手続き生成）と、歩き／スケボーの移動、手続きアニメーション。
@@ -25,6 +26,8 @@ export class Hero {
   onGround = false;
   speed = 0;
   events: HeroEvents = {};
+  /** 本番モデル。読めたら仮モデルを隠してこちらを動かす */
+  private model: THREE.Group | null = null;
   /** 乗っているラジコン。前が +x のモデル */
   ride: THREE.Group | null = null;
   private get radius() { return this.ride ? 4.6 : 0.22; }
@@ -69,6 +72,11 @@ export class Hero {
   /** 足元の位置。見た目の root とは別に持つ（乗り物の上では root がずれるため） */
   readonly pos = new THREE.Vector3();
   get falling() { return !this.onGround && this.vel.y < -3; }
+
+  async applyModel() {
+    const m = await loadModel('parker', 1.75, { faceZ: Math.PI }); if (!m) return;
+    this.body.visible = false; this.board.visible = false; this.model = m.root; this.root.add(this.model);
+  }
 
   place(p: THREE.Vector3, yaw = Math.PI) { this.pos.copy(p); this.yaw = yaw; this.vel.set(0, 0, 0); this.speed = 0; this.groundY = p.y; }
 
@@ -208,6 +216,18 @@ export class Hero {
     this.squash = lerp(this.squash, 0, e(9));
     const sq = this.squash; hips.scale.set(1 + sq * 0.35, 1 - sq * 0.45, 1 + sq * 0.35);
     this.root.position.copy(this.pos);
+    if (this.model) {
+      // 本番モデル（まだ骨なし）: 全体の傾き・弾み・しゃがみだけ付ける
+      const m = this.model; m.scale.set(1 + sq * 0.25, 1 - sq * 0.35, 1 + sq * 0.25);
+      if (this.ride) { const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
+        const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw)); this.root.position.addScaledVector(face, -1.2).y += 5.6; m.rotation.set(0.05, 0, -this.steer * 0.12); m.position.y = 0; return; }
+      if (this.skate) { m.rotation.set(0.05 + Math.min(0.2, this.speed * 0.03), -0.9, this.steer * 0.35); m.position.y = (this.onGround ? 0.17 : 0.27);
+        board.visible = true; board.position.copy(this.pos); board.position.y = this.pos.y + (this.onGround ? 0 : .1); board.rotation.order = 'YXZ'; board.rotation.set(this.steer * .15, this.yaw - Math.PI / 2, 0); return; }
+      board.visible = false;
+      this.phase += sp * dt * 5.2; const w = clamp(sp / WALK_SPEED, 0, 1);
+      m.rotation.set(w * 0.1, 0, 0); m.position.y = Math.abs(Math.sin(this.phase)) * 0.06 * w + (this.onGround ? 0 : 0.08);
+      return;
+    }
     if (this.ride) {
       const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
       const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));

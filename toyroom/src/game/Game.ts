@@ -62,6 +62,8 @@ export class Game {
     this.post = new Post(this.renderer, this.scene, this.camera, tier);
     if (this.input.isTouch) this.$('touch').classList.add('show');
 
+    // 本番モデルがあれば差し替える（なければ仮モデルのまま）
+    void this.room.applyModels(); void this.hero.applyModel();
     this.setupInteractables();
     for (const it of this.interactables) {
       const kind = it.label === 'はなす' ? 'talk' : it.label === 'のる' ? 'ride' : 'item';

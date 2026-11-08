@@ -3,6 +3,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import * as T from './textures';
 import { scanned } from './assets';
 import { scatterProps } from './Props';
+import { loadModel } from './Models';
 
 // 子供部屋（仮モデル）。単位 1 = 10cm。
 // ゾーン: 机の上(出発) / ラグ / 窓の下 / 机の下 / ベッドの上 / 枕元(ゴール)
@@ -435,6 +436,22 @@ export class Room {
     const bg = night ? 0x262838 : morning ? 0xf6e9d6 : 0xf0d7b8;
     this.scene.background = new THREE.Color(bg); this.scene.fog = new THREE.FogExp2(bg, (night ? 0.016 : 0.010) / S);
     this.bulbMat.emissiveIntensity = night ? 2.4 : 0;
+  }
+
+  /** 本番モデル（public/models）を読めたものから仮モデルと差し替える。読めなければ仮のまま */
+  async applyModels() {
+    const swap = async (grp: THREE.Group, name: string, height: number, faceZ: number, keep: (o: THREE.Object3D) => boolean = () => false) => {
+      const m = await loadModel(name, height, { faceZ }); if (!m) return;
+      for (const c of [...grp.children]) if (!keep(c)) c.visible = false;
+      grp.add(m.root);
+    };
+    await Promise.all([
+      swap(this.bear, 'boro', 3.3, Math.PI),
+      swap(this.robot, 'gacha', 4.2, Math.PI),
+      swap(this.rabbit, 'mimi', 3.6, Math.PI),
+      // ラジコンは前が +x。ライトとターゲットは残す
+      swap(this.car, 'dash', 2.3, Math.PI / 2, o => (o as THREE.Light).isLight || o.type === 'Object3D'),
+    ]);
   }
 
   /** 天井の明かり。スイッチで切り替え */
