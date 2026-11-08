@@ -1,0 +1,23 @@
+{
+  "name": "toyroom",
+  "private": true,
+  "version": "0.1.0",
+  "description": "おもちゃの目線で夜の子供部屋をめぐる箱庭ゲーム（体験版）",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "build:single": "SINGLE=1 vite build",
+    "preview": "vite preview --host",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "three": "0.165.0"
+  },
+  "devDependencies": {
+    "@types/three": "0.165.0",
+    "typescript": "5.6.3",
+    "vite": "5.4.11",
+    "vite-plugin-singlefile": "2.0.3"
+  }
+}
