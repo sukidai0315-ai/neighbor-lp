@@ -178,18 +178,16 @@ export class Room {
     add(new THREE.CylinderGeometry(.16, .16, 1.3, 10), botDark, [cave.x + 1.8, .16, cave.z - 1.6], [Math.PI / 2, 0, 0.4]); // 取れた左腕が床に
     this.colliders.push(new THREE.Box3(new THREE.Vector3(cave.x - 2.1, 0, cave.z - 2.0).multiplyScalar(S), new THREE.Vector3(cave.x - 0.3, 3.4, cave.z - 0.4).multiplyScalar(S)));
 
-    // ---- 本のスロープ（ベッドへ） ----
-    const rampMat = new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 });
-    const ramp = { x0: 0.4, x1: -6.8, z0: 7.6, z1: 12.6, h0: 0.0, h1: 4.5 }; // 低い側は床に接し、高い側はベッドの上面にそのままつながる
+    // ---- スロープ（ベッドへ）: 厚い画用紙の束のくさび。見た目と当たり判定を一致させる ----
+    const ramp = { x0: 0.4, x1: -6.8, z0: 7.6, z1: 12.6, h0: 0.0, h1: 4.5 }; // 低い側は床に接し、高い側はベッドの上面につながる
+    const wedgeShape = new THREE.Shape([new THREE.Vector2(ramp.x0, 0), new THREE.Vector2(ramp.x1, ramp.h1), new THREE.Vector2(ramp.x1, 0)]);
+    const wedgeGeo = new THREE.ExtrudeGeometry(wedgeShape, { depth: ramp.z1 - ramp.z0, bevelEnabled: false });
+    const pagesMat = new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .95 });
+    const wedge = new THREE.Mesh(wedgeGeo, pagesMat); wedge.position.set(0, 0.01, ramp.z0); wedge.castShadow = wedge.receiveShadow = true; this.group.add(wedge);
+    // 表紙（青い大きな本）が斜面の上に乗っている
     const len = Math.hypot(ramp.x1 - ramp.x0, ramp.h1 - ramp.h0), ang = Math.atan2(ramp.h1 - ramp.h0, ramp.x0 - ramp.x1);
-    const rampMesh = add(new RoundedBoxGeometry(len + 0.4, 0.5, ramp.z1 - ramp.z0, 2, .05), rampMat, [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 - 0.22, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
-    const pages = new THREE.Mesh(new THREE.BoxGeometry(len + 0.25, 0.42, ramp.z1 - ramp.z0 - 0.15), new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .9 })); pages.position.copy(rampMesh.position); pages.rotation.copy(rampMesh.rotation); pages.receiveShadow = true; this.group.add(pages);
+    add(new RoundedBoxGeometry(len + 0.3, 0.16, ramp.z1 - ramp.z0 + 0.2, 2, .04), new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 }), [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 + 0.07, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
     this.ramps.push({ minX: Math.min(ramp.x0, ramp.x1) * S, maxX: Math.max(ramp.x0, ramp.x1) * S, minZ: ramp.z0 * S, maxZ: ramp.z1 * S, hAtMinX: ramp.h1 * S, hAtMaxX: ramp.h0 * S });
-    // 支えの本の山（当たり判定あり）。スロープの下に積んである
-    // 見た目だけ（当たり判定はスロープ側が持つ。本が斜面から突き出るとそこで引っかかるため）
-    add(new RoundedBoxGeometry(2.4, 1.2, 5.0, 2, .04), new THREE.MeshStandardMaterial({ color: 0xd8443a, roughness: .6 }), [-4.6, 0.6, 10.1], [0, 0.05, 0]);
-    add(new RoundedBoxGeometry(2.0, 1.2, 4.8, 2, .04), new THREE.MeshStandardMaterial({ color: 0x3da36b, roughness: .6 }), [-5.4, 1.8, 10.1], [0, -0.08, 0]);
-    add(new RoundedBoxGeometry(1.6, 1.0, 4.6, 2, .04), new THREE.MeshStandardMaterial({ color: 0xe3a21a, roughness: .6 }), [-5.9, 2.9, 10.1], [0, 0.04, 0]);
 
     // ---- ウサギ「ミミ」（ベッドの上、枕のそば） ----
     const bunnyMat = new THREE.MeshPhysicalMaterial({ ...scanned('cotton_jersey', { repeat: [2, 2], aniso }), color: 0xf0c9c9, roughness: 1, sheen: 1, sheenRoughness: .7 });

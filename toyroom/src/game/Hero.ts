@@ -91,7 +91,7 @@ export class Hero {
       const inX = p.x > r.minX - RADIUS && p.x < r.maxX + RADIUS, inZ = p.z > r.minZ - RADIUS && p.z < r.maxZ + RADIUS;
       if (!inX || !inZ) continue;
       const t = clamp((p.x - r.minX) / (r.maxX - r.minX), 0, 1), h = lerp(r.hAtMinX, r.hAtMaxX, t);
-      if (p.y >= h - 0.45) { ground = Math.max(ground, h); continue; } // 上に乗っている
+      if (p.y >= h - 0.7) { ground = Math.max(ground, h); continue; } // 上に乗っている（低い段差なら横からでも乗れる）
       if (p.y + HEIGHT <= Math.min(r.hAtMinX, r.hAtMaxX) - 0.5) continue; // 完全に下をくぐっている
       // 横や下から入ったら壁として押し返す（斜面の下側にはもぐれない）
       const px = Math.min(p.x - (r.minX - RADIUS), (r.maxX + RADIUS) - p.x), pz = Math.min(p.z - (r.minZ - RADIUS), (r.maxZ + RADIUS) - p.z);
