@@ -13,13 +13,28 @@ export interface RoomPoints {
   bear: THREE.Vector3;
   award: THREE.Vector3;
   pillow: THREE.Vector3;
+  robot: THREE.Vector3;
+  rabbit: THREE.Vector3;
 }
+
+/** 斜面。x 方向に高さが変わる長方形の板 */
+export interface Ramp { minX: number; maxX: number; minZ: number; maxZ: number; hAtMinX: number; hAtMaxX: number }
 
 export class Room {
   readonly group = new THREE.Group();
   readonly colliders: THREE.Box3[] = [];
+  readonly ramps: Ramp[] = [];
   readonly points: RoomPoints;
   readonly bear = new THREE.Group();
+  readonly robot = new THREE.Group();
+  readonly rabbit = new THREE.Group();
+  readonly car = new THREE.Group();
+  readonly wheels: THREE.Mesh[] = [];
+  readonly headlights: THREE.SpotLight[] = [];
+  fragments: THREE.Mesh[] = [];
+  private headlampMat!: THREE.MeshStandardMaterial;
+  private robotEyes!: THREE.MeshStandardMaterial;
+  private carColliderIndex = -1;
   readonly awardBall: THREE.Mesh;
   private bearHead!: THREE.Mesh;
   private dustGeo: THREE.BufferGeometry;
@@ -120,14 +135,75 @@ export class Room {
       .forEach(([col, x, y, z, ry, w, h, d]) => { add(new RoundedBoxGeometry(w, h, d, 2, .03), new THREE.MeshStandardMaterial({ color: col, roughness: .6 }), [x, y, z], [0, ry, 0], { solid: true }); add(new THREE.BoxGeometry(w - .15, h - .08, d - .1), new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .9 }), [x, y, z], [0, ry, 0]); });
     [0xd8443a, 0x3b6fc4, 0x3da36b, 0xe3a21a, 0x8b4bb8, 0xf07c3a].forEach((col, i) => { const a = .3 + i * .9 + T.hash(i, 2); add(new THREE.CylinderGeometry(.06, .06, .9, 10), new THREE.MeshStandardMaterial({ color: col, roughness: .8 }), [-.5 + Math.cos(a) * 1.4, .06, -0.2 + Math.sin(a) * 1.0], [Math.PI / 2, 0, a]); });
 
-    // ラジコン（5-2 で乗れるようにする。今は置物）
-    const car = new THREE.Group();
+    // ---- ラジコン「ダッシュ」（乗れる。前が +x） ----
+    const car = this.car;
     const ck = (g: THREE.BufferGeometry, m: THREE.Material, p: [number, number, number], r?: [number, number, number]) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; o.position.set(...p); if (r) o.rotation.set(...r); car.add(o); return o; };
     ck(new RoundedBoxGeometry(2.6, .55, 1.3, 4, .12), carPaint, [0, .62, 0]); ck(new RoundedBoxGeometry(1.2, .55, 1.1, 4, .15), whitePlastic, [-.2, 1.12, 0]);
     ck(new RoundedBoxGeometry(.9, .08, 1.0, 2, .03), new THREE.MeshPhysicalMaterial({ color: 0x1b2a3a, roughness: .1, metalness: .2, clearcoat: 1 }), [.45, 1.3, 0], [0, 0, -.35]);
     ck(new THREE.CylinderGeometry(.03, .03, 1.6, 8), rubber, [-.75, 1.9, -.4]); ck(new THREE.SphereGeometry(.07, 12, 8), rubber, [-.75, 2.7, -.4]);
-    ([[-.85, .72], [.85, .72], [-.85, -.72], [.85, -.72]] as number[][]).forEach(([x, z]) => { ck(new THREE.CylinderGeometry(.42, .42, .34, 20), rubber, [x, .42, z], [Math.PI / 2, 0, 0]); ck(new THREE.CylinderGeometry(.22, .22, .36, 16), whitePlastic, [x, .42, z], [Math.PI / 2, 0, 0]); });
-    car.position.set(4.5, 0, 9.5); car.rotation.y = 2.3; this.group.add(car); car.updateMatrixWorld(true); this.colliders.push(new THREE.Box3().setFromObject(car));
+    ([[-.85, .72], [.85, .72], [-.85, -.72], [.85, -.72]] as number[][]).forEach(([x, z]) => { const w = ck(new THREE.CylinderGeometry(.42, .42, .34, 20), rubber, [x, .42, z], [Math.PI / 2, 0, 0]); this.wheels.push(w); ck(new THREE.CylinderGeometry(.22, .22, .36, 16), whitePlastic, [x, .42, z], [Math.PI / 2, 0, 0]); });
+    this.headlampMat = new THREE.MeshStandardMaterial({ color: 0xfff4d6, emissive: 0xfff0c0, emissiveIntensity: 0 });
+    [-.42, .42].forEach(z => {
+      ck(new THREE.CylinderGeometry(.14, .14, .1, 14), this.headlampMat, [1.32, .68, z], [0, 0, Math.PI / 2]);
+      const s = new THREE.SpotLight(0xfff0c8, 0, 22, 0.55, 0.5, 1.5); s.position.set(1.3, .7, z); s.target.position.set(8, 0, z * 1.5); car.add(s, s.target); this.headlights.push(s);
+    });
+    car.position.set(4.5, 0, 9.5); car.rotation.y = 2.3; this.group.add(car); car.updateMatrixWorld(true);
+    this.carColliderIndex = this.colliders.length; this.colliders.push(new THREE.Box3().setFromObject(car));
+
+    // ---- 机の下の暗がり: 段ボール箱の洞窟（口は部屋側 +z） ----
+    const cardMat = new THREE.MeshStandardMaterial({ ...T.pbr(T.cardboard(), { repeat: 2, normalStrength: 0.8, aniso }), roughness: 1 });
+    const cave = { x: 13, z: -8.6, w: 8, h: 4.6, d: 5 };
+    add(new THREE.BoxGeometry(cave.w, cave.h, .12), cardMat, [cave.x, cave.h / 2, cave.z - cave.d / 2], undefined, { solid: true }); // 奥
+    add(new THREE.BoxGeometry(.12, cave.h, cave.d), cardMat, [cave.x - cave.w / 2, cave.h / 2, cave.z], undefined, { solid: true });
+    add(new THREE.BoxGeometry(.12, cave.h, cave.d), cardMat, [cave.x + cave.w / 2, cave.h / 2, cave.z], undefined, { solid: true });
+    add(new THREE.BoxGeometry(cave.w + .2, .12, cave.d + .2), cardMat, [cave.x, cave.h, cave.z], undefined, { solid: true }); // 天井
+    add(new THREE.BoxGeometry(cave.w, cave.h * 0.45, .12), cardMat, [cave.x, cave.h * 0.78, cave.z + cave.d / 2], [0.9, 0, 0]); // 垂れたフタで入口が暗い
+    add(new THREE.BoxGeometry(cave.w, .02, cave.d), new THREE.MeshStandardMaterial({ color: 0x8d6f4e, roughness: 1 }), [cave.x, 0.011, cave.z], undefined, { shadow: false });
+
+    // ロボット「ガチャ」（腕が片方ない）
+    const botPaint = new THREE.MeshPhysicalMaterial({ color: 0x8fb3c7, roughness: .35, metalness: .3, clearcoat: .8, clearcoatRoughness: .2 });
+    const botDark = new THREE.MeshStandardMaterial({ color: 0x3b3f46, roughness: .6, metalness: .4 });
+    const bk = (g: THREE.BufferGeometry, m: THREE.Material, p: [number, number, number], r?: [number, number, number]) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; o.position.set(...p); if (r) o.rotation.set(...r); this.robot.add(o); return o; };
+    bk(new RoundedBoxGeometry(1.6, 1.8, 1.1, 3, .12), botPaint, [0, 1.25, 0]); bk(new RoundedBoxGeometry(1.2, 1.0, 1.0, 3, .12), botPaint, [0, 2.75, 0]);
+    bk(new THREE.CylinderGeometry(.04, .04, .9, 8), botDark, [0, 3.6, 0]); bk(new THREE.SphereGeometry(.12, 10, 8), new THREE.MeshStandardMaterial({ color: 0xff5a3c, emissive: 0xff5a3c, emissiveIntensity: 1.2 }), [0, 4.05, 0]);
+    this.robotEyes = new THREE.MeshStandardMaterial({ color: 0x9fe8ff, emissive: 0x6fd8ff, emissiveIntensity: 1.6 });
+    bk(new THREE.BoxGeometry(.26, .18, .05), this.robotEyes, [-.28, 2.8, .52]); bk(new THREE.BoxGeometry(.26, .18, .05), this.robotEyes, [.28, 2.8, .52]);
+    bk(new THREE.BoxGeometry(.5, .08, .05), botDark, [0, 2.45, .52]);
+    bk(new THREE.CylinderGeometry(.16, .16, 1.3, 10), botDark, [1.0, 1.4, 0], [0, 0, -.25]); // 右腕だけ
+    bk(new THREE.CylinderGeometry(.22, .22, .5, 10), botDark, [-.45, .25, 0]); bk(new THREE.CylinderGeometry(.22, .22, .5, 10), botDark, [.45, .25, 0]);
+    this.robot.position.set(cave.x - 1.2, 0, cave.z - 1.2); this.robot.rotation.y = 0.5; this.group.add(this.robot);
+    add(new THREE.CylinderGeometry(.16, .16, 1.3, 10), botDark, [cave.x + 1.8, .16, cave.z - 1.6], [Math.PI / 2, 0, 0.4]); // 取れた左腕が床に
+    this.colliders.push(new THREE.Box3(new THREE.Vector3(cave.x - 2.1, 0, cave.z - 2.0), new THREE.Vector3(cave.x - 0.3, 3.4, cave.z - 0.4)));
+
+    // ---- 本のスロープ（ベッドへ） ----
+    const rampMat = new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 });
+    const ramp = { x0: -0.2, x1: -6.4, z0: 8.2, z1: 11.4, h0: 0.0, h1: 4.0 };
+    const len = Math.hypot(ramp.x1 - ramp.x0, ramp.h1 - ramp.h0), ang = Math.atan2(ramp.h1 - ramp.h0, ramp.x0 - ramp.x1);
+    const rampMesh = add(new RoundedBoxGeometry(len + 0.4, 0.5, ramp.z1 - ramp.z0, 2, .05), rampMat, [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 - 0.22, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
+    const pages = new THREE.Mesh(new THREE.BoxGeometry(len + 0.25, 0.42, ramp.z1 - ramp.z0 - 0.15), new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .9 })); pages.position.copy(rampMesh.position); pages.rotation.copy(rampMesh.rotation); pages.receiveShadow = true; this.group.add(pages);
+    this.ramps.push({ minX: Math.min(ramp.x0, ramp.x1), maxX: Math.max(ramp.x0, ramp.x1), minZ: ramp.z0, maxZ: ramp.z1, hAtMinX: ramp.h1, hAtMaxX: ramp.h0 });
+    add(new RoundedBoxGeometry(2.6, 0.5, 2.0, 2, .03), new THREE.MeshStandardMaterial({ color: 0xd8443a, roughness: .6 }), [-5.6, 3.4, 9.8], [0, 0.1, 0]); // 支えの本（見た目）
+
+    // ---- ウサギ「ミミ」（ベッドの上、枕のそば） ----
+    const bunnyMat = new THREE.MeshPhysicalMaterial({ ...scanned('cotton_jersey', { repeat: [2, 2], aniso }), color: 0xf0c9c9, roughness: 1, sheen: 1, sheenRoughness: .7 });
+    const bunnyInner = new THREE.MeshPhysicalMaterial({ color: 0xf6e7e2, roughness: 1, sheen: 1 });
+    const rk = (g: THREE.BufferGeometry, m: THREE.Material, p: [number, number, number], s?: [number, number, number], r?: [number, number, number]) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; o.position.set(...p); if (s) o.scale.set(...s); if (r) o.rotation.set(...r); this.rabbit.add(o); return o; };
+    rk(new THREE.SphereGeometry(.7, 24, 18), bunnyMat, [0, .7, 0], [1, 1.15, .9]); rk(new THREE.SphereGeometry(.42, 20, 16), bunnyInner, [0, .65, .5], [1, 1.2, .4]);
+    rk(new THREE.SphereGeometry(.52, 24, 18), bunnyMat, [0, 1.75, .05]);
+    [-1, 1].forEach(s => { rk(new THREE.CapsuleGeometry(.14, 1.1, 4, 10), bunnyMat, [s * .28, 2.75, -.05], undefined, [0, 0, -s * .18]); rk(new THREE.CapsuleGeometry(.07, .9, 4, 8), bunnyInner, [s * .28, 2.75, .05], undefined, [0, 0, -s * .18]);
+      rk(new THREE.SphereGeometry(.055, 10, 8), rubber, [s * .18, 1.85, .46]); rk(new THREE.SphereGeometry(.3, 16, 12), bunnyMat, [s * .55, .35, .35], [.9, .6, 1.2]); rk(new THREE.SphereGeometry(.2, 14, 10), bunnyMat, [s * .7, .95, .1], [.7, 1.3, .7], [0, 0, -s * .6]); });
+    rk(new THREE.SphereGeometry(.08, 10, 8), new THREE.MeshStandardMaterial({ color: 0xd86a7a, roughness: .7 }), [0, 1.66, .5], [1, .7, .8]);
+    this.rabbit.position.set(-11.2, 4.5, 0.6); this.rabbit.rotation.y = 2.4; this.group.add(this.rabbit);
+    this.colliders.push(new THREE.Box3(new THREE.Vector3(-11.9, 4.5, -0.1), new THREE.Vector3(-10.5, 7.2, 1.3)));
+
+    // ---- 賞の欠片（2つ） ----
+    const fragMat = new THREE.MeshStandardMaterial({ map: T.tex(T.awardPaper(), { srgb: true, aniso }), roughness: .95, side: THREE.DoubleSide });
+    const fragGeo = new THREE.Shape([new THREE.Vector2(0, 0), new THREE.Vector2(.9, .1), new THREE.Vector2(1.0, .7), new THREE.Vector2(.55, .95), new THREE.Vector2(.1, .8)]);
+    const fg = new THREE.ShapeGeometry(fragGeo); fg.center();
+    this.fragments = [
+      add(fg, fragMat, [cave.x + 2.2, 0.03, cave.z - 0.2], [-Math.PI / 2, 0, 0.8], { shadow: false }),
+      add(fg, fragMat, [-14.6, 4.52, 6.4], [-Math.PI / 2, 0, -0.5], { shadow: false }),
+    ];
 
     // ---- クマ「ボロ」 ----
     const mk = (g: THREE.BufferGeometry, m: THREE.Material, p: [number, number, number], s?: [number, number, number], r?: [number, number, number]) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; o.position.set(...p); if (s) o.scale.set(...s); if (r) o.rotation.set(...r); this.bear.add(o); return o; };
@@ -176,8 +252,19 @@ export class Room {
       bear: new THREE.Vector3(3.6, 0, -1.4),
       award: new THREE.Vector3(-1.2, 0, -10.6),
       pillow: new THREE.Vector3(-15.5, 5.75, -1.2),
+      robot: this.robot.position.clone(),
+      rabbit: this.rabbit.position.clone(),
     };
   }
+
+  /** ラジコンに乗っている間は車の当たり判定を外し、ライトをつける */
+  setRiding(on: boolean) {
+    const b = this.colliders[this.carColliderIndex];
+    if (on) { b.min.set(0, 0, 0); b.max.set(0, 0, 0); } else { this.car.updateMatrixWorld(true); b.setFromObject(this.car); }
+    for (const s of this.headlights) s.intensity = on ? 140 : 0;
+    this.headlampMat.emissiveIntensity = on ? 2.5 : 0;
+  }
+  spinWheels(dist: number) { for (const w of this.wheels) w.rotation.y -= dist / 0.42; }
 
   applyPreset(p: Preset) {
     this.preset = p;
@@ -227,6 +314,9 @@ export class Room {
     for (let i = 0; i < this.dustVel.length; i++) { a[i * 3 + 1] += Math.sin(t * .3 + i) * .002 - .0025 * this.dustVel[i]; if (a[i * 3 + 1] < .05) a[i * 3 + 1] = 9; }
     pos.needsUpdate = true;
     this.bearHead.rotation.y = Math.sin(t * .5) * .08;
+    this.robotEyes.emissiveIntensity = 1.2 + Math.max(0, Math.sin(t * 3.7)) * 0.8;
+    this.rabbit.rotation.z = Math.sin(t * 0.9) * 0.02;
+    for (let i = 0; i < this.fragments.length; i++) if (this.fragments[i].visible) this.fragments[i].position.y = (i === 0 ? 0.03 : 4.52) + 0.04 + Math.sin(t * 2 + i) * 0.03;
     if (this.preset === 'night') this.nightLight.intensity = 110 + Math.sin(t * 7.3) * 3 + Math.sin(t * 2.1) * 2;
     void dt;
   }

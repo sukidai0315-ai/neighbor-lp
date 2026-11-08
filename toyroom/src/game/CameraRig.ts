@@ -16,6 +16,8 @@ export class CameraRig {
   private cinematic = false;
   private shakeAmp = 0; private shakeT = 0;
   private fallLook = 0;
+  /** 乗り物に乗っている間などに足す距離 */
+  extraDist = 0;
 
   /** 着地の衝撃などでカメラを揺らす（0..1） */
   shake(strength: number) { this.shakeAmp = Math.max(this.shakeAmp, strength * 0.22); }
@@ -55,7 +57,7 @@ export class CameraRig {
     // 落下中はカメラが少し上に残って見下ろし、着地点が見える
     this.fallLook = lerp(this.fallLook, falling ? 1 : 0, 1 - Math.exp(-(falling ? 4 : 2.5) * dt));
 
-    const d = this.tuning.dist + this.fallLook * 1.2, p = this.pitch + this.fallLook * 0.35;
+    const d = this.tuning.dist + this.fallLook * 1.2 + this.extraDist, p = this.pitch + this.fallLook * 0.35;
     const look = new THREE.Vector3(heroPos.x, heroPos.y + 1.0 - this.fallLook * 0.6, heroPos.z);
     const desired = new THREE.Vector3(look.x + Math.sin(this.yaw) * d * Math.cos(p), look.y + d * Math.sin(p), look.z + Math.cos(this.yaw) * d * Math.cos(p));
     desired.x = clamp(desired.x, this.bounds.minX, this.bounds.maxX); desired.z = clamp(desired.z, this.bounds.minZ, this.bounds.maxZ); desired.y = Math.max(desired.y, 0.25);

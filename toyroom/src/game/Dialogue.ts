@@ -66,6 +66,9 @@ export class Dialogue {
     this.timer = 1.3; this.queue.unshift({ goto: list[i].next });
   }
 
+  /** デバッグ: 今の行を飛ばす */
+  skip() { if (this.active && !this.choicesOpen) this.timer = 0; }
+
   update(dt: number) {
     if (!this.active || this.choicesOpen) return;
     this.timer -= dt; if (this.timer <= 0) this.next();

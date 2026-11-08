@@ -92,6 +92,11 @@ export const quilt = () => genPair(256, (x, y) => {
   return [r * m, g * m, b * m, seam ? 0.1 : 0.5 + 0.3 * weave];
 });
 
+export const cardboard = () => genPair(256, (x, y) => {
+  const n = fbm(x * 0.03, y * 0.03, 3), fiber = fbm(x * 0.4, y * 0.05, 2), m = 0.82 + 0.18 * n + 0.08 * fiber;
+  return [196 * m, 160 * m, 112 * m, 0.5 + 0.2 * fiber];
+});
+
 export function blockFace(letter: string, color: number) {
   const c = canvas(256, 256), ctx = c.getContext('2d')!, img = ctx.createImageData(256, 256);
   for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { const i = (y * 256 + x) * 4, g = fbm(x * 0.01, y * 0.07, 3), m = 0.82 + 0.36 * g; img.data[i] = 222 * m; img.data[i + 1] = 190 * m; img.data[i + 2] = 140 * m; img.data[i + 3] = 255; }

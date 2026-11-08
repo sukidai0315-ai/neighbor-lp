@@ -4,11 +4,13 @@ import * as T from './textures';
 import { scanned } from './assets';
 import type { Frame } from './Input';
 import type { CameraRig } from './CameraRig';
+import type { Ramp } from './Room';
 
 // 主人公「パーカー」。20歳くらいのスケーター青年のプラスチックフィギュア、身長 12cm。
 // 仮モデル（手続き生成）と、歩き／スケボーの移動、手続きアニメーション。
 
-const WALK_SPEED = 2.8, SKATE_MAX = 8.5, JUMP_V = 7.8, G_UP = 19, G_DOWN = 27, RADIUS = 0.22, HEIGHT = 1.75;
+const WALK_SPEED = 2.8, SKATE_MAX = 8.5, JUMP_V = 7.8, G_UP = 19, G_DOWN = 27;
+const CAR_MAX = 11, CAR_ACCEL = 12, CAR_REVERSE = 4;
 const PUSH_IMPULSE = 2.6, PUSH_INTERVAL = 0.42;
 const { lerp, clamp } = T;
 
@@ -23,6 +25,10 @@ export class Hero {
   onGround = false;
   speed = 0;
   events: HeroEvents = {};
+  /** 乗っているラジコン。前が +x のモデル */
+  ride: THREE.Group | null = null;
+  private get radius() { return this.ride ? 0.95 : 0.22; }
+  private get height() { return this.ride ? 1.5 : 1.75; }
   private steer = 0; private phase = 0; private kick = 0; private groundY = 0;
   private body = new THREE.Group(); private lean = new THREE.Group(); private hips = new THREE.Group();
   private legL = new THREE.Group(); private legR = new THREE.Group(); private armL = new THREE.Group(); private armR = new THREE.Group(); private head = new THREE.Group();
@@ -60,17 +66,32 @@ export class Hero {
     scene.add(this.root, this.board);
   }
 
-  get pos() { return this.root.position; }
+  /** 足元の位置。見た目の root とは別に持つ（乗り物の上では root がずれるため） */
+  readonly pos = new THREE.Vector3();
   get falling() { return !this.onGround && this.vel.y < -3; }
 
   place(p: THREE.Vector3, yaw = Math.PI) { this.pos.copy(p); this.yaw = yaw; this.vel.set(0, 0, 0); this.speed = 0; this.groundY = p.y; }
 
-  toggleSkate() { this.skate = !this.skate; if (!this.skate) this.speed = 0; }
+  toggleSkate() { if (this.ride) return; this.skate = !this.skate; if (!this.skate) this.speed = 0; }
+  mount(car: THREE.Group) {
+    if (this.skate) this.toggleSkate();
+    this.ride = car; this.pos.copy(car.position); this.yaw = car.rotation.y + Math.PI / 2; this.vel.set(0, 0, 0); this.speed = 0;
+  }
+  dismount() {
+    if (!this.ride) return;
+    const side = new THREE.Vector3(Math.cos(this.yaw), 0, -Math.sin(this.yaw)); // 進行方向の右
+    this.ride = null; this.pos.addScaledVector(side, 1.5); this.vel.set(0, 0, 0); this.speed = 0;
+  }
   stop() { this.vel.set(0, 0, 0); this.speed = 0; if (this.skate) this.toggleSkate(); }
   faceTowards(p: THREE.Vector3) { this.yaw = Math.atan2(p.x - this.pos.x, p.z - this.pos.z); }
 
-  private resolve(colliders: THREE.Box3[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
-    const p = this.pos; let ground = 0;
+  private resolve(colliders: THREE.Box3[], ramps: Ramp[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
+    const p = this.pos; let ground = 0; const RADIUS = this.radius, HEIGHT = this.height;
+    for (const r of ramps) {
+      if (p.x < r.minX - RADIUS * .5 || p.x > r.maxX + RADIUS * .5 || p.z < r.minZ || p.z > r.maxZ) continue;
+      const t = clamp((p.x - r.minX) / (r.maxX - r.minX), 0, 1), h = lerp(r.hAtMinX, r.hAtMaxX, t);
+      if (p.y >= h - 0.45) ground = Math.max(ground, h);
+    }
     for (const b of colliders) {
       const inX = p.x > b.min.x - RADIUS && p.x < b.max.x + RADIUS, inZ = p.z > b.min.z - RADIUS && p.z < b.max.z + RADIUS;
       if (!inX || !inZ) continue;
@@ -89,16 +110,28 @@ export class Hero {
   }
 
   /** 物理の1ステップ。Game 側が固定刻みで複数回呼ぶ */
-  step(dt: number, f: Frame | null, cam: CameraRig, colliders: THREE.Box3[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
+  step(dt: number, f: Frame | null, cam: CameraRig, colliders: THREE.Box3[], ramps: Ramp[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
     this.time += dt;
     const inp = f ? f.move : { x: 0, z: 0, l: 0 };
     const fwd = cam.forward(), right = cam.right();
     const wish = new THREE.Vector3().addScaledVector(fwd, -inp.z).addScaledVector(right, inp.x);
     if (f?.jump) this.jumpBuffer = 0.12; else this.jumpBuffer = Math.max(0, this.jumpBuffer - dt);
-    if (f?.skate) this.toggleSkate();
+    if (f?.skate && !this.ride) this.toggleSkate();
     this.pushCooldown = Math.max(0, this.pushCooldown - dt);
 
-    if (!this.skate) {
+    if (this.ride) {
+      // ラジコン: 前に倒すと加速、後ろでバック、左右でハンドル。速いほど曲がりにくい
+      const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
+      const pressing = inp.l > .05, along = pressing ? wish.dot(face) : 0;
+      const steerIn = pressing ? clamp(wish.dot(new THREE.Vector3(-face.z, 0, face.x)) * 1.8, -1, 1) : 0; // 右手方向との内積。正 = スティックが右
+      this.steer = lerp(this.steer, steerIn, 1 - Math.exp(-8 * dt));
+      if (along > 0.1) this.speed += CAR_ACCEL * along * dt; else if (along < -0.1) this.speed += CAR_REVERSE * along * dt;
+      this.speed -= (this.speed * 0.5 + Math.sign(this.speed) * 0.5) * dt; this.speed = clamp(this.speed, -4, CAR_MAX);
+      if (Math.abs(this.speed) > 0.2) this.yaw -= this.steer * (2.6 - 1.2 * Math.min(1, Math.abs(this.speed) / CAR_MAX)) * dt * Math.sign(this.speed);
+      const nf = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
+      this.vel.x = nf.x * this.speed; this.vel.z = nf.z * this.speed;
+      this.jumpBuffer = 0;
+    } else if (!this.skate) {
       const k = 1 - Math.exp(-(this.onGround ? 16 : 5) * dt);
       this.vel.x = lerp(this.vel.x, wish.x * WALK_SPEED * inp.l, k); this.vel.z = lerp(this.vel.z, wish.z * WALK_SPEED * inp.l, k);
       if (inp.l > .05) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-14 * dt)); }
@@ -107,7 +140,7 @@ export class Hero {
       const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
       const pressing = inp.l > .05;
       const along = pressing ? wish.dot(face) : 0;
-      const steerIn = pressing ? clamp(wish.dot(new THREE.Vector3(-face.z, 0, face.x)) * 1.8, -1, 1) : 0;
+      const steerIn = pressing ? clamp(wish.dot(new THREE.Vector3(-face.z, 0, face.x)) * 1.8, -1, 1) : 0; // 右手方向との内積。正 = スティックが右
       this.steer = lerp(this.steer, steerIn, 1 - Math.exp(-9 * dt));
       // 止まっている／遅いときは、スティックの方向へ素早く向き直る
       if (pressing && this.speed < 1.2) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-10 * dt)); }
@@ -119,7 +152,7 @@ export class Hero {
       this.kick = Math.max(0, this.kick - dt * 2.4);
       if (pressing && along < -0.5) this.speed -= 7 * dt; // 後ろに倒すとブレーキ
       this.speed -= (this.speed * 0.22 + 0.25) * dt; this.speed = clamp(this.speed, 0, SKATE_MAX);
-      if (this.speed > .2) this.yaw += this.steer * (1.6 + 1.4 * Math.min(1, this.speed / 5)) * dt;
+      if (this.speed > .2) this.yaw -= this.steer * (1.6 + 1.4 * Math.min(1, this.speed / 5)) * dt;
       const nf = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
       this.vel.x = nf.x * this.speed; this.vel.z = nf.z * this.speed;
     }
@@ -129,7 +162,7 @@ export class Hero {
     if (this.jumpBuffer > 0 && this.coyote > 0) { this.vel.y = JUMP_V * (this.skate ? 1.08 : 1); this.onGround = false; this.coyote = 0; this.jumpBuffer = 0; this.squash = -0.5; }
     this.vel.y -= (this.vel.y > 0 ? G_UP : G_DOWN) * dt;
     this.pos.x += this.vel.x * dt; this.pos.z += this.vel.z * dt; this.pos.y += this.vel.y * dt;
-    this.resolve(colliders, bounds);
+    this.resolve(colliders, ramps, bounds);
 
     const wasAir = !this.onGround;
     if (!this.onGround) { this.airTime += dt; this.peakFall = Math.min(this.peakFall, this.vel.y); }
@@ -150,6 +183,18 @@ export class Hero {
     const { legL, legR, armL, armR, hips, lean, body, head, board } = this;
     this.squash = lerp(this.squash, 0, e(9));
     const sq = this.squash; hips.scale.set(1 + sq * 0.35, 1 - sq * 0.45, 1 + sq * 0.35);
+    this.root.position.copy(this.pos);
+    if (this.ride) {
+      const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
+      const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
+      this.root.position.addScaledVector(face, -0.25).y += 1.15; // キャビンの上に座る
+      body.rotation.y = lerp(body.rotation.y, 0, e(10)); lean.rotation.z = lerp(lean.rotation.z, -this.steer * 0.15, e(8)); lean.rotation.x = lerp(lean.rotation.x, 0.1, e(8));
+      legL.position.set(-.16, .72, 0); legR.position.set(.16, .72, 0); legL.rotation.set(-1.35, 0, 0); legR.rotation.set(-1.35, 0, 0);
+      armL.rotation.set(-1.0, 0, .25); armR.rotation.set(-1.0, 0, -.25); hips.position.y = -0.1;
+      head.rotation.y = lerp(head.rotation.y, this.steer * 0.3, e(6));
+      board.position.copy(this.root.position).add(new THREE.Vector3(Math.cos(this.yaw) * .36, .9, -Math.sin(this.yaw) * .36)); board.rotation.set(0, this.yaw, Math.PI / 2 - .2);
+      return;
+    }
     if (!this.skate) {
       this.phase += sp * dt * 5.2; const sw = Math.sin(this.phase), w = clamp(sp / WALK_SPEED, 0, 1);
       body.rotation.y = lerp(body.rotation.y, 0, e(10)); lean.rotation.z = lerp(lean.rotation.z, 0, e(10)); lean.rotation.x = lerp(lean.rotation.x, w * .12, e(10));

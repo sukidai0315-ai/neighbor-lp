@@ -19,8 +19,12 @@ export class Game {
   private acc = 0;
   private started = false;
   private interactables: Interactable[] = [];
-  private flags = { metBear: false, hasAward: false };
+  private flags = { metBear: false, hasAward: false, metDash: false, metRobot: false, metRabbit: false, frag1: false, frag2: false };
   private $ = (id: string) => document.getElementById(id) as HTMLElement;
+  /** デバッグ: 位置とカメラ向きを直接指定 */
+  teleport(x: number, y: number, z: number, camYaw: number) { this.hero.place(new THREE.Vector3(x, y, z), camYaw + Math.PI); this.rig.yaw = camYaw; }
+  get debugState() { return { pos: this.hero.pos.clone(), ride: !!this.hero.ride, skate: this.hero.skate, dialog: this.dialogue.active, flags: { ...this.flags } }; }
+  skipLine() { this.dialogue.skip(); }
 
   constructor(private app: HTMLElement) {}
 
@@ -65,6 +69,33 @@ export class Game {
         this.dialogue.start(key, points.bear.clone().setY(1.2), this.hero.pos.clone(), () => { this.flags.metBear = true; });
       },
     });
+    const talk = (id: string, pos: THREE.Vector3, radius: number, actor: THREE.Group, first: string, again: string, flag: 'metRobot' | 'metRabbit') => this.interactables.push({
+      id, pos, radius, label: 'はなす',
+      onUse: () => {
+        this.hero.stop(); this.hero.faceTowards(pos);
+        actor.rotation.y = Math.atan2(this.hero.pos.x - pos.x, this.hero.pos.z - pos.z);
+        this.dialogue.start(this.flags[flag] ? again : first, pos.clone().setY(pos.y + 1.4), this.hero.pos.clone(), () => { this.flags[flag] = true; });
+      },
+    });
+    talk('robot', points.robot, 2.4, this.room.robot, 'gacha', 'gacha_again', 'metRobot');
+    talk('rabbit', points.rabbit, 2.2, this.room.rabbit, 'mimi', 'mimi_again', 'metRabbit');
+    const pickup = (id: 'frag1' | 'frag2', mesh: THREE.Mesh) => this.interactables.push({
+      id, pos: mesh.position, radius: 1.5, label: 'ひろう',
+      onUse: () => {
+        const it = this.interactables.find(i => i.id === id)!; it.done = true; this.hero.stop();
+        this.dialogue.start(id, mesh.position.clone(), this.hero.pos.clone(), () => { this.flags[id] = true; mesh.visible = false; });
+      },
+    });
+    pickup('frag1', this.room.fragments[0]); pickup('frag2', this.room.fragments[1]);
+    this.interactables.push({
+      id: 'car', pos: this.room.car.position, radius: 2.4, label: 'のる',
+      onUse: () => {
+        const mount = () => { this.hero.mount(this.room.car); this.room.setRiding(true); };
+        if (this.flags.metDash) { mount(); return; }
+        this.hero.stop(); this.hero.faceTowards(this.room.car.position);
+        this.dialogue.start('dash', this.room.car.position.clone().setY(1.0), this.hero.pos.clone(), () => { this.flags.metDash = true; mount(); });
+      },
+    });
     this.interactables.push({
       id: 'award', pos: points.award, radius: 1.4, label: 'ひろう',
       onUse: () => {
@@ -78,6 +109,7 @@ export class Game {
   private setupDebug() {
     if (!location.search.includes('debug')) return;
     const dbg = this.$('debug'); dbg.hidden = false;
+    (window as unknown as { __game: Game }).__game = this; // デバッグ用（テレポートなど）
     const bind = (id: string, key: 'dist' | 'pitch' | 'fov' | 'follow') => { const el = this.$(id) as HTMLInputElement; el.addEventListener('input', () => { this.rig.tuning[key] = parseFloat(el.value); }); };
     bind('dbgDist', 'dist'); bind('dbgPitch', 'pitch'); bind('dbgFov', 'fov'); bind('dbgFollow', 'follow');
     window.addEventListener('keydown', e => { if (e.code === 'KeyL') this.room.applyPreset(this.room.preset === 'night' ? 'evening' : 'night'); });
@@ -101,20 +133,27 @@ export class Game {
     let stepInput = controlling ? f : null;
     while (this.acc > 0) {
       const h = Math.min(this.acc, 1 / 60); this.acc -= h;
-      this.hero.step(h, stepInput, this.rig, this.room.colliders, this.rig.bounds);
+      this.hero.step(h, stepInput, this.rig, this.room.colliders, this.room.ramps, this.rig.bounds);
       if (stepInput) stepInput = { ...stepInput, jump: false, skate: false }; // 押した瞬間の入力は最初の刻みだけ
       if (this.acc < 1e-4) this.acc = 0;
     }
     this.hero.animate(dt);
-    this.$('modeTag').textContent = this.hero.skate ? 'スケボー' : 'あるく';
+    this.$('modeTag').textContent = this.hero.ride ? 'ラジコン' : this.hero.skate ? 'スケボー' : 'あるく';
+    this.rig.extraDist = this.hero.ride ? 1.6 : 0;
+    if (this.hero.ride) this.room.spinWheels(this.hero.speed * dt);
 
     // 近くのインタラクト
     let near: Interactable | null = null;
-    if (controlling) for (const it of this.interactables) if (!it.done && this.hero.pos.distanceTo(it.pos) < it.radius) { near = it; break; }
-    const prompt = this.$('prompt'); prompt.classList.toggle('show', !!near);
-    if (near) this.$('promptText').textContent = near.label;
-    this.$('tTalk').classList.toggle('hiddenBtn', !near);
-    if (near && f.interact) near.onUse();
+    if (controlling) for (const it of this.interactables) if (!it.done && !(this.hero.ride && it.id === 'car') && this.hero.pos.distanceTo(it.pos) < it.radius) { near = it; break; }
+    const riding = !!this.hero.ride;
+    const label = near ? near.label : riding ? 'おりる' : '';
+    const prompt = this.$('prompt'); prompt.classList.toggle('show', controlling && !!label);
+    if (label) this.$('promptText').textContent = label;
+    this.$('tTalk').classList.toggle('hiddenBtn', !label);
+    if (controlling && f.interact) {
+      if (near) near.onUse();
+      else if (riding) { this.hero.dismount(); this.room.setRiding(false); }
+    }
 
     this.dialogue.update(dt);
     this.room.update(dt, t);
