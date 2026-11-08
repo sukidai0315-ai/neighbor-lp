@@ -357,11 +357,11 @@ export class Room {
     ck2(new THREE.BoxGeometry(0.08, 1.2, 0.04), new THREE.MeshStandardMaterial({ color: 0x2b2725 }), [-0.3, 0.45, 0.22], [0, 0, 0.5]);
     // 机の上の壁: 辞書 → 棚を左右に重ねて排気口へ。棚の裏に写真
     add(new RoundedBoxGeometry(1.6, 1.0, 2.2, 2, .05), new THREE.MeshStandardMaterial({ color: 0x8b4bb8, roughness: .6 }), [12.8, deskTop + 0.5, -10.4], undefined, { solid: true }); // 辞書（上面 8.2）
-    shelf(13.3, 17.0, 9.1); shelf(11.0, 13.9, 10.2); shelf(13.3, 17.0, 11.2);
+    shelf(13.3, 17.0, 9.1); // この棚の左上が排気口
     add(new RoundedBoxGeometry(.6, .9, .5, 2, .05), new THREE.MeshPhysicalMaterial({ color: 0x3b6fc4, roughness: .4, clearcoat: .5 }), [16.6, 9.55, -11.3]);
     add(new THREE.PlaneGeometry(1.0, 0.75), new THREE.MeshStandardMaterial({ map: T.tex(T.photoPaper(), { srgb: true, aniso }), roughness: .9, side: THREE.DoubleSide }), [15.3, 9.65, wallZ + 0.05], [0, 0, 0.12], { shadow: false });
     // 排気口: 格子と、壁の中の小部屋（ひみつきち）。右列の最上段から入る
-    const ventX = 14.8, ventY = 12.4, ventW = 2.6, ventH = 1.6;
+    const ventX = 12.6, ventY = 11.3, ventW = 4.0, ventH = 2.6; // 床 10.0、棚（9.1）からよじ登って入る
     const ductMat = new THREE.MeshStandardMaterial({ color: 0x9a9ca3, roughness: .5, metalness: .5, side: THREE.BackSide });
     add(new THREE.BoxGeometry(ventW, ventH, 4.0), ductMat, [ventX, ventY, wallZ - 2.0], undefined, { shadow: false }); // 内側だけ見える箱
     add(new THREE.BoxGeometry(ventW + 0.3, ventH + 0.3, 0.1), bracketMat, [ventX, ventY, wallZ + 0.06]); // 枠
@@ -399,7 +399,7 @@ export class Room {
       childHead: new THREE.Vector3(-16.2, 6.75, -0.9).multiplyScalar(S),
       repairSpot: new THREE.Vector3(-13.6, 5.75, -1.0).multiplyScalar(S),
       lightSwitch: new THREE.Vector3(6.7, 3.6, -11.3).multiplyScalar(S),
-      vent: new THREE.Vector3(14.8, 11.65, -12.8).multiplyScalar(S),
+      vent: new THREE.Vector3(12.6, 10.05, -12.8).multiplyScalar(S),
       photo: new THREE.Vector3(15.3, 9.1, -11.2).multiplyScalar(S),
     };
   }

@@ -65,7 +65,8 @@ export class CameraRig {
     const d = this.tuning.dist + this.fallLook * 1.2 + this.extraDist, p = this.pitch + this.fallLook * 0.35;
     const look = new THREE.Vector3(heroPos.x, heroPos.y + 1.0 - this.fallLook * 0.6, heroPos.z);
     const desired = new THREE.Vector3(look.x + Math.sin(this.yaw) * d * Math.cos(p), look.y + d * Math.sin(p), look.z + Math.cos(this.yaw) * d * Math.cos(p));
-    desired.x = clamp(desired.x, this.bounds.minX, this.bounds.maxX); desired.z = clamp(desired.z, this.bounds.minZ, this.bounds.maxZ); desired.y = Math.max(desired.y, 0.25);
+    desired.x = clamp(desired.x, this.bounds.minX, this.bounds.maxX); desired.z = clamp(desired.z, this.bounds.minZ, this.bounds.maxZ);
+    desired.y = Math.max(desired.y, heroPos.y + 0.6); // 立っている面（机の上など）より下には潜らない
     this.pos.lerp(desired, 1 - Math.exp(-(falling ? 5 : 9) * dt)); this.target.lerp(look, 1 - Math.exp(-14 * dt));
     cam.position.copy(this.pos);
     if (this.shakeAmp > 0.001) {

@@ -282,7 +282,7 @@ export class Game {
       m.visible = on; if (!on) continue;
       const p = it.id === 'car' ? this.room.car.position : it.pos;
       m.position.set(p.x, p.y + (it.markerY ?? 6) + Math.sin(t * 2.2 + p.x) * 0.25, p.z);
-      const k = near === it ? 1.25 : 1; m.scale.set(2.6 * k, 2.6 * k, 1);
+      const k = (near === it ? 1.25 : 1) * (it.id === 'vent' ? 1.5 : 1); m.scale.set(2.6 * k, 2.6 * k, 1);
     }
     for (let i = this.flights.length - 1; i >= 0; i--) {
       const fl = this.flights[i]; fl.t += dt / 0.9; const k = Math.min(1, fl.t), e = k * k * (3 - 2 * k);
