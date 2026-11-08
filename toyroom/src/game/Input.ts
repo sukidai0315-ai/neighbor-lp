@@ -91,7 +91,7 @@ export class Input {
       jump: has('Space', 'T_JUMP', 'P_JUMP'),
       skate: has('ShiftLeft', 'ShiftRight', 'T_SKATE', 'P_SKATE'),
       interact: has('KeyE', 'Enter', 'T_TALK', 'P_TALK'),
-      choice: this.edges.has('Digit1') ? 1 : this.edges.has('Digit2') ? 2 : 0,
+      choice: this.edges.has('Digit1') ? 1 : this.edges.has('Digit2') ? 2 : this.edges.has('Digit3') ? 3 : 0,
       camDX: this.camDX, camDY: this.camDY, camStick,
     };
     this.edges.clear(); this.camDX = 0; this.camDY = 0;

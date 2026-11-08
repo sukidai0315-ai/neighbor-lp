@@ -63,3 +63,15 @@ body { font-family: var(--font); color: #fff; -webkit-tap-highlight-color: trans
 .debug { position: absolute; right: 10px; top: 10px; z-index: 6; background: rgba(0,0,0,.55); padding: 8px 10px; border-radius: 10px; font-size: 11px; display: grid; gap: 4px; }
 .debug label { display: flex; gap: 6px; align-items: center; justify-content: space-between; }
 .debug input { width: 110px; accent-color: var(--accent); }
+
+/* 黒へのフェード */
+.fade { position: absolute; inset: 0; z-index: 9; background: #06040a; opacity: 0; pointer-events: none; transition: opacity 1.2s ease; }
+.fade.show { opacity: 1; }
+/* 終了画面 */
+.ending { position: absolute; inset: 0; z-index: 11; display: grid; place-items: center; text-align: center; background: linear-gradient(180deg, rgba(250,240,224,.0), rgba(250,240,224,.55)); color: #3a2c20; opacity: 0; transition: opacity 1.5s ease; }
+.ending.show { opacity: 1; }
+.endingInner { padding: 24px; max-width: 560px; }
+.ending .titleEyebrow { color: #a86a2c; }
+.ending h1 { font-size: clamp(40px, 9vw, 72px); margin: 6px 0 8px; letter-spacing: .04em; color: #3a2c20; text-shadow: 0 2px 18px rgba(255,255,255,.6); }
+.ending p { margin: 0 0 20px; font-size: 15px; line-height: 1.9; }
+.ending button { font: inherit; font-size: 17px; font-weight: 700; padding: 12px 32px; border-radius: 999px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }

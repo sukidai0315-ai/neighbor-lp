@@ -20,7 +20,8 @@ export class Game {
   private moveYaw = 0; private stickHeld = false;
   private started = false;
   private interactables: Interactable[] = [];
-  private flags = { metBear: false, hasAward: false, metDash: false, metRobot: false, metRabbit: false, frag1: false, frag2: false };
+  private flags = { metBear: false, hasAward: false, metDash: false, metRobot: false, metRabbit: false, frag1: false, frag2: false, repaired: false };
+  private ending = false; private endingT = 0;
   private $ = (id: string) => document.getElementById(id) as HTMLElement;
   /** デバッグ: 位置とカメラ向きを直接指定 */
   teleport(x: number, y: number, z: number, camYaw: number) { this.hero.place(new THREE.Vector3(x, y, z), camYaw + Math.PI); this.rig.yaw = camYaw; }
@@ -54,7 +55,9 @@ export class Game {
     this.setupInteractables();
     this.setupDebug();
 
-    this.$('startBtn').addEventListener('click', () => { this.started = true; this.$('title').remove(); this.app.classList.remove('pre'); canvas.focus(); });
+    this.$('startBtn').addEventListener('click', () => { this.started = true; this.$('title').remove(); this.app.classList.remove('pre'); canvas.focus(); this.playIntro(); });
+    this.$('againBtn').addEventListener('click', () => location.reload());
+    this.dialogue.onEvent = (name) => this.onEvent(name);
     window.addEventListener('resize', () => this.resize()); this.resize();
     this.renderer.setAnimationLoop(() => this.frame());
   }
@@ -98,6 +101,18 @@ export class Game {
       },
     });
     this.interactables.push({
+      id: 'pillow', pos: points.repairSpot, radius: 6, label: 'なおす',
+      onUse: () => {
+        this.hero.stop(); this.hero.faceTowards(points.repairSpot);
+        const spot = points.repairSpot, look = spot.clone().add(new THREE.Vector3(0, 0.6, 0));
+        const cam = { pos: spot.clone().add(new THREE.Vector3(5.5, 4.2, 6.5)), look };
+        if (!this.flags.hasAward) { this.dialogue.start('pillow_noaward', spot, this.hero.pos.clone()); return; }
+        if (!(this.flags.frag1 && this.flags.frag2)) { this.dialogue.start('pillow_wait', spot, this.hero.pos.clone()); return; }
+        const it = this.interactables.find(i => i.id === 'pillow')!; it.done = true;
+        this.dialogue.start('repair', spot, this.hero.pos.clone(), () => this.finish(), cam);
+      },
+    });
+    this.interactables.push({
       id: 'award', pos: points.award, radius: 3, label: 'ひろう',
       onUse: () => {
         const it = this.interactables.find(i => i.id === 'award')!; it.done = true;
@@ -105,6 +120,35 @@ export class Game {
         this.dialogue.start('award', points.award.clone().setY(0.6), this.hero.pos.clone(), () => { this.flags.hasAward = true; this.room.awardBall.visible = false; });
       },
     });
+  }
+
+  /** オープニング: 寝ている子どもと、窓の下の紙を見せてから主人公へ */
+  private playIntro() {
+    const p = this.room.points;
+    const head = p.childHead;
+    const cam = { pos: head.clone().add(new THREE.Vector3(15, 9, 20)), look: head.clone().add(new THREE.Vector3(-1, -1.5, 2)) };
+    this.dialogue.start('intro', head, this.hero.pos.clone(), undefined, cam);
+    this.rig.snapTo(cam.pos, cam.look); // 最初のカットは飛ばずに切り替える
+  }
+
+  private onEvent(name: string) {
+    const p = this.room.points;
+    switch (name) {
+      case 'intro:paper': this.dialogue.setCamera(p.award.clone().add(new THREE.Vector3(6, 4, 9)), p.award.clone().add(new THREE.Vector3(0, 1.2, 0))); break;
+      case 'intro:hero': this.dialogue.setCamera(this.hero.pos.clone().add(new THREE.Vector3(-3.5, 2.2, 4.5)), this.hero.pos.clone().add(new THREE.Vector3(0, 1.0, 0))); break;
+      case 'repair:place': this.room.showRepairPaper(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(1.5, 4.5, 2.5)), p.repairSpot.clone()); break;
+      case 'repair:tape': this.room.awardTape(); break;
+      case 'repair:gather': this.room.gatherToys(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(7, 6, 9)), p.repairSpot.clone().add(new THREE.Vector3(0.5, 1.0, 0.5))); break;
+      case 'repair:morning': this.room.startMorning(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(-4, 18, 26)), p.childHead.clone().add(new THREE.Vector3(0, -2, 4))); break;
+      case 'repair:ending': this.ending = true; this.endingT = 0; this.dialogue.setCamera(new THREE.Vector3(10, 70, 80), new THREE.Vector3(-30, 10, 0)); break;
+      default: if (name.startsWith('repair:stroke:')) this.room.awardStroke(name.split(':')[2]);
+    }
+  }
+
+  private finish() {
+    this.flags.repaired = true;
+    this.$('fade').classList.add('show');
+    setTimeout(() => { const e = this.$('ending'); e.hidden = false; requestAnimationFrame(() => e.classList.add('show')); }, 1300);
   }
 
   private setupDebug() {
@@ -152,7 +196,9 @@ export class Game {
 
     // 近くのインタラクト
     let near: Interactable | null = null;
-    if (controlling) for (const it of this.interactables) if (!it.done && !(this.hero.ride && it.id === 'car') && this.hero.pos.distanceTo(it.pos) < it.radius) { near = it; break; }
+    // 水平距離を主に見る（枕やベッドの上など高さのずれが大きい相手も拾えるように）
+    const near2 = (a: THREE.Vector3, b: THREE.Vector3) => Math.hypot(a.x - b.x, a.z - b.z) + Math.abs(a.y - b.y) * 0.3;
+    if (controlling) for (const it of this.interactables) if (!it.done && !(this.hero.ride && it.id === 'car') && near2(this.hero.pos, it.pos) < it.radius) { near = it; break; }
     const riding = !!this.hero.ride;
     const label = near ? near.label : riding ? 'おりる' : '';
     const prompt = this.$('prompt'); prompt.classList.toggle('show', controlling && !!label);
@@ -164,6 +210,7 @@ export class Game {
     }
 
     this.dialogue.update(dt);
+    if (this.ending) { this.endingT += dt; this.dialogue.camPos.x += dt * 0.8; this.dialogue.camPos.y += dt * 0.6; }
     this.room.update(dt, t);
     this.rig.update(dt, t, this.hero.pos, this.hero.vel, this.hero.speed * 0.7, { active: this.dialogue.active, pos: this.dialogue.camPos, look: this.dialogue.camLook }, this.hero.falling);
     this.post.setFocus(this.camera.position.distanceTo(this.rig.target), this.dialogue.active ? 2.4 : 1);

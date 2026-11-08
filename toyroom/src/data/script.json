@@ -284,5 +284,208 @@
         "end": true
       }
     ]
+  },
+  "intro": {
+    "start": [
+      {
+        "who": "",
+        "text": "",
+        "hold": 1.6
+      },
+      {
+        "who": "パーカー",
+        "text": "……ないたまま、ねちゃった。"
+      },
+      {
+        "event": "intro:paper"
+      },
+      {
+        "who": "パーカー",
+        "text": "まるめた かみ。あれ、あの子が つくった やつだ。"
+      },
+      {
+        "event": "intro:hero"
+      },
+      {
+        "who": "パーカー",
+        "text": "……さがしに いこう。"
+      },
+      {
+        "end": true
+      }
+    ]
+  },
+  "pillow_wait": {
+    "start": [
+      {
+        "who": "パーカー",
+        "text": "まだ、かけらが たりない。"
+      },
+      {
+        "end": true
+      }
+    ]
+  },
+  "pillow_noaward": {
+    "start": [
+      {
+        "who": "パーカー",
+        "text": "……ねてる。おこさないように。"
+      },
+      {
+        "end": true
+      }
+    ]
+  },
+  "repair": {
+    "start": [
+      {
+        "who": "パーカー",
+        "text": "……ここに おこう。"
+      },
+      {
+        "event": "repair:place"
+      },
+      {
+        "who": "パーカー",
+        "text": "セロテープで……。"
+      },
+      {
+        "event": "repair:tape"
+      },
+      {
+        "who": "パーカー",
+        "text": "やぶれたとこ、ぜんぶは もどらないや。"
+      },
+      {
+        "who": "パーカー",
+        "text": "……なにか、かきたそう。"
+      },
+      {
+        "choices": [
+          {
+            "text": "スケボーを かく",
+            "next": "skate"
+          },
+          {
+            "text": "ほしを かく",
+            "next": "star"
+          },
+          {
+            "text": "にっこりを かく",
+            "next": "smile"
+          }
+        ]
+      }
+    ],
+    "skate": [
+      {
+        "event": "repair:stroke:skate"
+      },
+      {
+        "who": "パーカー",
+        "text": "あの子と いつも いっしょの、スケボー。"
+      },
+      {
+        "goto": "others"
+      }
+    ],
+    "star": [
+      {
+        "event": "repair:stroke:star"
+      },
+      {
+        "who": "パーカー",
+        "text": "ほし。もう ひとつ あっても いいよね。"
+      },
+      {
+        "goto": "others"
+      }
+    ],
+    "smile": [
+      {
+        "event": "repair:stroke:smile"
+      },
+      {
+        "who": "パーカー",
+        "text": "あしたは、この かおで。"
+      },
+      {
+        "goto": "others"
+      }
+    ],
+    "others": [
+      {
+        "event": "repair:gather"
+      },
+      {
+        "who": "ボロ",
+        "text": "わたしも、いいかい。"
+      },
+      {
+        "event": "repair:stroke:bear"
+      },
+      {
+        "who": "ガチャ",
+        "text": "ピピ。ぼくも！ ……あれ、まがった。"
+      },
+      {
+        "event": "repair:stroke:robot"
+      },
+      {
+        "who": "ミミ",
+        "text": "……すこしだけ。"
+      },
+      {
+        "event": "repair:stroke:rabbit"
+      },
+      {
+        "who": "ダッシュ",
+        "text": "はやく はやく！ ぼくの タイヤ！"
+      },
+      {
+        "event": "repair:stroke:car"
+      },
+      {
+        "who": "パーカー",
+        "text": "……へんてこに なった。"
+      },
+      {
+        "who": "ボロ",
+        "text": "さいしょより、いいねえ。"
+      },
+      {
+        "event": "repair:morning"
+      },
+      {
+        "who": "",
+        "text": "",
+        "hold": 2.4
+      },
+      {
+        "who": "パーカー",
+        "text": "……あさだ。もどろう。"
+      },
+      {
+        "event": "repair:ending"
+      },
+      {
+        "who": "",
+        "text": "",
+        "hold": 2.0
+      },
+      {
+        "who": "パーカー",
+        "text": "ぼくが やくにたったからじゃない。"
+      },
+      {
+        "who": "パーカー",
+        "text": "あの子が わらったから、ぼくは うれしかった。",
+        "hold": 4.0
+      },
+      {
+        "end": true
+      }
+    ]
   }
 }

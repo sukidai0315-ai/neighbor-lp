@@ -120,3 +120,42 @@ export function awardPaper() {
   ctx.fillStyle = '#d8443a'; ctx.font = '700 44px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('がんばったで しょう', 256, 62);
   return c;
 }
+
+
+/** 枕元で貼り直す「がんばったで賞」。破れ・テープ・みんなの一筆を順に描き足す */
+export class AwardCanvas {
+  readonly canvas: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
+  constructor() { this.canvas = awardPaper(); this.ctx = this.canvas.getContext('2d')!; this.tear(); }
+  private wob(pts: number[][], color: string, w: number) {
+    const ctx = this.ctx; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath();
+    pts.forEach((p, i) => { const jx = (Math.random() - .5) * 3, jy = (Math.random() - .5) * 3; i ? ctx.lineTo(p[0] + jx, p[1] + jy) : ctx.moveTo(p[0] + jx, p[1] + jy); }); ctx.stroke();
+  }
+  /** 破れ目（白い線）と欠けた角。テープを貼る前の状態 */
+  private tear() {
+    const ctx = this.ctx; ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(300, 0); ctx.lineTo(280, 120); ctx.lineTo(310, 230); ctx.lineTo(290, 384); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, 250); ctx.lineTo(120, 262); ctx.lineTo(200, 240); ctx.stroke(); ctx.restore();
+  }
+  /** セロテープ（半透明の帯） */
+  tape() {
+    const ctx = this.ctx; ctx.save(); ctx.fillStyle = 'rgba(255,250,230,0.45)'; ctx.strokeStyle = 'rgba(200,190,160,0.5)'; ctx.lineWidth = 1;
+    for (const [x, y, a] of [[295, 60, 0.15], [300, 180, -0.1], [290, 320, 0.2], [60, 256, 1.45], [160, 250, 1.6]] as number[][]) {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(a); ctx.fillRect(-16, -42, 32, 84); ctx.strokeRect(-16, -42, 32, 84); ctx.restore();
+    }
+    ctx.restore();
+  }
+  /** 一筆。kind: skate / star / smile / bear / robot / rabbit / car */
+  stroke(kind: string) {
+    const c = this.ctx;
+    switch (kind) {
+      case 'skate': this.wob([[70, 330], [150, 322], [230, 330]], '#3b6fc4', 9); for (const x of [95, 205]) this.wob([[x, 340], [x + 1, 340]], '#3b6fc4', 14); break;
+      case 'star': { const pts: number[][] = []; for (let i = 0; i <= 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 14 : 34; pts.push([150 + Math.cos(a) * r, 320 + Math.sin(a) * r]); } this.wob(pts, '#e3a21a', 8); break; }
+      case 'smile': { const pts: number[][] = []; for (let a = 0.2; a <= Math.PI - 0.2; a += 0.3) pts.push([150 + Math.cos(a) * 40, 300 + Math.sin(a) * 30]); this.wob(pts, '#d8443a', 9); this.wob([[125, 285], [126, 286]], '#d8443a', 12); this.wob([[175, 285], [176, 286]], '#d8443a', 12); break; }
+      case 'bear': for (const [x, y, r] of [[420, 300, 14], [398, 280, 6], [414, 268, 6], [432, 270, 6], [446, 284, 6]] as number[][]) { c.fillStyle = '#a8743f'; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); } break;
+      case 'robot': this.wob([[60, 110], [95, 110], [95, 150], [60, 150], [60, 110]], '#8fb3c7', 7); this.wob([[70, 125], [72, 125]], '#6fd8ff', 10); this.wob([[85, 125], [87, 125]], '#6fd8ff', 10); break;
+      case 'rabbit': { const pts: number[][] = []; for (let a = 0; a <= Math.PI * 2 + 0.3; a += 0.4) pts.push([430 + Math.cos(a) * 16, 110 + Math.sin(a) * 14]); this.wob(pts, '#e89aa6', 6); this.wob([[422, 96], [416, 66]], '#e89aa6', 6); this.wob([[438, 96], [444, 66]], '#e89aa6', 6); break; }
+      case 'car': this.wob([[330, 350], [460, 346]], '#2b2725', 5); this.wob([[332, 362], [462, 358]], '#2b2725', 5); for (let x = 335; x < 460; x += 16) this.wob([[x, 345], [x + 4, 363]], '#2b2725', 3); break;
+    }
+  }
+}

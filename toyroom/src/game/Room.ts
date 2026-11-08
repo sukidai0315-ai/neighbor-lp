@@ -6,7 +6,7 @@ import { scanned } from './assets';
 // 子供部屋（仮モデル）。単位 1 = 10cm。
 // ゾーン: 机の上(出発) / ラグ / 窓の下 / 机の下 / ベッドの上 / 枕元(ゴール)
 
-export type Preset = 'night' | 'evening';
+export type Preset = 'night' | 'evening' | 'morning';
 
 export interface RoomPoints {
   heroStart: THREE.Vector3;
@@ -15,6 +15,8 @@ export interface RoomPoints {
   pillow: THREE.Vector3;
   robot: THREE.Vector3;
   rabbit: THREE.Vector3;
+  childHead: THREE.Vector3;
+  repairSpot: THREE.Vector3;
 }
 
 /** 斜面。x 方向に高さが変わる長方形の板 */
@@ -49,6 +51,16 @@ export class Room {
   private moon: THREE.DirectionalLight;
   private glass: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   private bulbMat: THREE.MeshStandardMaterial;
+  private hallLight!: THREE.PointLight;
+  private deskLight!: THREE.PointLight;
+  private bedLamp!: THREE.PointLight;
+  private bedLampMat!: THREE.MeshStandardMaterial;
+  private clouds: THREE.Group[] = [];
+  private childLump!: THREE.Mesh;
+  /** 枕元に置いた賞（貼り直し演出用）。最初は非表示 */
+  readonly repairPaper: THREE.Mesh;
+  readonly award = new T.AwardCanvas();
+  private awardTex: THREE.CanvasTexture;
   preset: Preset = 'night';
 
   constructor(private scene: THREE.Scene, aniso: number, lowTier: boolean) {
@@ -104,7 +116,7 @@ export class Room {
     add(new THREE.BoxGeometry(doorW - 1.6, doorH * 0.3, 0.1), new THREE.MeshStandardMaterial({ color: 0xece6dc, roughness: 0.6 }), [doorX, doorH * 0.25, 17.6]);
     add(new THREE.SphereGeometry(0.35, 14, 10), new THREE.MeshPhysicalMaterial({ color: 0xd8c08a, roughness: 0.3, metalness: 0.8 }), [doorX - doorW / 2 + 0.9, doorH * 0.5, 17.4]);
     add(new THREE.BoxGeometry(doorW - 0.2, 0.12, 0.3), new THREE.MeshStandardMaterial({ color: 0xffe3b0, emissive: 0xffc070, emissiveIntensity: 2.5 }), [doorX, 0.06, 17.7], undefined, { shadow: false });
-    const hallLight = new THREE.PointLight(0xffc98a, 18 * S * S, 36 * S, 2); hallLight.position.set(doorX, 0.5, 16.6); this.group.add(hallLight);
+    this.hallLight = new THREE.PointLight(0xffc98a, 18 * S * S, 36 * S, 2); this.hallLight.position.set(doorX, 0.5, 16.6); this.group.add(this.hallLight);
 
     // ---- 窓（奥の壁、左寄り） ----
     const winX = -3, winY = 12.5, winW = 9, winH = 10;
@@ -133,13 +145,45 @@ export class Room {
     add(new THREE.CylinderGeometry(0.9, 2.2, 2.2, 24, 1, true), new THREE.MeshPhysicalMaterial({ color: 0x3f8f7a, roughness: 0.4, clearcoat: 0.8, side: THREE.DoubleSide }), [15.4, deskTop + 5.6, -6.9], [0.25, 0, 0.6]);
     const deskBulb = new THREE.MeshStandardMaterial({ color: 0xffe9c0, emissive: 0xffc070, emissiveIntensity: 3 });
     add(new THREE.SphereGeometry(0.45, 16, 12), deskBulb, [15.0, deskTop + 5.0, -6.6], undefined, { shadow: false });
-    const deskLight = new THREE.PointLight(0xffc98a, 70 * S * S, 24 * S, 2); deskLight.position.set(14.8, deskTop + 4.6, -6.4); deskLight.castShadow = !lowTier; deskLight.shadow.mapSize.set(1024, 1024); deskLight.shadow.bias = -0.002; this.group.add(deskLight);
+    this.deskLight = new THREE.PointLight(0xffc98a, 70 * S * S, 24 * S, 2); this.deskLight.position.set(14.8, deskTop + 4.6, -6.4); this.deskLight.castShadow = !lowTier; this.deskLight.shadow.mapSize.set(1024, 1024); this.deskLight.shadow.bias = -0.002; this.group.add(this.deskLight);
 
     // ---- ベッド（左、丘） ----
     add(new RoundedBoxGeometry(13, 4.5, 20, 4, .8), quiltMat, [-13, 2.25, 7], undefined, { solid: true });
     add(new RoundedBoxGeometry(5, 1.3, 3.6, 4, .6), sheetMat, [-15.5, 5.1, -1.2], undefined, { solid: true }); // 枕
     add(new THREE.BoxGeometry(13.4, 6.5, .5), deskMat, [-13, 3.2, -3.3], undefined, { solid: true }); // ヘッドボード
     add(new THREE.BoxGeometry(13.4, 1.2, .5), deskMat, [-13, 0.6, 17.3], undefined, { solid: true });
+    // 寝ている子ども「そうた」: 毛布の下のふくらみと、枕の上の頭。息で毛布がゆっくり上下する
+    const blanketMat = new THREE.MeshPhysicalMaterial({ ...scanned('knitted_fleece', { repeat: [3, 5], aniso }), color: 0xd9b4a0, roughness: 1, sheen: 1, sheenRoughness: .8 });
+    this.childLump = add(new RoundedBoxGeometry(5.2, 2.2, 11, 4, 1.0), blanketMat, [-15.3, 4.5 + 1.0, 6.5], undefined, { solid: true });
+    const skin = new THREE.MeshPhysicalMaterial({ color: 0xf0c8a8, roughness: .6, clearcoat: .1 });
+    const headGrp = new THREE.Group(); headGrp.position.set(-16.2, 4.5 + 1.3 + 0.95, -0.9); headGrp.rotation.set(0.1, 0.6, 0.35); this.group.add(headGrp);
+    const hm = (g: THREE.BufferGeometry, m: THREE.Material, p: [number, number, number], sc?: [number, number, number]) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; o.position.set(...p); if (sc) o.scale.set(...sc); headGrp.add(o); return o; };
+    hm(new THREE.SphereGeometry(1.25, 28, 20), skin, [0, 0, 0], [1, 0.95, 1.05]);
+    hm(new THREE.SphereGeometry(1.32, 28, 20, 0, Math.PI * 2, 0, Math.PI * 0.6), new THREE.MeshStandardMaterial({ color: 0x3e2a1c, roughness: .7 }), [0, 0.12, -0.1]);
+    hm(new THREE.SphereGeometry(0.14, 10, 8), skin, [0.02, -0.25, 1.22]); // 鼻
+    for (const sx of [-1, 1]) { const eye = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 6, 12, Math.PI), new THREE.MeshStandardMaterial({ color: 0x3e2a1c })); eye.position.set(sx * 0.45, 0.1, 1.15); eye.rotation.set(Math.PI, 0, 0); headGrp.add(eye); }
+    this.colliders.push(new THREE.Box3(new THREE.Vector3(-17.6, 4.5, -2.3).multiplyScalar(S), new THREE.Vector3(-14.8, 8.4, 0.5).multiplyScalar(S)));
+    // 賞を置く場所（枕の空いている側）。貼り直し前は非表示
+    this.awardTex = new THREE.CanvasTexture(this.award.canvas); this.awardTex.colorSpace = THREE.SRGBColorSpace; this.awardTex.anisotropy = aniso;
+    this.repairPaper = add(new THREE.PlaneGeometry(2.1, 1.575), new THREE.MeshStandardMaterial({ map: this.awardTex, roughness: .95, side: THREE.DoubleSide }), [-13.6, 5.78, -1.0], [-Math.PI / 2, 0, 0.25], { shadow: false });
+    this.repairPaper.visible = false;
+    // ベッドサイドの小さな台とランプ（枕側の壁ぎわ）
+    const tableMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(woodP, { repeat: 1, normalStrength: 1.0, aniso }), color: 0xcfa67a, roughness: .55, clearcoat: .3 });
+    add(new RoundedBoxGeometry(4, 5, 4, 3, .1), tableMat, [-17.5, 2.5, -8], undefined, { solid: true });
+    add(new THREE.CylinderGeometry(0.9, 1.1, 0.25, 20), whitePlastic, [-17.5, 5.12, -8], undefined, { solid: true });
+    add(new THREE.CylinderGeometry(0.1, 0.1, 2.2, 10), whitePlastic, [-17.5, 6.2, -8]);
+    this.bedLampMat = new THREE.MeshStandardMaterial({ color: 0xfff0d0, emissive: 0xffc98a, emissiveIntensity: 1.8, side: THREE.DoubleSide });
+    add(new THREE.CylinderGeometry(1.0, 1.6, 1.6, 20, 1, true), this.bedLampMat, [-17.5, 7.6, -8], undefined, { shadow: false });
+    this.bedLamp = new THREE.PointLight(0xffc98a, 30 * S * S, 30 * S, 2); this.bedLamp.position.set(-17.5, 7.2, -8); this.group.add(this.bedLamp);
+    // 綿の雲（天井から糸で下がっている）
+    const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, emissive: 0x404048, emissiveIntensity: 0.6 });
+    const threadMat = new THREE.MeshBasicMaterial({ color: 0xcfcfcf });
+    ([[-14, 20, 4, 1.0], [-9, 22.5, 11, 0.8], [-17, 21.5, 13, 0.7]] as number[][]).forEach(([cx, cy, cz, sc]) => {
+      const grp = new THREE.Group(); grp.position.set(cx, cy, cz);
+      ([[0, 0, 0, 1.6], [1.5, 0.3, 0.2, 1.2], [-1.4, 0.2, 0.3, 1.1], [0.5, 0.9, -0.3, 1.0], [-0.5, -0.5, 0.4, 0.9]] as number[][]).forEach(([x, y, z, r]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r * sc, 16, 12), cloudMat); m.position.set(x * sc, y * sc, z * sc); m.castShadow = true; grp.add(m); });
+      const th = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 26 - cy, 6), threadMat); th.position.y = (26 - cy) / 2; grp.add(th);
+      this.group.add(grp); this.clouds.push(grp);
+    });
 
     // ---- おもちゃ ----
     const blockGeo = new RoundedBoxGeometry(.44, .44, .44, 3, .03);
@@ -275,6 +319,8 @@ export class Room {
       pillow: new THREE.Vector3(-15.5, 5.75, -1.2).multiplyScalar(S),
       robot: this.robot.position.clone().multiplyScalar(S),
       rabbit: this.rabbit.position.clone().multiplyScalar(S),
+      childHead: new THREE.Vector3(-16.2, 6.75, -0.9).multiplyScalar(S),
+      repairSpot: new THREE.Vector3(-13.6, 5.75, -1.0).multiplyScalar(S),
     };
   }
 
@@ -290,14 +336,34 @@ export class Room {
 
   applyPreset(p: Preset) {
     this.preset = p;
-    const night = p === 'night';
-    this.sun.intensity = night ? 0 : 3.0; this.moon.intensity = night ? 0.55 : 0.25;
-    this.sky.intensity = night ? 0.44 : 0.55; this.nightLight.intensity = night ? 110 * S * S : 0; this.fill.intensity = night ? 16 * S * S : 0;
-    this.scene.environmentIntensity = night ? 0.28 : 0.45;
-    this.glass.material.color.set(night ? 0x8fa6cc : 0xfff1d2);
-    const bg = night ? 0x262838 : 0xf0d7b8;
-    this.scene.background = new THREE.Color(bg); this.scene.fog = new THREE.FogExp2(bg, (night ? 0.016 : 0.013) / S);
+    const night = p === 'night', morning = p === 'morning';
+    this.sun.intensity = night ? 0 : morning ? 2.6 : 3.0; this.sun.color.set(morning ? 0xffe6c0 : 0xffd3a1); this.sun.castShadow = !night; this.moon.castShadow = night;
+    this.moon.intensity = night ? 0.55 : 0.2;
+    this.sky.intensity = night ? 0.44 : morning ? 0.9 : 0.55; this.nightLight.intensity = night ? 110 * S * S : 0; this.fill.intensity = night ? 16 * S * S : morning ? 10 * S * S : 0;
+    this.hallLight.intensity = night ? 18 * S * S : 0; this.deskLight.intensity = night ? 70 * S * S : 0; this.bedLamp.intensity = night ? 30 * S * S : 0;
+    this.bedLampMat.emissiveIntensity = night ? 1.8 : 0;
+    this.scene.environmentIntensity = night ? 0.28 : morning ? 0.7 : 0.45;
+    this.glass.material.color.set(night ? 0x8fa6cc : morning ? 0xfff6e2 : 0xfff1d2);
+    const bg = night ? 0x262838 : morning ? 0xf6e9d6 : 0xf0d7b8;
+    this.scene.background = new THREE.Color(bg); this.scene.fog = new THREE.FogExp2(bg, (night ? 0.016 : 0.010) / S);
     this.bulbMat.emissiveIntensity = night ? 2.4 : 0;
+  }
+
+  /** 朝へ、時間をかけて切り替える（0..1） */
+  private morningT = -1;
+  startMorning() { this.morningT = 0; }
+
+  /** 貼り直しの演出: 賞を枕元に出す / テープ / 一筆 */
+  showRepairPaper() { this.repairPaper.visible = true; this.awardTex.needsUpdate = true; }
+  awardTape() { this.award.tape(); this.awardTex.needsUpdate = true; }
+  awardStroke(kind: string) { this.award.stroke(kind); this.awardTex.needsUpdate = true; }
+  /** おもちゃたちが枕元に集まる */
+  gatherToys() {
+    const spot = new THREE.Vector3(-13.6, 4.5, -1.0);
+    this.bear.position.set(spot.x + 2.2, 4.5, spot.z + 2.6); this.bear.rotation.y = -2.4;
+    this.robot.position.set(spot.x + 2.6, 4.5, spot.z - 1.4); this.robot.rotation.y = -1.8;
+    this.rabbit.position.set(spot.x - 0.2, 4.5, spot.z + 2.8); this.rabbit.rotation.y = 3.1;
+    this.car.position.set((spot.x + 0.8) * S, 4.5 * S, (spot.z - 3.0) * S); this.car.rotation.y = 2.0;
   }
 
   // 着地や押し出しの埃。短命のパーティクル
@@ -336,10 +402,24 @@ export class Room {
     for (let i = 0; i < this.dustVel.length; i++) { a[i * 3 + 1] += Math.sin(t * .3 + i) * .002 - .0025 * this.dustVel[i]; if (a[i * 3 + 1] < .05) a[i * 3 + 1] = 9; }
     pos.needsUpdate = true;
     this.bearHead.rotation.y = Math.sin(t * .5) * .08;
+    this.clouds.forEach((c, i) => { c.position.y += Math.sin(t * 0.6 + i * 2) * 0.0015; c.rotation.y = Math.sin(t * 0.2 + i) * 0.05; });
+    const breath = 1 + Math.sin(t * 1.1) * 0.025; this.childLump.scale.set(1, breath, 1);
+    if (this.morningT >= 0 && this.morningT < 1) {
+      this.morningT = Math.min(1, this.morningT + dt / 6);
+      const k = this.morningT, e = k * k * (3 - 2 * k);
+      this.sun.intensity = 2.6 * e; this.sun.castShadow = e > 0.3; this.moon.castShadow = e <= 0.3; this.moon.intensity = T.lerp(0.55, 0.2, e);
+      this.sky.intensity = T.lerp(0.44, 0.9, e); this.scene.environmentIntensity = T.lerp(0.28, 0.7, e);
+      this.nightLight.intensity = 110 * S * S * (1 - e); this.hallLight.intensity = 18 * S * S * (1 - e); this.deskLight.intensity = 70 * S * S * (1 - e); this.bedLamp.intensity = 30 * S * S * (1 - e);
+      this.bulbMat.emissiveIntensity = 2.4 * (1 - e); this.bedLampMat.emissiveIntensity = 1.8 * (1 - e);
+      const bg = new THREE.Color(0x262838).lerp(new THREE.Color(0xf6e9d6), e);
+      this.scene.background = bg; (this.scene.fog as THREE.FogExp2).color.copy(bg); (this.scene.fog as THREE.FogExp2).density = T.lerp(0.016, 0.010, e) / S;
+      this.glass.material.color.copy(new THREE.Color(0x8fa6cc).lerp(new THREE.Color(0xfff6e2), e));
+      if (this.morningT >= 1) this.preset = 'morning';
+    }
     this.robotEyes.emissiveIntensity = 1.2 + Math.max(0, Math.sin(t * 3.7)) * 0.8;
     this.rabbit.rotation.z = Math.sin(t * 0.9) * 0.02;
     for (let i = 0; i < this.fragments.length; i++) if (this.fragments[i].visible) this.fragments[i].position.y = (i === 0 ? 0.03 : 4.52) + 0.04 + Math.sin(t * 2 + i) * 0.03;
-    if (this.preset === 'night') this.nightLight.intensity = (110 + Math.sin(t * 7.3) * 3 + Math.sin(t * 2.1) * 2) * S * S;
+    if (this.preset === 'night' && this.morningT < 0) this.nightLight.intensity = (110 + Math.sin(t * 7.3) * 3 + Math.sin(t * 2.1) * 2) * S * S;
     void dt;
   }
 }

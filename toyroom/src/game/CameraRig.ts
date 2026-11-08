@@ -21,6 +21,9 @@ export class CameraRig {
   /** 乗り物に乗っている間などに足す距離 */
   extraDist = 0;
 
+  /** カット: 補間せずにその位置へ */
+  snapTo(pos: THREE.Vector3, look: THREE.Vector3) { this.camera.position.copy(pos); this.target.copy(look); this.camera.lookAt(look); this.pos.copy(pos); }
+
   /** 着地の衝撃などでカメラを揺らす（0..1） */
   shake(strength: number) { this.shakeAmp = Math.max(this.shakeAmp, strength * 0.22); }
 
