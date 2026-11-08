@@ -110,7 +110,8 @@ export class Game {
   private setupDebug() {
     if (!location.search.includes('debug')) return;
     const dbg = this.$('debug'); dbg.hidden = false;
-    (window as unknown as { __game: Game }).__game = this; // デバッグ用（テレポートなど）
+    (window as unknown as { __game: Game; __THREE: typeof THREE }).__game = this; // デバッグ用（テレポートなど）
+    (window as unknown as { __THREE: typeof THREE }).__THREE = THREE;
     const bind = (id: string, key: 'dist' | 'pitch' | 'fov' | 'follow') => { const el = this.$(id) as HTMLInputElement; el.addEventListener('input', () => { this.rig.tuning[key] = parseFloat(el.value); }); };
     bind('dbgDist', 'dist'); bind('dbgPitch', 'pitch'); bind('dbgFov', 'fov'); bind('dbgFollow', 'follow');
     window.addEventListener('keydown', e => { if (e.code === 'KeyL') this.room.applyPreset(this.room.preset === 'night' ? 'evening' : 'night'); });

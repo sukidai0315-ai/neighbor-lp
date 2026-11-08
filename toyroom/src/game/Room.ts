@@ -90,6 +90,21 @@ export class Room {
     add(new THREE.BoxGeometry(0.18, 0.9, 36), trimMat, [-19.92, 0.45, 6]);
     add(new THREE.BoxGeometry(0.18, 0.9, 36), trimMat, [19.92, 0.45, 6]);
     add(new THREE.CircleGeometry(6.5, 64), rugMat, [0.5, 0.02, 1.5], [-Math.PI / 2, 0, 0], { shadow: false });
+    add(new THREE.BoxGeometry(40, 0.9, 0.18), trimMat, [0, 0.45, 17.92]); // 正面の幅木
+    // 天井（白い漆喰）。夜空が見えて壁が途切れて見えないように
+    add(new THREE.PlaneGeometry(40, 32), new THREE.MeshStandardMaterial({ color: 0xf2eee6, roughness: 1 }), [0, 26, 2], [Math.PI / 2, 0, 0], { shadow: false });
+    // ドア（正面の壁、右寄り）。廊下の明かりが下の隙間から漏れている
+    const doorX = 12, doorW = 8, doorH = 19;
+    add(new THREE.BoxGeometry(doorW + 1.2, 0.6, 0.6), trimMat, [doorX, doorH + 0.3, 17.7]);
+    add(new THREE.BoxGeometry(0.6, doorH + 0.6, 0.6), trimMat, [doorX - doorW / 2 - 0.3, (doorH + 0.6) / 2, 17.7]);
+    add(new THREE.BoxGeometry(0.6, doorH + 0.6, 0.6), trimMat, [doorX + doorW / 2 + 0.3, (doorH + 0.6) / 2, 17.7]);
+    const doorMat = new THREE.MeshStandardMaterial({ color: 0xf6f1e8, roughness: 0.55 });
+    add(new THREE.BoxGeometry(doorW, doorH - 0.5, 0.4), doorMat, [doorX, doorH / 2 + 0.25, 17.85]);
+    add(new THREE.BoxGeometry(doorW - 1.6, doorH * 0.42, 0.1), new THREE.MeshStandardMaterial({ color: 0xece6dc, roughness: 0.6 }), [doorX, doorH * 0.7, 17.6]);
+    add(new THREE.BoxGeometry(doorW - 1.6, doorH * 0.3, 0.1), new THREE.MeshStandardMaterial({ color: 0xece6dc, roughness: 0.6 }), [doorX, doorH * 0.25, 17.6]);
+    add(new THREE.SphereGeometry(0.35, 14, 10), new THREE.MeshPhysicalMaterial({ color: 0xd8c08a, roughness: 0.3, metalness: 0.8 }), [doorX - doorW / 2 + 0.9, doorH * 0.5, 17.4]);
+    add(new THREE.BoxGeometry(doorW - 0.2, 0.12, 0.3), new THREE.MeshStandardMaterial({ color: 0xffe3b0, emissive: 0xffc070, emissiveIntensity: 2.5 }), [doorX, 0.06, 17.7], undefined, { shadow: false });
+    const hallLight = new THREE.PointLight(0xffc98a, 18 * S * S, 36 * S, 2); hallLight.position.set(doorX, 0.5, 16.6); this.group.add(hallLight);
 
     // ---- 窓（奥の壁、左寄り） ----
     const winX = -3, winY = 12.5, winW = 9, winH = 10;
@@ -180,13 +195,14 @@ export class Room {
 
     // ---- スロープ（ベッドへ）: 厚い画用紙の束のくさび。見た目と当たり判定を一致させる ----
     const ramp = { x0: 0.4, x1: -6.8, z0: 7.6, z1: 12.6, h0: 0.0, h1: 4.5 }; // 低い側は床に接し、高い側はベッドの上面につながる
-    const wedgeShape = new THREE.Shape([new THREE.Vector2(ramp.x0, 0), new THREE.Vector2(ramp.x1, ramp.h1), new THREE.Vector2(ramp.x1, 0)]);
+    const coverT = 0.16, slopeDrop = coverT / Math.cos(Math.atan2(ramp.h1, ramp.x0 - ramp.x1)); // 表紙の厚みぶん紙の束を低くし、表紙の上面＝当たり判定の面にする
+    const wedgeShape = new THREE.Shape([new THREE.Vector2(ramp.x0 - 0.3, 0), new THREE.Vector2(ramp.x1, ramp.h1 - slopeDrop), new THREE.Vector2(ramp.x1, 0)]);
     const wedgeGeo = new THREE.ExtrudeGeometry(wedgeShape, { depth: ramp.z1 - ramp.z0, bevelEnabled: false });
     const pagesMat = new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .95 });
     const wedge = new THREE.Mesh(wedgeGeo, pagesMat); wedge.position.set(0, 0.01, ramp.z0); wedge.castShadow = wedge.receiveShadow = true; this.group.add(wedge);
     // 表紙（青い大きな本）が斜面の上に乗っている
     const len = Math.hypot(ramp.x1 - ramp.x0, ramp.h1 - ramp.h0), ang = -Math.atan2(ramp.h1 - ramp.h0, ramp.x0 - ramp.x1); // -x へ向かって上る
-    add(new RoundedBoxGeometry(len + 0.3, 0.16, ramp.z1 - ramp.z0 + 0.2, 2, .04), new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 }), [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 + 0.07, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
+    add(new RoundedBoxGeometry(len + 0.3, coverT, ramp.z1 - ramp.z0 + 0.2, 2, .04), new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 }), [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 - coverT / 2 - 0.005, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
     this.ramps.push({ minX: Math.min(ramp.x0, ramp.x1) * S, maxX: Math.max(ramp.x0, ramp.x1) * S, minZ: ramp.z0 * S, maxZ: ramp.z1 * S, hAtMinX: ramp.h1 * S, hAtMaxX: ramp.h0 * S });
 
     // ---- ウサギ「ミミ」（ベッドの上、枕のそば） ----
@@ -276,8 +292,8 @@ export class Room {
     this.preset = p;
     const night = p === 'night';
     this.sun.intensity = night ? 0 : 3.0; this.moon.intensity = night ? 0.55 : 0.25;
-    this.sky.intensity = night ? 0.32 : 0.55; this.nightLight.intensity = night ? 110 * S * S : 0; this.fill.intensity = night ? 16 * S * S : 0;
-    this.scene.environmentIntensity = night ? 0.2 : 0.45;
+    this.sky.intensity = night ? 0.44 : 0.55; this.nightLight.intensity = night ? 110 * S * S : 0; this.fill.intensity = night ? 16 * S * S : 0;
+    this.scene.environmentIntensity = night ? 0.28 : 0.45;
     this.glass.material.color.set(night ? 0x8fa6cc : 0xfff1d2);
     const bg = night ? 0x262838 : 0xf0d7b8;
     this.scene.background = new THREE.Color(bg); this.scene.fog = new THREE.FogExp2(bg, (night ? 0.016 : 0.013) / S);
