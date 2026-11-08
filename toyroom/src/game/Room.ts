@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import * as T from './textures';
 import { scanned } from './assets';
+import { scatterProps } from './Props';
 
 // 子供部屋（仮モデル）。単位 1 = 10cm。
 // ゾーン: 机の上(出発) / ラグ / 窓の下 / 机の下 / ベッドの上 / 枕元(ゴール)
@@ -310,6 +311,9 @@ export class Room {
     this.sky = new THREE.HemisphereLight(0xdfe9ff, 0x7a5a3c, .2); this.group.add(this.sky);
     this.nightLight = new THREE.PointLight(0xffb060, 110 * S * S, 40 * S, 2); this.nightLight.position.set(-18.6, 2.6, 12); this.nightLight.castShadow = !lowTier; this.nightLight.shadow.mapSize.set(1024, 1024); this.nightLight.shadow.bias = -.002; this.group.add(this.nightLight);
     this.fill = new THREE.PointLight(0xffe2c0, 10 * S * S, 40 * S, 2); this.fill.position.set(4, 9, 6); this.group.add(this.fill);
+    // 散らかった小物（通り道は避ける）
+    scatterProps(this.group, this.colliders, S, aniso, lowTier);
+
     this.applyPreset('night');
 
     this.points = {

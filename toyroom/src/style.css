@@ -75,3 +75,24 @@ body { font-family: var(--font); color: #fff; -webkit-tap-highlight-color: trans
 .ending h1 { font-size: clamp(40px, 9vw, 72px); margin: 6px 0 8px; letter-spacing: .04em; color: #3a2c20; text-shadow: 0 2px 18px rgba(255,255,255,.6); }
 .ending p { margin: 0 0 20px; font-size: 15px; line-height: 1.9; }
 .ending button { font: inherit; font-size: 17px; font-weight: 700; padding: 12px 32px; border-radius: 999px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+
+/* いま何をするか */
+.objective { position: absolute; left: max(14px, env(safe-area-inset-left)); top: calc(max(10px, env(safe-area-inset-top)) + 30px); z-index: 4; display: flex; gap: 8px; align-items: center; font-size: 13px; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.7); pointer-events: none; transition: opacity .3s; }
+.objective .objLabel { background: var(--accent); color: #fff; font-size: 11px; padding: 1px 8px; border-radius: 999px; }
+.objective.flash #objText { animation: objflash 1.2s ease; }
+@keyframes objflash { 0% { color: #ffd9a3; transform: translateX(6px); } 100% { color: #fff; transform: none; } }
+#app.cine .objective, #app.pre .objective, #app.pre .inv { opacity: 0; }
+/* 持ち物 */
+.inv { position: absolute; right: max(14px, env(safe-area-inset-right)); top: max(10px, env(safe-area-inset-top)); z-index: 4; display: flex; gap: 6px; pointer-events: none; transition: opacity .3s; }
+#app.cine .inv { opacity: 0; }
+.slot { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 50px; padding: 5px 0 3px; border-radius: 10px; background: rgba(20,12,8,.5); border: 1px solid rgba(255,255,255,.18); font-size: 10px; color: rgba(255,255,255,.45); }
+.slot .ico { width: 22px; height: 16px; border-radius: 3px; background: rgba(255,255,255,.12); display: block; }
+.slot .ico-award { background: rgba(255,255,255,.12); }
+.slot .ico-frag { clip-path: polygon(0 10%, 70% 0, 100% 50%, 80% 100%, 10% 90%); width: 18px; height: 16px; }
+.slot.got { color: #fff; border-color: #ffd9a3; background: rgba(60,36,16,.75); }
+.slot.got .ico { background: #f6e6c0; box-shadow: 0 0 10px rgba(255,217,163,.6); }
+.slot.pop { animation: slotpop .5s ease; }
+@keyframes slotpop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+/* お知らせ */
+.toast { position: absolute; left: 50%; top: calc(max(10px, env(safe-area-inset-top)) + 52px); transform: translateX(-50%) translateY(-6px); z-index: 5; background: rgba(20,12,8,.78); color: #fff; font-size: 14px; padding: 7px 16px; border-radius: 999px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; white-space: nowrap; max-width: 92%; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }

@@ -159,3 +159,21 @@ export class AwardCanvas {
     }
   }
 }
+
+/** 子どもの落書き（家、太陽、人、車、花、猫）。i で絵柄を変える */
+export function doodlePaper(i: number) {
+  const c = canvas(256, 192), ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#f7f1e3'; ctx.fillRect(0, 0, 256, 192);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const wob = (pts: number[][], color: string, w: number) => { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.beginPath(); pts.forEach((p, k) => { const jx = (Math.random() - .5) * 3, jy = (Math.random() - .5) * 3; k ? ctx.lineTo(p[0] + jx, p[1] + jy) : ctx.moveTo(p[0] + jx, p[1] + jy); }); ctx.stroke(); };
+  const circ = (cx: number, cy: number, r: number, color: string, w: number) => { const pts: number[][] = []; for (let a = 0; a <= Math.PI * 2 + .3; a += .35) pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); wob(pts, color, w); };
+  switch (i % 6) {
+    case 0: wob([[60, 150], [60, 90], [110, 50], [160, 90], [160, 150], [60, 150]], '#d8443a', 6); wob([[95, 150], [95, 115], [125, 115], [125, 150]], '#3b6fc4', 5); circ(210, 45, 22, '#e3a21a', 6); break;
+    case 1: circ(128, 70, 26, '#f0b7a4', 5); wob([[128, 96], [128, 150]], '#3b6fc4', 5); wob([[100, 120], [128, 105], [156, 120]], '#3b6fc4', 5); wob([[128, 150], [108, 180]], '#3b6fc4', 5); wob([[128, 150], [148, 180]], '#3b6fc4', 5); wob([[118, 66], [120, 66]], '#2b2725', 6); wob([[136, 66], [138, 66]], '#2b2725', 6); break;
+    case 2: wob([[40, 130], [40, 95], [80, 95], [100, 70], [170, 70], [190, 95], [220, 95], [220, 130], [40, 130]], '#3da36b', 6); circ(75, 135, 16, '#2b2725', 6); circ(185, 135, 16, '#2b2725', 6); break;
+    case 3: for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3; circ(128 + Math.cos(a) * 30, 90 + Math.sin(a) * 30, 14, '#e36fa0', 5); } circ(128, 90, 14, '#e3a21a', 6); wob([[128, 118], [128, 180]], '#3da36b', 6); break;
+    case 4: circ(128, 100, 40, '#f07c3a', 6); wob([[100, 70], [95, 40], [118, 62]], '#f07c3a', 6); wob([[156, 70], [161, 40], [138, 62]], '#f07c3a', 6); wob([[112, 95], [114, 95]], '#2b2725', 6); wob([[144, 95], [146, 95]], '#2b2725', 6); wob([[118, 112], [128, 118], [138, 112]], '#2b2725', 4); break;
+    default: for (let k = 0; k < 5; k++) { const x = 40 + k * 44; wob([[x, 160], [x + 10, 120], [x + 20, 160]], ['#d8443a', '#3b6fc4', '#3da36b', '#e3a21a', '#8b4bb8'][k], 7); } circ(128, 60, 24, '#e3a21a', 6); break;
+  }
+  return c;
+}
