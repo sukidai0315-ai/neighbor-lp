@@ -7,8 +7,11 @@ import type { CameraRig } from './CameraRig';
 // 主人公「パーカー」。20歳くらいのスケーター青年のプラスチックフィギュア、身長 12cm。
 // 仮モデル（手続き生成）と、歩き／スケボーの移動、手続きアニメーション。
 
-const WALK_SPEED = 2.6, SKATE_MAX = 7.5, JUMP_V = 7.2, GRAVITY = 22, RADIUS = 0.22, HEIGHT = 1.75;
+const WALK_SPEED = 2.8, SKATE_MAX = 8.5, JUMP_V = 7.8, G_UP = 19, G_DOWN = 27, RADIUS = 0.22, HEIGHT = 1.75;
+const PUSH_IMPULSE = 2.6, PUSH_INTERVAL = 0.42;
 const { lerp, clamp } = T;
+
+export interface HeroEvents { onLand?: (impact: number, pos: THREE.Vector3) => void; onPush?: () => void }
 
 export class Hero {
   readonly root = new THREE.Group();
@@ -18,16 +21,17 @@ export class Hero {
   skate = false;
   onGround = false;
   speed = 0;
+  events: HeroEvents = {};
   private steer = 0; private phase = 0; private kick = 0; private groundY = 0;
   private body = new THREE.Group(); private lean = new THREE.Group(); private hips = new THREE.Group();
   private legL = new THREE.Group(); private legR = new THREE.Group(); private armL = new THREE.Group(); private armR = new THREE.Group(); private head = new THREE.Group();
   private time = 0;
-  private coyote = 0; private jumpBuffer = 0;
+  private coyote = 0; private jumpBuffer = 0; private pushCooldown = 0;
+  private squash = 0; private airTime = 0; private peakFall = 0;
 
   constructor(scene: THREE.Scene, aniso: number) {
     const denimMat = new THREE.MeshStandardMaterial({ ...T.pbr(T.denim(), { repeat: 4, normalStrength: 1.6, aniso }), roughness: .95 });
     const jerseyMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(T.jersey(), { repeat: 6, normalStrength: 1.2, aniso }), roughness: .9, sheen: .6, sheenRoughness: .8, sheenColor: new THREE.Color(0xffffff) });
-    // プラスチックのフィギュアなので肌は少しつやがある
     const skinMat = new THREE.MeshPhysicalMaterial({ color: 0xe7b58d, roughness: .45, clearcoat: .35, clearcoatRoughness: .4 });
     const hairMat = new THREE.MeshPhysicalMaterial({ color: 0x4a2f1f, roughness: .5, clearcoat: .3 });
     const shoeMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2e, roughness: .7 });
@@ -56,6 +60,7 @@ export class Hero {
   }
 
   get pos() { return this.root.position; }
+  get falling() { return !this.onGround && this.vel.y < -3; }
 
   place(p: THREE.Vector3, yaw = Math.PI) { this.pos.copy(p); this.yaw = yaw; this.vel.set(0, 0, 0); this.speed = 0; this.groundY = p.y; }
 
@@ -82,66 +87,84 @@ export class Hero {
     this.groundY = ground;
   }
 
-  update(dt: number, f: Frame | null, cam: CameraRig, colliders: THREE.Box3[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
+  /** 物理の1ステップ。Game 側が固定刻みで複数回呼ぶ */
+  step(dt: number, f: Frame | null, cam: CameraRig, colliders: THREE.Box3[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
     this.time += dt;
     const inp = f ? f.move : { x: 0, z: 0, l: 0 };
     const fwd = cam.forward(), right = cam.right();
     const wish = new THREE.Vector3().addScaledVector(fwd, -inp.z).addScaledVector(right, inp.x);
     if (f?.jump) this.jumpBuffer = 0.12; else this.jumpBuffer = Math.max(0, this.jumpBuffer - dt);
     if (f?.skate) this.toggleSkate();
+    this.pushCooldown = Math.max(0, this.pushCooldown - dt);
 
     if (!this.skate) {
-      const k = 1 - Math.exp(-14 * dt);
+      const k = 1 - Math.exp(-(this.onGround ? 16 : 5) * dt);
       this.vel.x = lerp(this.vel.x, wish.x * WALK_SPEED * inp.l, k); this.vel.z = lerp(this.vel.z, wish.z * WALK_SPEED * inp.l, k);
-      if (inp.l > .05) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-12 * dt)); }
+      if (inp.l > .05) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-14 * dt)); }
       this.steer = lerp(this.steer, 0, 1 - Math.exp(-8 * dt)); this.speed = Math.hypot(this.vel.x, this.vel.z);
     } else {
       const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
-      const along = inp.l > .05 ? wish.dot(face) : 0;
-      const steerIn = inp.l > .05 ? clamp(wish.dot(new THREE.Vector3(-face.z, 0, face.x)) * 1.6, -1, 1) : 0;
-      this.steer = lerp(this.steer, steerIn, 1 - Math.exp(-7 * dt));
-      if (along > .2) { this.speed += 3.8 * along * dt; this.kick = Math.min(1, this.kick + dt * 3); } else this.kick = Math.max(0, this.kick - dt * 2);
-      if (along < -.3) this.speed -= 6 * dt;
-      // 止まっているときはスティックの方向を向く（押し出し前に向きを変えられる）
-      if (this.speed < .4 && inp.l > .05) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-6 * dt)); }
-      this.speed -= this.speed * .45 * dt; this.speed = clamp(this.speed, 0, SKATE_MAX);
-      if (this.speed > .3) this.yaw += this.steer * (1.2 + 1.6 * Math.min(1, this.speed / 4)) * dt;
+      const pressing = inp.l > .05;
+      const along = pressing ? wish.dot(face) : 0;
+      const steerIn = pressing ? clamp(wish.dot(new THREE.Vector3(-face.z, 0, face.x)) * 1.8, -1, 1) : 0;
+      this.steer = lerp(this.steer, steerIn, 1 - Math.exp(-9 * dt));
+      // 止まっている／遅いときは、スティックの方向へ素早く向き直る
+      if (pressing && this.speed < 1.2) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-10 * dt)); }
+      // 押し出し: 前に倒している間、一定間隔で蹴って加速する（最初の一蹴りで歩きより速くなる）
+      if (pressing && along > -0.2 && this.onGround) {
+        if (this.pushCooldown <= 0) { this.speed += PUSH_IMPULSE * (0.6 + 0.4 * Math.max(0, along)); this.pushCooldown = PUSH_INTERVAL; this.kick = 1; this.events.onPush?.(); }
+        this.speed += 2.2 * Math.max(0, along) * dt;
+      }
+      this.kick = Math.max(0, this.kick - dt * 2.4);
+      if (pressing && along < -0.5) this.speed -= 7 * dt; // 後ろに倒すとブレーキ
+      this.speed -= (this.speed * 0.22 + 0.25) * dt; this.speed = clamp(this.speed, 0, SKATE_MAX);
+      if (this.speed > .2) this.yaw += this.steer * (1.6 + 1.4 * Math.min(1, this.speed / 5)) * dt;
       const nf = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
       this.vel.x = nf.x * this.speed; this.vel.z = nf.z * this.speed;
     }
 
-    // ジャンプ（コヨーテタイムと先行入力つき）
+    // ジャンプ（コヨーテタイムと先行入力つき、上りは軽く下りは重い）
     if (this.onGround) this.coyote = 0.1; else this.coyote = Math.max(0, this.coyote - dt);
-    if (this.jumpBuffer > 0 && this.coyote > 0) { this.vel.y = JUMP_V * (this.skate ? 1.08 : 1); this.onGround = false; this.coyote = 0; this.jumpBuffer = 0; }
-    this.vel.y -= GRAVITY * dt;
+    if (this.jumpBuffer > 0 && this.coyote > 0) { this.vel.y = JUMP_V * (this.skate ? 1.08 : 1); this.onGround = false; this.coyote = 0; this.jumpBuffer = 0; this.squash = -0.5; }
+    this.vel.y -= (this.vel.y > 0 ? G_UP : G_DOWN) * dt;
     this.pos.x += this.vel.x * dt; this.pos.z += this.vel.z * dt; this.pos.y += this.vel.y * dt;
     this.resolve(colliders, bounds);
-    if (this.pos.y <= this.groundY + .001 && this.vel.y <= 0) { this.pos.y = this.groundY; this.vel.y = 0; this.onGround = true; }
-    else if (this.pos.y > this.groundY + .05) this.onGround = false;
 
-    this.animate(dt);
+    const wasAir = !this.onGround;
+    if (!this.onGround) { this.airTime += dt; this.peakFall = Math.min(this.peakFall, this.vel.y); }
+    if (this.pos.y <= this.groundY + .001 && this.vel.y <= 0) {
+      this.pos.y = this.groundY; this.vel.y = 0; this.onGround = true;
+      if (wasAir) {
+        const impact = clamp((-this.peakFall - 4) / 9, 0, 1); // 小さなジャンプは0、机からの落下で1
+        if (impact > 0) { this.squash = 0.35 + impact * 0.5; this.events.onLand?.(impact, this.pos.clone()); }
+        this.airTime = 0; this.peakFall = 0;
+      }
+    } else if (this.pos.y > this.groundY + .05) this.onGround = false;
   }
 
-  private animate(dt: number) {
+  /** 見た目の更新（フレームごとに1回） */
+  animate(dt: number) {
     this.root.rotation.y = this.yaw;
     const sp = Math.hypot(this.vel.x, this.vel.z), e = (k: number) => 1 - Math.exp(-k * dt);
     const { legL, legR, armL, armR, hips, lean, body, head, board } = this;
+    this.squash = lerp(this.squash, 0, e(9));
+    const sq = this.squash; hips.scale.set(1 + sq * 0.35, 1 - sq * 0.45, 1 + sq * 0.35);
     if (!this.skate) {
       this.phase += sp * dt * 5.2; const sw = Math.sin(this.phase), w = clamp(sp / WALK_SPEED, 0, 1);
       body.rotation.y = lerp(body.rotation.y, 0, e(10)); lean.rotation.z = lerp(lean.rotation.z, 0, e(10)); lean.rotation.x = lerp(lean.rotation.x, w * .12, e(10));
       legL.rotation.x = sw * .75 * w; legR.rotation.x = -sw * .75 * w; legL.rotation.z = 0; legL.position.x = -.13; legR.position.x = .13;
       armL.rotation.x = -sw * .6 * w; armR.rotation.x = sw * .6 * w; armL.rotation.z = .1; armR.rotation.z = -.1;
       hips.position.y = Math.abs(Math.sin(this.phase)) * .05 * w + (this.onGround ? 0 : .08);
-      if (!this.onGround) { legL.rotation.x = .5; legR.rotation.x = -.2; }
+      if (!this.onGround) { const fall = clamp(-this.vel.y / 8, 0, 1); legL.rotation.x = .5 - fall * .3; legR.rotation.x = -.2 + fall * .4; armL.rotation.z = .1 + fall * 1.2; armR.rotation.z = -.1 - fall * 1.2; }
       head.rotation.y = lerp(head.rotation.y, 0, e(6));
       board.position.copy(this.pos).add(new THREE.Vector3(Math.cos(this.yaw) * .36, .95 + hips.position.y, -Math.sin(this.yaw) * .36));
       board.rotation.set(0, this.yaw, Math.PI / 2 - .2);
     } else {
       body.rotation.y = lerp(body.rotation.y, -1.15, e(8));
-      lean.rotation.z = lerp(lean.rotation.z, this.steer * .35, e(8)); lean.rotation.x = lerp(lean.rotation.x, .05 + Math.min(.2, this.speed * .03), e(8));
+      lean.rotation.z = lerp(lean.rotation.z, this.steer * .4, e(8)); lean.rotation.x = lerp(lean.rotation.x, .05 + Math.min(.22, this.speed * .03), e(8));
       legL.position.set(-.28, .72, 0); legR.position.set(.28, .72, 0);
-      const kickSwing = Math.sin(this.time * 9) * this.kick;
-      legL.rotation.x = -.15 + kickSwing * .5; legR.rotation.x = .1; legL.rotation.z = .25 * this.kick;
+      const kickSwing = Math.sin(this.kick * Math.PI) * this.kick;
+      legL.rotation.x = -.15 + kickSwing * .9; legR.rotation.x = .1; legL.rotation.z = .3 * this.kick;
       armL.rotation.x = -.4 - this.steer * .3; armR.rotation.x = -.4 + this.steer * .3; armL.rotation.z = .5; armR.rotation.z = -.5;
       hips.position.y = .17 + (this.onGround ? 0 : .12);
       if (!this.onGround) { legL.rotation.x = .6; legR.rotation.x = .6; }

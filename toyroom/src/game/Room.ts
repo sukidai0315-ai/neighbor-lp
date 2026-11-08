@@ -189,7 +189,38 @@ export class Room {
     this.bulbMat.emissiveIntensity = night ? 2.4 : 0;
   }
 
+  // 着地や押し出しの埃。短命のパーティクル
+  private puffs: { pts: THREE.Points; vel: Float32Array; life: number; max: number }[] = [];
+  private _puffTex: THREE.Texture | null = null;
+  private puffTex() {
+    if (this._puffTex) return this._puffTex;
+    const c = document.createElement('canvas'); c.width = c.height = 64; const ctx = c.getContext('2d')!;
+    const g = ctx.createRadialGradient(32, 32, 2, 32, 32, 30); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.5, 'rgba(255,255,255,0.45)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+    this._puffTex = new THREE.CanvasTexture(c); return this._puffTex;
+  }
+  puff(at: THREE.Vector3, strength: number) {
+    const n = Math.round(10 + strength * 26), geo = new THREE.BufferGeometry(), p = new Float32Array(n * 3), v = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, r = 0.2 + Math.random() * 0.4;
+      p[i * 3] = at.x + Math.cos(a) * r * 0.5; p[i * 3 + 1] = at.y + 0.05; p[i * 3 + 2] = at.z + Math.sin(a) * r * 0.5;
+      const s = (0.8 + Math.random() * 1.4) * (0.5 + strength);
+      v[i * 3] = Math.cos(a) * s; v[i * 3 + 1] = 0.6 + Math.random() * 0.8 * strength; v[i * 3 + 2] = Math.sin(a) * s;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(p, 3));
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xd9c7a8, size: 0.14 + strength * 0.12, map: this.puffTex(), transparent: true, opacity: 0.7, depthWrite: false }));
+    this.group.add(pts); this.puffs.push({ pts, vel: v, life: 0, max: 0.45 + strength * 0.35 });
+  }
+
   update(dt: number, t: number) {
+    for (let k = this.puffs.length - 1; k >= 0; k--) {
+      const q = this.puffs[k]; q.life += dt;
+      const arr = (q.pts.geometry.attributes.position as THREE.BufferAttribute).array as Float32Array;
+      for (let i = 0; i < q.vel.length / 3; i++) { arr[i * 3] += q.vel[i * 3] * dt; arr[i * 3 + 1] += q.vel[i * 3 + 1] * dt; arr[i * 3 + 2] += q.vel[i * 3 + 2] * dt; q.vel[i * 3 + 1] -= 2.5 * dt; q.vel[i * 3] *= 0.92; q.vel[i * 3 + 2] *= 0.92; }
+      (q.pts.geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      (q.pts.material as THREE.PointsMaterial).opacity = 0.7 * (1 - q.life / q.max);
+      if (q.life >= q.max) { this.group.remove(q.pts); q.pts.geometry.dispose(); (q.pts.material as THREE.Material).dispose(); this.puffs.splice(k, 1); }
+    }
     const pos = this.dustGeo.attributes.position as THREE.BufferAttribute; const a = pos.array as Float32Array;
     for (let i = 0; i < this.dustVel.length; i++) { a[i * 3 + 1] += Math.sin(t * .3 + i) * .002 - .0025 * this.dustVel[i]; if (a[i * 3 + 1] < .05) a[i * 3 + 1] = 9; }
     pos.needsUpdate = true;

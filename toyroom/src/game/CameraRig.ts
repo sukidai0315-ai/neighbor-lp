@@ -14,6 +14,11 @@ export class CameraRig {
   private pos = new THREE.Vector3();
   private lastInput = -9;
   private cinematic = false;
+  private shakeAmp = 0; private shakeT = 0;
+  private fallLook = 0;
+
+  /** 着地の衝撃などでカメラを揺らす（0..1） */
+  shake(strength: number) { this.shakeAmp = Math.max(this.shakeAmp, strength * 0.22); }
 
   constructor(readonly camera: THREE.PerspectiveCamera, start: THREE.Vector3) {
     this.pos.copy(start).add(new THREE.Vector3(0, 1.6, 4.6)); this.target.copy(start).add(new THREE.Vector3(0, 1, 0));
@@ -29,7 +34,7 @@ export class CameraRig {
     if (stick.x || stick.y) { this.yaw -= stick.x * 2.4 * dt; this.pitch = clamp(this.pitch + stick.y * 1.6 * dt, -0.15, 1.1); this.lastInput = time; }
   }
 
-  update(dt: number, time: number, heroPos: THREE.Vector3, heroVel: THREE.Vector3, speedBoost: number, cine: { active: boolean; pos: THREE.Vector3; look: THREE.Vector3 }) {
+  update(dt: number, time: number, heroPos: THREE.Vector3, heroVel: THREE.Vector3, speedBoost: number, cine: { active: boolean; pos: THREE.Vector3; look: THREE.Vector3 }, falling = false) {
     const cam = this.camera;
     if (cine.active) {
       this.cinematic = true;
@@ -47,13 +52,21 @@ export class CameraRig {
       this.yaw += d * (1 - Math.exp(-this.tuning.follow * 0.9 * dt));
     }
     if (idle) this.pitch = lerp(this.pitch, this.tuning.pitch, 1 - Math.exp(-0.8 * dt));
+    // 落下中はカメラが少し上に残って見下ろし、着地点が見える
+    this.fallLook = lerp(this.fallLook, falling ? 1 : 0, 1 - Math.exp(-(falling ? 4 : 2.5) * dt));
 
-    const d = this.tuning.dist, p = this.pitch;
-    const look = new THREE.Vector3(heroPos.x, heroPos.y + 1.0, heroPos.z);
+    const d = this.tuning.dist + this.fallLook * 1.2, p = this.pitch + this.fallLook * 0.35;
+    const look = new THREE.Vector3(heroPos.x, heroPos.y + 1.0 - this.fallLook * 0.6, heroPos.z);
     const desired = new THREE.Vector3(look.x + Math.sin(this.yaw) * d * Math.cos(p), look.y + d * Math.sin(p), look.z + Math.cos(this.yaw) * d * Math.cos(p));
     desired.x = clamp(desired.x, this.bounds.minX, this.bounds.maxX); desired.z = clamp(desired.z, this.bounds.minZ, this.bounds.maxZ); desired.y = Math.max(desired.y, 0.25);
-    this.pos.lerp(desired, 1 - Math.exp(-9 * dt)); this.target.lerp(look, 1 - Math.exp(-14 * dt));
-    cam.position.copy(this.pos); cam.lookAt(this.target);
+    this.pos.lerp(desired, 1 - Math.exp(-(falling ? 5 : 9) * dt)); this.target.lerp(look, 1 - Math.exp(-14 * dt));
+    cam.position.copy(this.pos);
+    if (this.shakeAmp > 0.001) {
+      this.shakeT += dt * 40; const a = this.shakeAmp;
+      cam.position.x += Math.sin(this.shakeT * 1.3) * a; cam.position.y += Math.sin(this.shakeT * 1.9 + 1) * a * 1.4; cam.position.z += Math.cos(this.shakeT * 1.1) * a * 0.6;
+      this.shakeAmp *= Math.exp(-7 * dt);
+    }
+    cam.lookAt(this.target);
     cam.fov = lerp(cam.fov, this.tuning.fov + Math.min(6, speedBoost), 1 - Math.exp(-4 * dt)); cam.updateProjectionMatrix();
   }
 }

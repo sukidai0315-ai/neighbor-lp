@@ -16,6 +16,7 @@ export class Game {
   private camera = new THREE.PerspectiveCamera(50, 16 / 9, 0.05, 200);
   private room!: Room; private hero!: Hero; private rig!: CameraRig; private input!: Input; private dialogue!: Dialogue; private post!: Post;
   private clock = new THREE.Clock();
+  private acc = 0;
   private started = false;
   private interactables: Interactable[] = [];
   private flags = { metBear: false, hasAward: false };
@@ -36,6 +37,10 @@ export class Game {
     this.hero.place(this.room.points.heroStart, -Math.PI / 2);
     this.rig = new CameraRig(this.camera, this.hero.pos);
     this.rig.yaw = Math.PI / 2;
+    this.hero.events = {
+      onLand: (impact, pos) => { this.rig.shake(impact); this.room.puff(pos, impact); },
+      onPush: () => { if (this.hero.onGround) this.room.puff(this.hero.pos, 0.15); },
+    };
     this.input = new Input(canvas, { stick: this.$('stick'), knob: this.$('knob'), jump: this.$('tJump'), skate: this.$('tSkate'), talk: this.$('tTalk') });
     this.dialogue = new Dialogue({ app: this.app, subtitle: this.$('subtitle'), who: this.$('who'), line: this.$('line'), choices: this.$('choices') }, script as Script);
     this.post = new Post(this.renderer, this.scene, this.camera, tier);
@@ -85,13 +90,22 @@ export class Game {
 
   private frame() {
     const t0 = performance.now();
-    const dt = Math.min(this.clock.getDelta(), 0.033), t = this.clock.elapsedTime;
+    // 重い端末でもゲーム速度が落ちないよう、物理は固定刻み（最大 1/60 秒）で回す
+    const dt = Math.min(this.clock.getDelta(), 0.1), t = this.clock.elapsedTime;
     const f = this.input.poll();
 
     if (this.started && this.dialogue.choicesOpen && f.choice) this.dialogue.pick(f.choice - 1);
     const controlling = this.started && !this.dialogue.active;
     this.rig.input(controlling ? f.camDX : 0, controlling ? f.camDY : 0, controlling ? f.camStick : { x: 0, y: 0 }, dt, t);
-    this.hero.update(dt, controlling ? f : null, this.rig, this.room.colliders, this.rig.bounds);
+    this.acc += dt;
+    let stepInput = controlling ? f : null;
+    while (this.acc > 0) {
+      const h = Math.min(this.acc, 1 / 60); this.acc -= h;
+      this.hero.step(h, stepInput, this.rig, this.room.colliders, this.rig.bounds);
+      if (stepInput) stepInput = { ...stepInput, jump: false, skate: false }; // 押した瞬間の入力は最初の刻みだけ
+      if (this.acc < 1e-4) this.acc = 0;
+    }
+    this.hero.animate(dt);
     this.$('modeTag').textContent = this.hero.skate ? 'スケボー' : 'あるく';
 
     // 近くのインタラクト
@@ -104,7 +118,7 @@ export class Game {
 
     this.dialogue.update(dt);
     this.room.update(dt, t);
-    this.rig.update(dt, t, this.hero.pos, this.hero.vel, this.hero.speed * 0.7, { active: this.dialogue.active, pos: this.dialogue.camPos, look: this.dialogue.camLook });
+    this.rig.update(dt, t, this.hero.pos, this.hero.vel, this.hero.speed * 0.7, { active: this.dialogue.active, pos: this.dialogue.camPos, look: this.dialogue.camLook }, this.hero.falling);
     this.post.setFocus(this.camera.position.distanceTo(this.rig.target), this.dialogue.active ? 2.4 : 1);
     this.post.render(dt);
 
