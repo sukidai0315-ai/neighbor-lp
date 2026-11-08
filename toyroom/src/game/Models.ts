@@ -8,13 +8,15 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 const loader = new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
 const base = `${import.meta.env.BASE_URL}models/`;
+// 配信先が .glb を置けないとき（Claude のアーティファクトなど）は拡張子を差し替えられる
+const ext = (globalThis as { __TOYROOM_MODEL_EXT?: string }).__TOYROOM_MODEL_EXT ?? '.glb';
 
 export interface LoadedModel { root: THREE.Group; height: number }
 
 /** name.glb を読み、足元を原点、指定の高さに揃えて返す */
-export async function loadModel(name: string, targetHeight: number, opts: { faceZ?: number } = {}): Promise<LoadedModel | null> {
+export async function loadModel(name: string, targetHeight: number, opts: { faceZ?: number; fitAxis?: 'x' | 'y' | 'z' } = {}): Promise<LoadedModel | null> {
   try {
-    const gltf = await loader.loadAsync(`${base}${name}.glb`);
+    const gltf = await loader.loadAsync(`${base}${name}${ext}`);
     const root = gltf.scene;
     root.traverse(o => {
       const m = o as THREE.Mesh;
@@ -28,7 +30,7 @@ export async function loadModel(name: string, targetHeight: number, opts: { face
     if (opts.faceZ) root.rotation.y = opts.faceZ;
     const box = new THREE.Box3().setFromObject(root);
     const size = box.getSize(new THREE.Vector3());
-    const s = targetHeight / size.y;
+    const s = targetHeight / size[opts.fitAxis ?? 'y']; // ラジコンはアンテナで背が高いので長さで合わせる
     root.scale.setScalar(s);
     box.setFromObject(root);
     const c = box.getCenter(new THREE.Vector3());

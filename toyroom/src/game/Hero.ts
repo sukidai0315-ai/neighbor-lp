@@ -30,8 +30,10 @@ export class Hero {
   private model: THREE.Group | null = null;
   /** 乗っているラジコン。前が +x のモデル */
   ride: THREE.Group | null = null;
-  private get radius() { return this.ride ? 4.6 : 0.22; }
-  private get height() { return this.ride ? 7.0 : 1.75; }
+  /** 乗っているときの当たり判定の大きさと座る位置。Room が本番モデルに合わせて更新する */
+  rideShape = { radius: 4.6, height: 7.0, seatY: 5.6, back: 1.2 };
+  private get radius() { return this.ride ? this.rideShape.radius : 0.22; }
+  private get height() { return this.ride ? this.rideShape.height : 1.75; }
   private steer = 0; private phase = 0; private kick = 0; private groundY = 0;
   private body = new THREE.Group(); private lean = new THREE.Group(); private hips = new THREE.Group();
   private legL = new THREE.Group(); private legR = new THREE.Group(); private armL = new THREE.Group(); private armR = new THREE.Group(); private head = new THREE.Group();
@@ -74,7 +76,7 @@ export class Hero {
   get falling() { return !this.onGround && this.vel.y < -3; }
 
   async applyModel() {
-    const m = await loadModel('parker', 1.75, { faceZ: Math.PI }); if (!m) return;
+    const m = await loadModel('parker', 1.75, { faceZ: 0 }); if (!m) return;
     this.body.visible = false; this.board.visible = false; this.model = m.root; this.root.add(this.model);
   }
 
@@ -220,7 +222,7 @@ export class Hero {
       // 本番モデル（まだ骨なし）: 全体の傾き・弾み・しゃがみだけ付ける
       const m = this.model; m.scale.set(1 + sq * 0.25, 1 - sq * 0.35, 1 + sq * 0.25);
       if (this.ride) { const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
-        const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw)); this.root.position.addScaledVector(face, -1.2).y += 5.6; m.rotation.set(0.05, 0, -this.steer * 0.12); m.position.y = 0; return; }
+        const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw)); this.root.position.addScaledVector(face, -this.rideShape.back).y += this.rideShape.seatY; m.rotation.set(0.05, 0, -this.steer * 0.12); m.position.y = 0; return; }
       if (this.skate) { m.rotation.set(0.05 + Math.min(0.2, this.speed * 0.03), -0.9, this.steer * 0.35); m.position.y = (this.onGround ? 0.17 : 0.27);
         board.visible = true; board.position.copy(this.pos); board.position.y = this.pos.y + (this.onGround ? 0 : .1); board.rotation.order = 'YXZ'; board.rotation.set(this.steer * .15, this.yaw - Math.PI / 2, 0); return; }
       board.visible = false;
@@ -231,7 +233,7 @@ export class Hero {
     if (this.ride) {
       const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
       const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
-      this.root.position.addScaledVector(face, -1.2).y += 5.6; // キャビンの上に座る（車は5倍サイズ）
+      this.root.position.addScaledVector(face, -this.rideShape.back).y += this.rideShape.seatY; // キャビンの上に座る
       body.rotation.y = lerp(body.rotation.y, 0, e(10)); lean.rotation.z = lerp(lean.rotation.z, -this.steer * 0.15, e(8)); lean.rotation.x = lerp(lean.rotation.x, 0.1, e(8));
       legL.position.set(-.16, .72, 0); legR.position.set(.16, .72, 0); legL.rotation.set(-1.35, 0, 0); legR.rotation.set(-1.35, 0, 0);
       armL.rotation.set(-1.0, 0, .25); armR.rotation.set(-1.0, 0, -.25); hips.position.y = -0.1;

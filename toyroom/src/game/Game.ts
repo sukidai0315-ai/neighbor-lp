@@ -63,7 +63,8 @@ export class Game {
     if (this.input.isTouch) this.$('touch').classList.add('show');
 
     // 本番モデルがあれば差し替える（なければ仮モデルのまま）
-    void this.room.applyModels(); void this.hero.applyModel();
+    void this.room.applyModels().then(() => { const cb = new THREE.Box3().setFromObject(this.room.car); const sz = cb.getSize(new THREE.Vector3()); this.hero.rideShape = { radius: Math.max(sz.x, sz.z) * 0.45, height: sz.y, seatY: this.room.seat.y, back: this.room.seat.back }; });
+    void this.hero.applyModel();
     this.setupInteractables();
     for (const it of this.interactables) {
       const kind = it.label === 'はなす' ? 'talk' : it.label === 'のる' ? 'ride' : 'item';
@@ -92,7 +93,7 @@ export class Game {
         const key = this.flags.metBear ? 'bear_again' : 'bear';
         this.hero.stop(); this.hero.faceTowards(points.bear);
         this.room.bear.rotation.y = Math.atan2(this.hero.pos.x - points.bear.x, this.hero.pos.z - points.bear.z);
-        this.dialogue.start(key, points.bear.clone().setY(6), this.hero.pos.clone(), () => { if (!this.flags.metBear) { this.flags.metBear = true; this.setObjective('まどの したの、まるめた かみを さがす'); } });
+        this.dialogue.start(key, points.bear.clone().setY(Math.min(6, this.room.markerHeight.bear * 0.5)), this.hero.pos.clone(), () => { if (!this.flags.metBear) { this.flags.metBear = true; this.setObjective('まどの したの、まるめた かみを さがす'); } });
       },
     });
     // 会話の終わりに欠片が飛んでくる（拾う操作を別にすると、もらえたのか分からないため）
@@ -102,7 +103,7 @@ export class Game {
         this.hero.stop(); this.hero.faceTowards(pos);
         actor.rotation.y = Math.atan2(this.hero.pos.x - pos.x, this.hero.pos.z - pos.z);
         const firstTime = !this.flags[flag];
-        this.dialogue.start(firstTime ? first : again, pos.clone().setY(pos.y + 6.5), this.hero.pos.clone(), () => {
+        this.dialogue.start(firstTime ? first : again, pos.clone().setY(pos.y + Math.min(6.5, (this.room.markerHeight[id] ?? 8) * 0.5)), this.hero.pos.clone(), () => {
           this.flags[flag] = true;
           if (firstTime && !this.flags[frag]) this.flyFragment(fragIndex, () => { this.flags[frag] = true; this.gotFragment(frag); });
         });
@@ -116,7 +117,7 @@ export class Game {
         const mount = () => { this.hero.mount(this.room.car); this.room.setRiding(true); };
         if (this.flags.metDash) { mount(); return; }
         this.hero.stop(); this.hero.faceTowards(this.room.car.position);
-        this.dialogue.start('dash', this.room.car.position.clone().setY(4), this.hero.pos.clone(), () => { this.flags.metDash = true; mount(); });
+        this.dialogue.start('dash', this.room.car.position.clone().setY(Math.min(4, this.room.markerHeight.car * 0.4)), this.hero.pos.clone(), () => { this.flags.metDash = true; mount(); });
       },
     });
     this.interactables.push({
@@ -268,7 +269,7 @@ export class Game {
     }
     this.hero.animate(dt);
     this.$('modeTag').textContent = this.hero.ride ? 'ラジコン' : this.hero.skate ? 'スケボー' : 'あるく';
-    this.rig.extraDist = this.hero.ride ? 4 : 0;
+    this.rig.extraDist = this.hero.ride ? Math.min(4, this.hero.rideShape.height * 0.6) : 0;
     if (this.hero.ride) this.room.spinWheels(this.hero.speed * dt);
 
     // 近くのインタラクト
@@ -294,7 +295,8 @@ export class Game {
       const on = this.started && !this.dialogue.active && !it.done && (it.show ? it.show() : true) && !(this.hero.ride && it.id === 'car');
       m.visible = on; if (!on) continue;
       const p = it.id === 'car' ? this.room.car.position : it.pos;
-      m.position.set(p.x, p.y + (it.markerY ?? 6) + Math.sin(t * 2.2 + p.x) * 0.25, p.z);
+      const my = this.room.markerHeight[it.id] ?? it.markerY ?? 6;
+      m.position.set(p.x, p.y + my + Math.sin(t * 2.2 + p.x) * 0.25, p.z);
       const k = (near === it ? 1.25 : 1) * (it.id === 'vent' ? 1.5 : 1); m.scale.set(2.6 * k, 2.6 * k, 1);
     }
     for (let i = this.flights.length - 1; i >= 0; i--) {

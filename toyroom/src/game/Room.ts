@@ -41,10 +41,16 @@ export class Room {
   readonly car = new THREE.Group();
   readonly wheels: THREE.Mesh[] = [];
   readonly headlights: THREE.SpotLight[] = [];
+  private headlightPower = 140 * S * S; // 本番モデルの大きさに合わせて applyModels で下げる
   fragments: THREE.Mesh[] = [];
   private headlampMat!: THREE.MeshStandardMaterial;
   private robotEyes!: THREE.MeshStandardMaterial;
   private carColliderIndex = -1;
+  private actorCollider: Record<string, number> = {};
+  /** 本番モデルに合わせた目印の高さ（world 単位）。読めるまでは仮モデルの値 */
+  markerHeight: Record<string, number> = { bear: 9, robot: 11, rabbit: 10, car: 8.5 };
+  /** 乗ったときの座る高さと後ろへのずれ（world 単位） */
+  seat = { y: 5.6, back: 1.2 };
   readonly awardBall: THREE.Mesh;
   private bearHead!: THREE.Mesh;
   private dustGeo: THREE.BufferGeometry;
@@ -245,6 +251,7 @@ export class Room {
     bk(new THREE.CylinderGeometry(.22, .22, .5, 10), botDark, [-.45, .25, 0]); bk(new THREE.CylinderGeometry(.22, .22, .5, 10), botDark, [.45, .25, 0]);
     this.robot.position.set(cave.x - 1.2, 0, cave.z - 1.2); this.robot.rotation.y = 0.5; this.group.add(this.robot);
     add(new THREE.CylinderGeometry(.16, .16, 1.3, 10), botDark, [cave.x + 1.8, .16, cave.z - 1.6], [Math.PI / 2, 0, 0.4]); // 取れた左腕が床に
+    this.actorCollider.robot = this.colliders.length;
     this.colliders.push(new THREE.Box3(new THREE.Vector3(cave.x - 2.1, 0, cave.z - 2.0).multiplyScalar(S), new THREE.Vector3(cave.x - 0.3, 3.4, cave.z - 0.4).multiplyScalar(S)));
 
     // ---- スロープ（ベッドへ）: 厚い画用紙の束のくさび。見た目と当たり判定を一致させる ----
@@ -269,6 +276,7 @@ export class Room {
       rk(new THREE.SphereGeometry(.055, 10, 8), rubber, [s * .18, 1.85, .46]); rk(new THREE.SphereGeometry(.3, 16, 12), bunnyMat, [s * .55, .35, .35], [.9, .6, 1.2]); rk(new THREE.SphereGeometry(.2, 14, 10), bunnyMat, [s * .7, .95, .1], [.7, 1.3, .7], [0, 0, -s * .6]); });
     rk(new THREE.SphereGeometry(.08, 10, 8), new THREE.MeshStandardMaterial({ color: 0xd86a7a, roughness: .7 }), [0, 1.66, .5], [1, .7, .8]);
     this.rabbit.position.set(-11.2, 4.5, 0.6); this.rabbit.rotation.y = 2.4; this.group.add(this.rabbit);
+    this.actorCollider.rabbit = this.colliders.length;
     this.colliders.push(new THREE.Box3(new THREE.Vector3(-11.9, 4.5, -0.1).multiplyScalar(S), new THREE.Vector3(-10.5, 7.2, 1.3).multiplyScalar(S)));
 
     // ---- 賞の欠片（2つ） ----
@@ -288,6 +296,7 @@ export class Room {
     [-1, 1].forEach(s => { mk(new THREE.SphereGeometry(.26, 18, 14), bearMat, [s * .52, 2.92, 0]); mk(new THREE.SphereGeometry(.14, 12, 10), bellyMat, [s * .52, 2.92, .12], [1, 1, .5]); mk(new THREE.SphereGeometry(.07, 12, 10), rubber, [s * .25, 2.48, .62]);
       mk(new THREE.SphereGeometry(.32, 18, 14), bearMat, [s * 1.0, 1.2, .15], [.75, 1.5, .75], [0, 0, -s * .5]); mk(new THREE.SphereGeometry(.38, 18, 14), bearMat, [s * .58, .36, .65], [.85, .7, 1.3]); mk(new THREE.SphereGeometry(.2, 18, 14), bellyMat, [s * .58, .3, 1.12], [1, .7, .5]); });
     this.bear.position.set(3.6, 0, -1.4); this.bear.rotation.y = -0.9; this.group.add(this.bear);
+    this.actorCollider.bear = this.colliders.length;
     this.colliders.push(new THREE.Box3(new THREE.Vector3(2.7, 0, -2.3).multiplyScalar(S), new THREE.Vector3(4.5, 3.2, -0.5).multiplyScalar(S)));
 
     // ---- 丸められた賞（窓の下） ----
@@ -417,7 +426,7 @@ export class Room {
   setRiding(on: boolean) {
     const b = this.colliders[this.carColliderIndex];
     if (on) { b.min.set(0, 0, 0); b.max.set(0, 0, 0); } else { this.car.updateMatrixWorld(true); b.setFromObject(this.car); }
-    for (const s of this.headlights) s.intensity = on ? 140 * S * S : 0;
+    for (const s of this.headlights) s.intensity = on ? this.headlightPower : 0;
     this.headlampMat.emissiveIntensity = on ? 2.5 : 0;
   }
   fragmentWorld(i: number) { return this.fragments[i].getWorldPosition(new THREE.Vector3()); }
@@ -440,18 +449,35 @@ export class Room {
 
   /** 本番モデル（public/models）を読めたものから仮モデルと差し替える。読めなければ仮のまま */
   async applyModels() {
-    const swap = async (grp: THREE.Group, name: string, height: number, faceZ: number, keep: (o: THREE.Object3D) => boolean = () => false) => {
-      const m = await loadModel(name, height, { faceZ }); if (!m) return;
-      for (const c of [...grp.children]) if (!keep(c)) c.visible = false;
-      grp.add(m.root);
+    // 寸法は実物のおもちゃの比率（主人公 12cm = 1.75）。部屋のローカル単位は 1cm = 0.0292
+    const cm = 1.75 / 12;
+    const swap = async (grp: THREE.Group, name: string, worldSize: number, faceZ: number, colliderKey?: string, keep: (o: THREE.Object3D) => boolean = () => false) => {
+      const local = grp === this.car ? worldSize / S : worldSize / S; // どちらも親が S 倍
+      const m = await loadModel(name, local, { faceZ, fitAxis: name === 'dash' ? 'x' : 'y' }); if (!m) return;
+      for (const c of [...grp.children]) if (!keep(c)) grp.remove(c);
+      grp.add(m.root); grp.updateMatrixWorld(true);
+      if (colliderKey && this.actorCollider[colliderKey] !== undefined) {
+        const b = this.colliders[this.actorCollider[colliderKey]]; b.setFromObject(grp);
+        const cx = (b.min.x + b.max.x) / 2, cz = (b.min.z + b.max.z) / 2, r = Math.max(b.max.x - b.min.x, b.max.z - b.min.z) * 0.35; // 足元より少し小さめ
+        b.min.x = cx - r; b.max.x = cx + r; b.min.z = cz - r; b.max.z = cz + r;
+      }
+      const h = new THREE.Box3().setFromObject(grp).getSize(new THREE.Vector3()).y;
+      if (colliderKey) this.markerHeight[colliderKey] = h + 1.6;
     };
     await Promise.all([
-      swap(this.bear, 'boro', 3.3, Math.PI),
-      swap(this.robot, 'gacha', 4.2, Math.PI),
-      swap(this.rabbit, 'mimi', 3.6, Math.PI),
-      // ラジコンは前が +x。ライトとターゲットは残す
-      swap(this.car, 'dash', 2.3, Math.PI / 2, o => (o as THREE.Light).isLight || o.type === 'Object3D'),
+      swap(this.bear, 'boro', 25 * cm, 0, 'bear'),
+      swap(this.robot, 'gacha', 20 * cm, 0, 'robot'),
+      swap(this.rabbit, 'mimi', 22 * cm, 0, 'rabbit'),
+      // ラジコンは前が +x（生成モデルは -x が前なので半回転）。ライトとターゲットは残す。長さ 26cm
+      swap(this.car, 'dash', 26 * cm, Math.PI, undefined, o => (o as THREE.Light).isLight || o.type === 'Object3D'),
     ]);
+    // ラジコンの当たり判定と座る位置
+    this.car.updateMatrixWorld(true); const cb = new THREE.Box3().setFromObject(this.car); const ch = cb.max.y - cb.min.y;
+    this.markerHeight.car = ch + 1.5; this.seat = { y: ch * 0.62, back: 0.9 };
+    if (this.carColliderIndex >= 0) this.colliders[this.carColliderIndex].copy(cb);
+    const lenRatio = (cb.max.x - cb.min.x) / (2.6 * S); // 仮モデル比の長さ
+    this.headlightPower = 140 * S * S * lenRatio * lenRatio * 0.6; this.headlampMat.emissiveIntensity = 0;
+    for (const s of this.headlights) { s.position.set(1.0, 0.35, s.position.z > 0 ? 0.22 : -0.22); s.target.position.set(6, 0, s.position.z * 1.5); s.distance = 22 * S * lenRatio; s.angle = 0.5; }
   }
 
   /** 天井の明かり。スイッチで切り替え */
