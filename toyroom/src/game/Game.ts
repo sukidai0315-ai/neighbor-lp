@@ -62,12 +62,12 @@ export class Game {
   private setupInteractables() {
     const { points } = this.room;
     this.interactables.push({
-      id: 'bear', pos: points.bear, radius: 2.0, label: 'はなす',
+      id: 'bear', pos: points.bear, radius: 2.8, label: 'はなす',
       onUse: () => {
         const key = this.flags.metBear ? 'bear_again' : 'bear';
         this.hero.stop(); this.hero.faceTowards(points.bear);
         this.room.bear.rotation.y = Math.atan2(this.hero.pos.x - points.bear.x, this.hero.pos.z - points.bear.z);
-        this.dialogue.start(key, points.bear.clone().setY(1.2), this.hero.pos.clone(), () => { this.flags.metBear = true; });
+        this.dialogue.start(key, points.bear.clone().setY(2.4), this.hero.pos.clone(), () => { this.flags.metBear = true; });
       },
     });
     const talk = (id: string, pos: THREE.Vector3, radius: number, actor: THREE.Group, first: string, again: string, flag: 'metRobot' | 'metRabbit') => this.interactables.push({
@@ -75,30 +75,30 @@ export class Game {
       onUse: () => {
         this.hero.stop(); this.hero.faceTowards(pos);
         actor.rotation.y = Math.atan2(this.hero.pos.x - pos.x, this.hero.pos.z - pos.z);
-        this.dialogue.start(this.flags[flag] ? again : first, pos.clone().setY(pos.y + 1.4), this.hero.pos.clone(), () => { this.flags[flag] = true; });
+        this.dialogue.start(this.flags[flag] ? again : first, pos.clone().setY(pos.y + 2.6), this.hero.pos.clone(), () => { this.flags[flag] = true; });
       },
     });
-    talk('robot', points.robot, 2.4, this.room.robot, 'gacha', 'gacha_again', 'metRobot');
-    talk('rabbit', points.rabbit, 2.2, this.room.rabbit, 'mimi', 'mimi_again', 'metRabbit');
-    const pickup = (id: 'frag1' | 'frag2', mesh: THREE.Mesh) => this.interactables.push({
-      id, pos: mesh.position, radius: 1.5, label: 'ひろう',
+    talk('robot', points.robot, 3.2, this.room.robot, 'gacha', 'gacha_again', 'metRobot');
+    talk('rabbit', points.rabbit, 3.0, this.room.rabbit, 'mimi', 'mimi_again', 'metRabbit');
+    const pickup = (id: 'frag1' | 'frag2', index: number) => this.interactables.push({
+      id, pos: this.room.fragmentWorld(index), radius: 1.8, label: 'ひろう',
       onUse: () => {
         const it = this.interactables.find(i => i.id === id)!; it.done = true; this.hero.stop();
-        this.dialogue.start(id, mesh.position.clone(), this.hero.pos.clone(), () => { this.flags[id] = true; mesh.visible = false; });
+        this.dialogue.start(id, this.room.fragmentWorld(index), this.hero.pos.clone(), () => { this.flags[id] = true; this.room.fragments[index].visible = false; });
       },
     });
-    pickup('frag1', this.room.fragments[0]); pickup('frag2', this.room.fragments[1]);
+    pickup('frag1', 0); pickup('frag2', 1);
     this.interactables.push({
-      id: 'car', pos: this.room.car.position, radius: 2.4, label: 'のる',
+      id: 'car', pos: this.room.car.position, radius: 3.4, label: 'のる',
       onUse: () => {
         const mount = () => { this.hero.mount(this.room.car); this.room.setRiding(true); };
         if (this.flags.metDash) { mount(); return; }
         this.hero.stop(); this.hero.faceTowards(this.room.car.position);
-        this.dialogue.start('dash', this.room.car.position.clone().setY(1.0), this.hero.pos.clone(), () => { this.flags.metDash = true; mount(); });
+        this.dialogue.start('dash', this.room.car.position.clone().setY(1.6), this.hero.pos.clone(), () => { this.flags.metDash = true; mount(); });
       },
     });
     this.interactables.push({
-      id: 'award', pos: points.award, radius: 1.4, label: 'ひろう',
+      id: 'award', pos: points.award, radius: 1.8, label: 'ひろう',
       onUse: () => {
         const it = this.interactables.find(i => i.id === 'award')!; it.done = true;
         this.hero.stop(); this.hero.faceTowards(points.award);

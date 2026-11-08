@@ -8,8 +8,8 @@ import type { Ramp } from './Room';
 // 主人公「パーカー」。20歳くらいのスケーター青年のプラスチックフィギュア、身長 12cm。
 // 仮モデル（手続き生成）と、歩き／スケボーの移動、手続きアニメーション。
 
-const WALK_SPEED = 2.8, SKATE_MAX = 8.5, JUMP_V = 7.8, G_UP = 19, G_DOWN = 27;
-const CAR_MAX = 11, CAR_ACCEL = 12, CAR_REVERSE = 4;
+const WALK_SPEED = 3.0, SKATE_MAX = 10, JUMP_V = 7.8, G_UP = 19, G_DOWN = 27;
+const CAR_MAX = 14, CAR_ACCEL = 14, CAR_REVERSE = 5;
 const PUSH_IMPULSE = 2.6, PUSH_INTERVAL = 0.42;
 const { lerp, clamp } = T;
 
@@ -26,8 +26,8 @@ export class Hero {
   events: HeroEvents = {};
   /** 乗っているラジコン。前が +x のモデル */
   ride: THREE.Group | null = null;
-  private get radius() { return this.ride ? 0.95 : 0.22; }
-  private get height() { return this.ride ? 1.5 : 1.75; }
+  private get radius() { return this.ride ? 1.9 : 0.22; }
+  private get height() { return this.ride ? 3.0 : 1.75; }
   private steer = 0; private phase = 0; private kick = 0; private groundY = 0;
   private body = new THREE.Group(); private lean = new THREE.Group(); private hips = new THREE.Group();
   private legL = new THREE.Group(); private legR = new THREE.Group(); private armL = new THREE.Group(); private armR = new THREE.Group(); private head = new THREE.Group();
@@ -188,7 +188,7 @@ export class Hero {
     if (this.ride) {
       const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
       const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
-      this.root.position.addScaledVector(face, -0.25).y += 1.15; // キャビンの上に座る
+      this.root.position.addScaledVector(face, -0.5).y += 2.3; // キャビンの上に座る（車は2倍サイズ）
       body.rotation.y = lerp(body.rotation.y, 0, e(10)); lean.rotation.z = lerp(lean.rotation.z, -this.steer * 0.15, e(8)); lean.rotation.x = lerp(lean.rotation.x, 0.1, e(8));
       legL.position.set(-.16, .72, 0); legR.position.set(.16, .72, 0); legL.rotation.set(-1.35, 0, 0); legR.rotation.set(-1.35, 0, 0);
       armL.rotation.set(-1.0, 0, .25); armR.rotation.set(-1.0, 0, -.25); hips.position.y = -0.1;

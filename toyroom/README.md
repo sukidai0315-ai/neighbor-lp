@@ -32,7 +32,7 @@ npm run typecheck
 - `src/game/textures.ts` コード生成の素材
 - `src/data/script.json` 台詞
 
-単位は 1 = 10cm。主人公の身長は 12cm。
+単位は 1 = 10cm。主人公の身長は 12cm。部屋は `Room.ts` の `S = 2` で2倍にしてあり、相対的に主人公が小さく見える。
 
 ## フェーズ
 

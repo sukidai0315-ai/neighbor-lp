@@ -9,7 +9,7 @@ export interface CamTuning { dist: number; pitch: number; fov: number; follow: n
 export class CameraRig {
   yaw = 0; pitch = 0.3;
   tuning: CamTuning = { dist: 4.6, pitch: 0.3, fov: 50, follow: 1.4 };
-  bounds = { minX: -19.3, maxX: 19.3, minZ: -11.3, maxZ: 17.3 };
+  bounds = { minX: -19.3 * 2, maxX: 19.3 * 2, minZ: -11.3 * 2, maxZ: 17.3 * 2 };
   readonly target = new THREE.Vector3();
   private pos = new THREE.Vector3();
   private lastInput = -9;
