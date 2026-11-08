@@ -17,6 +17,7 @@ export class Game {
   private room!: Room; private hero!: Hero; private rig!: CameraRig; private input!: Input; private dialogue!: Dialogue; private post!: Post;
   private clock = new THREE.Clock();
   private acc = 0;
+  private moveYaw = 0; private stickHeld = false;
   private started = false;
   private interactables: Interactable[] = [];
   private flags = { metBear: false, hasAward: false, metDash: false, metRobot: false, metRabbit: false, frag1: false, frag2: false };
@@ -129,11 +130,17 @@ export class Game {
     if (this.started && this.dialogue.choicesOpen && f.choice) this.dialogue.pick(f.choice - 1);
     const controlling = this.started && !this.dialogue.active;
     this.rig.input(controlling ? f.camDX : 0, controlling ? f.camDY : 0, controlling ? f.camStick : { x: 0, y: 0 }, dt, t);
+    // スティックの「前」は倒し始めたときのカメラ向きで固定する（回り込み中に進路が曲がらないように）。
+    // 自分でカメラを動かしたときはその向きに追従する
+    const held = controlling && f.move.l > 0.1;
+    if (held && (!this.stickHeld || t - this.rig.lastInputTime < 0.3)) this.moveYaw = this.rig.yaw;
+    if (!held) this.moveYaw = this.rig.yaw;
+    this.stickHeld = held;
     this.acc += dt;
     let stepInput = controlling ? f : null;
     while (this.acc > 0) {
       const h = Math.min(this.acc, 1 / 60); this.acc -= h;
-      this.hero.step(h, stepInput, this.rig, this.room.colliders, this.room.ramps, this.rig.bounds);
+      this.hero.step(h, stepInput, this.moveYaw, this.room.colliders, this.room.ramps, this.rig.bounds);
       if (stepInput) stepInput = { ...stepInput, jump: false, skate: false }; // 押した瞬間の入力は最初の刻みだけ
       if (this.acc < 1e-4) this.acc = 0;
     }

@@ -13,6 +13,8 @@ export class CameraRig {
   readonly target = new THREE.Vector3();
   private pos = new THREE.Vector3();
   private lastInput = -9;
+  /** 最後に手でカメラを動かした時刻 */
+  get lastInputTime() { return this.lastInput; }
   private cinematic = false;
   private shakeAmp = 0; private shakeT = 0;
   private fallLook = 0;

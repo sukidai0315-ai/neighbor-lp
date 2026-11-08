@@ -3,7 +3,6 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import * as T from './textures';
 import { scanned } from './assets';
 import type { Frame } from './Input';
-import type { CameraRig } from './CameraRig';
 import type { Ramp } from './Room';
 
 // 主人公「パーカー」。20歳くらいのスケーター青年のプラスチックフィギュア、身長 12cm。
@@ -110,10 +109,11 @@ export class Hero {
   }
 
   /** 物理の1ステップ。Game 側が固定刻みで複数回呼ぶ */
-  step(dt: number, f: Frame | null, cam: CameraRig, colliders: THREE.Box3[], ramps: Ramp[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
+  /** moveYaw: スティックの「前」をどのカメラ向きで解釈するか（倒し始めの向きで固定される） */
+  step(dt: number, f: Frame | null, moveYaw: number, colliders: THREE.Box3[], ramps: Ramp[], bounds: { minX: number; maxX: number; minZ: number; maxZ: number }) {
     this.time += dt;
     const inp = f ? f.move : { x: 0, z: 0, l: 0 };
-    const fwd = cam.forward(), right = cam.right();
+    const fwd = new THREE.Vector3(-Math.sin(moveYaw), 0, -Math.cos(moveYaw)), right = new THREE.Vector3(-fwd.z, 0, fwd.x);
     const wish = new THREE.Vector3().addScaledVector(fwd, -inp.z).addScaledVector(right, inp.x);
     if (f?.jump) this.jumpBuffer = 0.12; else this.jumpBuffer = Math.max(0, this.jumpBuffer - dt);
     if (f?.skate && !this.ride) this.toggleSkate();
@@ -137,22 +137,23 @@ export class Hero {
       if (inp.l > .05) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-14 * dt)); }
       this.steer = lerp(this.steer, 0, 1 - Math.exp(-8 * dt)); this.speed = Math.hypot(this.vel.x, this.vel.z);
     } else {
-      const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
+      // スケボー: スティックを倒した方向へ向かう。向きが合ってから蹴る。速いほど曲がりは緩やか
       const pressing = inp.l > .05;
-      const along = pressing ? wish.dot(face) : 0;
-      const steerIn = pressing ? clamp(wish.dot(new THREE.Vector3(-face.z, 0, face.x)) * 1.8, -1, 1) : 0; // 右手方向との内積。正 = スティックが右
-      this.steer = lerp(this.steer, steerIn, 1 - Math.exp(-9 * dt));
-      // 止まっている／遅いときは、スティックの方向へ素早く向き直る
-      if (pressing && this.speed < 1.2) { const ty = Math.atan2(wish.x, wish.z); let d = ty - this.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); this.yaw += d * (1 - Math.exp(-10 * dt)); }
-      // 押し出し: 前に倒している間、一定間隔で蹴って加速する（最初の一蹴りで歩きより速くなる）
-      if (pressing && along > -0.2 && this.onGround) {
-        if (this.pushCooldown <= 0) { this.speed += PUSH_IMPULSE * (0.6 + 0.4 * Math.max(0, along)); this.pushCooldown = PUSH_INTERVAL; this.kick = 1; this.events.onPush?.(); }
-        this.speed += 2.2 * Math.max(0, along) * dt;
+      let diff = 0;
+      if (pressing) {
+        const ty = Math.atan2(wish.x, wish.z); diff = Math.atan2(Math.sin(ty - this.yaw), Math.cos(ty - this.yaw));
+        const rate = this.speed < 1.0 ? 12 : 4.2 - 2.2 * Math.min(1, this.speed / SKATE_MAX);
+        const turn = clamp(diff, -rate * dt, rate * dt); this.yaw += turn;
+        this.steer = lerp(this.steer, clamp(-diff * 1.5, -1, 1) * Math.min(1, this.speed / 3), 1 - Math.exp(-10 * dt));
+      } else this.steer = lerp(this.steer, 0, 1 - Math.exp(-6 * dt));
+      const aligned = pressing && Math.abs(diff) < 0.6;
+      if (aligned && this.onGround) {
+        if (this.pushCooldown <= 0) { this.speed += PUSH_IMPULSE; this.pushCooldown = PUSH_INTERVAL; this.kick = 1; this.events.onPush?.(); }
+        this.speed += 2.0 * dt;
       }
       this.kick = Math.max(0, this.kick - dt * 2.4);
-      if (pressing && along < -0.5) this.speed -= 7 * dt; // 後ろに倒すとブレーキ
+      if (pressing && Math.abs(diff) > 2.3 && this.speed > 1.0) this.speed -= 9 * dt; // 進行方向の逆に倒すとブレーキ
       this.speed -= (this.speed * 0.22 + 0.25) * dt; this.speed = clamp(this.speed, 0, SKATE_MAX);
-      if (this.speed > .2) this.yaw -= this.steer * (1.6 + 1.4 * Math.min(1, this.speed / 5)) * dt;
       const nf = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw));
       this.vel.x = nf.x * this.speed; this.vel.z = nf.z * this.speed;
     }
