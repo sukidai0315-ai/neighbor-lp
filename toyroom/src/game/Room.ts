@@ -150,7 +150,7 @@ export class Room {
       ck(new THREE.CylinderGeometry(.14, .14, .1, 14), this.headlampMat, [1.32, .68, z], [0, 0, Math.PI / 2]);
       const s = new THREE.SpotLight(0xfff0c8, 0, 22 * S, 0.55, 0.5, 1.5); s.position.set(1.3, .7, z); s.target.position.set(8, 0, z * 1.5); car.add(s, s.target); this.headlights.push(s);
     });
-    car.scale.setScalar(S); car.position.set(4.5 * S, 0, 9.5 * S); car.rotation.y = 2.3; scene.add(car); car.updateMatrixWorld(true);
+    car.scale.setScalar(S); car.position.set(8.5 * S, 0, 3.0 * S); car.rotation.y = 2.3; scene.add(car); // ラグの右手前。スロープの入口は塞がない car.updateMatrixWorld(true);
     this.carColliderIndex = this.colliders.length; this.colliders.push(new THREE.Box3().setFromObject(car));
 
     // ---- 机の下の暗がり: 段ボール箱の洞窟（口は部屋側 +z） ----
@@ -185,7 +185,7 @@ export class Room {
     const pagesMat = new THREE.MeshStandardMaterial({ color: 0xf1ebdd, roughness: .95 });
     const wedge = new THREE.Mesh(wedgeGeo, pagesMat); wedge.position.set(0, 0.01, ramp.z0); wedge.castShadow = wedge.receiveShadow = true; this.group.add(wedge);
     // 表紙（青い大きな本）が斜面の上に乗っている
-    const len = Math.hypot(ramp.x1 - ramp.x0, ramp.h1 - ramp.h0), ang = Math.atan2(ramp.h1 - ramp.h0, ramp.x0 - ramp.x1);
+    const len = Math.hypot(ramp.x1 - ramp.x0, ramp.h1 - ramp.h0), ang = -Math.atan2(ramp.h1 - ramp.h0, ramp.x0 - ramp.x1); // -x へ向かって上る
     add(new RoundedBoxGeometry(len + 0.3, 0.16, ramp.z1 - ramp.z0 + 0.2, 2, .04), new THREE.MeshStandardMaterial({ color: 0x2f6b9a, roughness: .55 }), [(ramp.x0 + ramp.x1) / 2, (ramp.h0 + ramp.h1) / 2 + 0.07, (ramp.z0 + ramp.z1) / 2], [0, 0, ang]);
     this.ramps.push({ minX: Math.min(ramp.x0, ramp.x1) * S, maxX: Math.max(ramp.x0, ramp.x1) * S, minZ: ramp.z0 * S, maxZ: ramp.z1 * S, hAtMinX: ramp.h1 * S, hAtMaxX: ramp.h0 * S });
 
