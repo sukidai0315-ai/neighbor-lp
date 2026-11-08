@@ -366,7 +366,15 @@ export class Room {
     add(new THREE.BoxGeometry(ventW, ventH, 4.0), ductMat, [ventX, ventY, wallZ - 2.0], undefined, { shadow: false }); // 内側だけ見える箱
     add(new THREE.BoxGeometry(ventW + 0.3, ventH + 0.3, 0.1), bracketMat, [ventX, ventY, wallZ + 0.06]); // 枠
     for (let i = 0; i < 5; i++) add(new THREE.BoxGeometry(ventW - 0.2, 0.08, 0.06), bracketMat, [ventX, ventY - ventH / 2 + 0.25 + i * 0.28, wallZ + 0.12], [0.5, 0, 0]);
-    add(new THREE.BoxGeometry(ventW - 0.1, 0.1, 3.9), new THREE.MeshStandardMaterial({ color: 0x80838a, roughness: .6, metalness: .4 }), [ventX, ventY - ventH / 2 + 0.05, wallZ - 2.0], undefined, { solid: true }); // 床（上面 11.65）
+    add(new THREE.BoxGeometry(ventW - 0.1, 0.1, 3.9), new THREE.MeshStandardMaterial({ color: 0x80838a, roughness: .6, metalness: .4 }), [ventX, ventY - ventH / 2 + 0.05, wallZ - 2.0], undefined, { solid: true }); // 床
+    add(new THREE.BoxGeometry(ventW + 0.3, 0.16, 1.1), new THREE.MeshStandardMaterial({ color: 0x80838a, roughness: .6, metalness: .4 }), [ventX, ventY - ventH / 2 + 0.02, wallZ + 0.5], undefined, { solid: true }); // 壁から張り出した口（棚からここへ登る）
+    // 壁の当たり判定: 奥の壁は排気口の穴だけ空ける
+    const wallBox = (x0: number, x1: number, y0: number, y1: number, z0: number, z1: number) => this.colliders.push(new THREE.Box3(new THREE.Vector3(x0, y0, z0).multiplyScalar(S), new THREE.Vector3(x1, y1, z1).multiplyScalar(S)));
+    const vx0 = ventX - ventW / 2 + 0.1, vx1 = ventX + ventW / 2 - 0.1, vy0 = ventY - ventH / 2, vy1 = ventY + ventH / 2;
+    wallBox(-20, vx0, 0, 26, wallZ - 0.5, wallZ); wallBox(vx1, 20, 0, 26, wallZ - 0.5, wallZ);
+    wallBox(vx0, vx1, 0, vy0, wallZ - 0.5, wallZ); wallBox(vx0, vx1, vy1, 26, wallZ - 0.5, wallZ);
+    wallBox(-20.5, -20, 0, 26, -12.5, 24.5); wallBox(20, 20.5, 0, 26, -12.5, 24.5); wallBox(-20, 20, 0, 26, 18, 18.5);
+    wallBox(vx0, vx1, vy0, vy1, wallZ - 4.1, wallZ - 4.0); // ダクトの突き当たり
     // ひみつきちの中身: 懐中電灯（ついている）とビー玉
     add(new THREE.CylinderGeometry(.22, .18, 1.1, 12), new THREE.MeshPhysicalMaterial({ color: 0xe3a21a, roughness: .4, clearcoat: .5 }), [ventX - 0.7, ventY - ventH / 2 + 0.3, wallZ - 3.0], [0, 0, Math.PI / 2 - 0.3]);
     const torch = new THREE.PointLight(0xffe8b0, 14 * S * S, 14 * S, 2); torch.position.set(ventX - 0.2, ventY - ventH / 2 + 0.4, wallZ - 3.0); this.group.add(torch);

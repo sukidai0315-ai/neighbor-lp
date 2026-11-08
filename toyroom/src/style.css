@@ -96,3 +96,14 @@ body { font-family: var(--font); color: #fff; -webkit-tap-highlight-color: trans
 /* お知らせ */
 .toast { position: absolute; left: 50%; top: calc(max(10px, env(safe-area-inset-top)) + 52px); transform: translateX(-50%) translateY(-6px); z-index: 5; background: rgba(20,12,8,.78); color: #fff; font-size: 14px; padding: 7px 16px; border-radius: 999px; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; white-space: nowrap; max-width: 92%; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* 会話中のとばすボタン */
+.skip { position: absolute; right: max(14px, env(safe-area-inset-right)); bottom: calc(11% + 10px); z-index: 6; display: none; gap: 8px; }
+#app.cine .skip { display: flex; }
+.skip button { font: inherit; font-family: var(--font); font-size: 12px; padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.45); background: rgba(20,12,8,.6); color: #fff; cursor: pointer; }
+.skip button:active { background: var(--accent); }
+
+/* 音の切り替え */
+.mute { position: absolute; right: max(14px, env(safe-area-inset-right)); top: calc(max(10px, env(safe-area-inset-top)) + 62px); z-index: 4; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(20,12,8,.5); color: #fff; font-family: var(--font); font-size: 15px; cursor: pointer; transition: opacity .3s; }
+.mute.off { color: rgba(255,255,255,.35); text-decoration: line-through; }
+#app.cine .mute, #app.pre .mute { opacity: 0; pointer-events: none; }

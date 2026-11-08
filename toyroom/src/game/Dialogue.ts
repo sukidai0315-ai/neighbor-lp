@@ -18,6 +18,8 @@ export class Dialogue {
   private onEnd: (() => void) | null = null;
   /** {event} 行に来たときに呼ばれる。演出のフック */
   onEvent: ((name: string) => void) | null = null;
+  /** 台詞が1行出るたびに呼ばれる（効果音用） */
+  onLine: (() => void) | null = null;
 
   constructor(private ui: DialogueUI, private script: Script) {}
 
@@ -52,6 +54,7 @@ export class Dialogue {
     if ('choices' in item) { this.showChoices(item.choices); return; }
     this.ui.who.textContent = item.who; this.ui.line.textContent = item.text;
     this.ui.subtitle.classList.toggle('show', item.text.length > 0);
+    if (item.text.length > 0) this.onLine?.();
     this.timer = item.hold ?? (1.6 + item.text.length * 0.1);
   }
 
@@ -74,8 +77,19 @@ export class Dialogue {
     this.timer = 1.3; this.queue.unshift({ goto: list[i].next });
   }
 
-  /** デバッグ: 今の行を飛ばす */
+  /** 今の行を飛ばす */
   skip() { if (this.active && !this.choicesOpen) this.timer = 0; }
+  /** 最後まで飛ばす。演出の合図（event）と分岐は実行し、選択肢で止まる */
+  skipAll() {
+    if (!this.active || this.choicesOpen) return;
+    for (let guard = 0; guard < 200 && this.active && !this.choicesOpen; guard++) {
+      const item = this.queue.shift();
+      if (item === undefined || 'end' in item) { this.finish(); return; }
+      if ('goto' in item) { this.queue = (this.current?.[item.goto] ?? []).slice(); continue; }
+      if ('event' in item) { this.onEvent?.(item.event); continue; }
+      if ('choices' in item) { this.showChoices(item.choices); return; }
+    }
+  }
 
   update(dt: number) {
     if (!this.active || this.choicesOpen) return;

@@ -7,6 +7,7 @@ import { Input } from './Input';
 import { Dialogue, type Script } from './Dialogue';
 import { Post, detectTier } from './Post';
 import script from '../data/script.json';
+import { GameAudio } from './Audio';
 
 interface Interactable { id: string; pos: THREE.Vector3; radius: number; label: string; done?: boolean; onUse: () => void; marker?: THREE.Sprite; markerY?: number; show?: () => boolean }
 
@@ -23,6 +24,10 @@ export class Game {
   private flags = { metBear: false, hasAward: false, metDash: false, metRobot: false, metRabbit: false, frag1: false, frag2: false, repaired: false };
   private ending = false; private endingT = 0;
   private hintedDesk = false;
+  private audio = new GameAudio();
+  private stepTimer = 0;
+  /** 主人公の移動範囲。壁は当たり判定で止めるので、排気口のダクトの奥まで入れる */
+  private heroBounds = { minX: -100, maxX: 100, minZ: -82, maxZ: 92 };
   private toastTimer: number | null = null;
   private flights: { mesh: THREE.Mesh; from: THREE.Vector3; t: number; onDone: () => void }[] = [];
   private $ = (id: string) => document.getElementById(id) as HTMLElement;
@@ -47,9 +52,11 @@ export class Game {
     this.rig = new CameraRig(this.camera, this.hero.pos);
     this.rig.yaw = Math.PI / 2;
     this.hero.events = {
-      onLand: (impact, pos) => { this.rig.shake(impact); this.room.puff(pos, impact); },
-      onPush: () => { if (this.hero.onGround) this.room.puff(this.hero.pos, 0.15); },
+      onLand: (impact, pos) => { this.rig.shake(impact); this.room.puff(pos, impact); this.audio.land(impact); },
+      onPush: () => { if (this.hero.onGround) this.room.puff(this.hero.pos, 0.15); if (this.hero.skate) this.audio.push(); else this.audio.mantle(); },
     };
+    try { if (localStorage.getItem('toyroom.muted') === '1') { this.audio.muted = true; this.$('muteBtn').classList.add('off'); } } catch { /* 読めなくても動く */ }
+    this.$('muteBtn').addEventListener('click', () => { this.audio.unlock(); this.audio.setMuted(!this.audio.muted); this.$('muteBtn').classList.toggle('off', this.audio.muted); });
     this.input = new Input(canvas, { stick: this.$('stick'), knob: this.$('knob'), jump: this.$('tJump'), skate: this.$('tSkate'), talk: this.$('tTalk') });
     this.dialogue = new Dialogue({ app: this.app, subtitle: this.$('subtitle'), who: this.$('who'), line: this.$('line'), choices: this.$('choices') }, script as Script);
     this.post = new Post(this.renderer, this.scene, this.camera, tier);
@@ -65,9 +72,12 @@ export class Game {
     this.setObjective('ラグの クマ（ボロ）に はなす');
     this.setupDebug();
 
-    this.$('startBtn').addEventListener('click', () => { this.started = true; this.$('title').remove(); this.app.classList.remove('pre'); canvas.focus(); this.playIntro(); });
+    this.$('startBtn').addEventListener('click', () => { this.audio.unlock(); this.started = true; this.$('title').remove(); this.app.classList.remove('pre'); canvas.focus(); this.playIntro(); });
     this.$('againBtn').addEventListener('click', () => location.reload());
+    this.$('skipLine').addEventListener('click', () => this.dialogue.skip());
+    this.$('skipAll').addEventListener('click', () => this.dialogue.skipAll());
     this.dialogue.onEvent = (name) => this.onEvent(name);
+    this.dialogue.onLine = () => this.audio.blip();
     window.addEventListener('resize', () => this.resize()); this.resize();
     this.renderer.setAnimationLoop(() => this.frame());
   }
@@ -121,7 +131,7 @@ export class Game {
     });
     this.interactables.push({
       id: 'switch', pos: points.lightSwitch, radius: 6.5, label: 'おす', markerY: 6,
-      onUse: () => { this.room.toggleCeiling(); this.toast(this.room.ceilingOn ? 'でんきが ついた' : 'でんきを けした'); },
+      onUse: () => { this.room.toggleCeiling(); this.audio.click(); this.toast(this.room.ceilingOn ? 'でんきが ついた' : 'でんきを けした'); },
     });
     const look = (id: string, pos: THREE.Vector3, radius: number, first: string, again: string, label: string, markerY: number) => {
       let seen = false;
@@ -136,7 +146,7 @@ export class Game {
         this.hero.stop(); this.hero.faceTowards(points.award);
         this.dialogue.start('award', points.award.clone().setY(0.6), this.hero.pos.clone(), () => {
           this.flags.hasAward = true; this.room.awardBall.visible = false;
-          this.markSlot('slotAward'); this.toast('しょうを ひろった。かけらが ふたつ たりない');
+          this.markSlot('slotAward'); this.audio.paper(); this.audio.chime(); this.toast('しょうを ひろった。かけらが ふたつ たりない');
           this.setObjective('かけらを ふたつ あつめる（つくえの した ／ ベッドの うえ）');
         });
       },
@@ -175,7 +185,7 @@ export class Game {
   private markSlot(id: string) { const el = this.$(id); el.classList.add('got'); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
   private gotFragment(which: 'frag1' | 'frag2') {
     const n = (this.flags.frag1 ? 1 : 0) + (this.flags.frag2 ? 1 : 0);
-    this.markSlot(which === 'frag1' ? 'slotFrag1' : 'slotFrag2');
+    this.markSlot(which === 'frag1' ? 'slotFrag1' : 'slotFrag2'); this.audio.chime();
     if (n === 2) { this.toast('かけらが そろった。まくらもとへ'); this.setObjective(this.flags.hasAward ? 'ベッドの まくらもとで、しょうを なおす' : 'まどの したの しょうを ひろって、まくらもとへ'); }
     else { this.toast(`かけらを もらった（${n} / 2）`); this.setObjective(this.flags.frag1 ? 'もうひとつの かけらは ベッドの うえ（ミミ）' : 'もうひとつの かけらは つくえの した（ガチャ）'); }
   }
@@ -200,12 +210,12 @@ export class Game {
     switch (name) {
       case 'intro:paper': this.dialogue.setCamera(p.award.clone().add(new THREE.Vector3(6, 4, 9)), p.award.clone().add(new THREE.Vector3(0, 1.2, 0))); break;
       case 'intro:hero': this.dialogue.setCamera(this.hero.pos.clone().add(new THREE.Vector3(-3.5, 2.2, 4.5)), this.hero.pos.clone().add(new THREE.Vector3(0, 1.0, 0))); break;
-      case 'repair:place': this.room.showRepairPaper(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(1.5, 4.5, 2.5)), p.repairSpot.clone()); break;
-      case 'repair:tape': this.room.awardTape(); break;
+      case 'repair:place': this.room.showRepairPaper(); this.audio.paper(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(1.5, 4.5, 2.5)), p.repairSpot.clone()); break;
+      case 'repair:tape': this.room.awardTape(); this.audio.paper(); break;
       case 'repair:gather': this.room.gatherToys(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(7, 6, 9)), p.repairSpot.clone().add(new THREE.Vector3(0.5, 1.0, 0.5))); break;
-      case 'repair:morning': this.room.startMorning(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(-4, 18, 26)), p.childHead.clone().add(new THREE.Vector3(0, -2, 4))); break;
+      case 'repair:morning': this.room.startMorning(); this.audio.birds(); this.dialogue.setCamera(p.repairSpot.clone().add(new THREE.Vector3(-4, 18, 26)), p.childHead.clone().add(new THREE.Vector3(0, -2, 4))); break;
       case 'repair:ending': this.ending = true; this.endingT = 0; this.dialogue.setCamera(new THREE.Vector3(10, 70, 80), new THREE.Vector3(-30, 10, 0)); break;
-      default: if (name.startsWith('repair:stroke:')) this.room.awardStroke(name.split(':')[2]);
+      default: if (name.startsWith('repair:stroke:')) { this.room.awardStroke(name.split(':')[2]); this.audio.paper(); }
     }
   }
 
@@ -237,6 +247,7 @@ export class Game {
     const f = this.input.poll();
 
     if (this.started && this.dialogue.choicesOpen && f.choice) this.dialogue.pick(f.choice - 1);
+    if (this.started && this.dialogue.active && !this.dialogue.choicesOpen && (f.jump || f.interact)) this.dialogue.skip(); // Space / Enter / E で1行進む
     const controlling = this.started && !this.dialogue.active;
     this.rig.input(controlling ? f.camDX : 0, controlling ? f.camDY : 0, controlling ? f.camStick : { x: 0, y: 0 }, dt, t);
     // スティックの「前」は倒し始めたときのカメラ向きで固定する（回り込み中に進路が曲がらないように）。
@@ -249,7 +260,7 @@ export class Game {
     let stepInput = controlling ? f : null;
     while (this.acc > 0) {
       const h = Math.min(this.acc, 1 / 60); this.acc -= h;
-      this.hero.step(h, stepInput, this.moveYaw, this.room.colliders, this.room.ramps, this.rig.bounds);
+      this.hero.step(h, stepInput, this.moveYaw, this.room.colliders, this.room.ramps, this.heroBounds);
       if (stepInput) stepInput = { ...stepInput, jump: false, skate: false }; // 押した瞬間の入力は最初の刻みだけ
       if (this.acc < 1e-4) this.acc = 0;
     }
@@ -290,6 +301,10 @@ export class Game {
       fl.mesh.position.lerpVectors(fl.from, to, e); fl.mesh.position.y += Math.sin(k * Math.PI) * 3; fl.mesh.rotation.y += dt * 6; fl.mesh.scale.setScalar(5 * (1 - e * 0.85));
       if (k >= 1) { this.scene.remove(fl.mesh); this.flights.splice(i, 1); fl.onDone(); }
     }
+    // 足音: 歩いている間、速度に応じた間隔で
+    const walking = !this.hero.skate && !this.hero.ride && this.hero.onGround && this.hero.speed > 0.6;
+    if (walking) { this.stepTimer += dt * (0.6 + this.hero.speed / 3.4); if (this.stepTimer >= 0.42) { this.stepTimer = 0; this.audio.footstep(this.hero.pos.y < 0.1); } } else this.stepTimer = 0.3;
+    this.audio.update(dt, { skating: this.hero.skate, skateSpeed: this.hero.speed, riding: !!this.hero.ride, carSpeed: this.hero.speed, onGround: this.hero.onGround, clock: this.started && !this.ending });
     this.dialogue.update(dt);
     if (this.ending) { this.endingT += dt; this.dialogue.camPos.x += dt * 0.8; this.dialogue.camPos.y += dt * 0.6; }
     this.room.update(dt, t);
