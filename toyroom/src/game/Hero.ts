@@ -177,8 +177,10 @@ export class Hero {
     if (this.pos.y <= this.groundY + .001 && this.vel.y <= 0) {
       this.pos.y = this.groundY; this.vel.y = 0; this.onGround = true;
       if (wasAir) {
-        const impact = clamp((-this.peakFall - 4) / 9, 0, 1); // 小さなジャンプは0、机からの落下で1
-        if (impact > 0) { this.squash = 0.35 + impact * 0.5; this.events.onLand?.(impact, this.pos.clone()); }
+        // 落下速度で衝撃を決める。普通のジャンプ（着地速度 約13）は 0、1m相当の落下で 0.3、机（3.6m相当）からで 1
+        const impact = clamp((-this.peakFall - 18) / 24, 0, 1);
+        this.squash = 0.12 + impact * 0.7; // 軽いしゃがみは常に、揺れと埃は高所からだけ
+        if (impact > 0) this.events.onLand?.(impact, this.pos.clone());
         this.airTime = 0; this.peakFall = 0;
       }
     } else if (this.pos.y > this.groundY + .05) this.onGround = false;
