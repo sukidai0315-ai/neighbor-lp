@@ -28,6 +28,11 @@ export class Hero {
   events: HeroEvents = {};
   /** 本番モデル。読めたら仮モデルを隠してこちらを動かす */
   private model: THREE.Group | null = null;
+  // 骨入りモデルのアニメーション。クリップ名は scripts/merge-animations.mjs で付けたもの
+  private mixer: THREE.AnimationMixer | null = null;
+  private actions: Record<string, THREE.AnimationAction> = {};
+  private current = '';
+  private mantling = 0; // よじ登り中の残り秒
   /** 乗っているラジコン。前が +x のモデル */
   ride: THREE.Group | null = null;
   /** 乗っているときの当たり判定の大きさと座る位置。Room が本番モデルに合わせて更新する */
@@ -78,6 +83,17 @@ export class Hero {
   async applyModel() {
     const m = await loadModel('parker', 1.75, { faceZ: 0 }); if (!m) return;
     this.body.visible = false; this.board.visible = false; this.model = m.root; this.root.add(this.model);
+    if (m.animations.length) {
+      this.mixer = new THREE.AnimationMixer(m.root);
+      for (const clip of m.animations) {
+        // 腰の前後左右の移動は消す（上下の弾みは残す。位置はゲーム側で決める）
+        // よじ登りは上方向の移動も消す（高さの変化はゲーム側で付ける）
+        for (const t of clip.tracks) if (t.name.endsWith('.position') && /hips|root|pelvis/i.test(t.name)) { const v = t.values; for (let i = 0; i < v.length; i += 3) { v[i] = 0; v[i + 2] = 0; if (clip.name === 'climb') v[i + 1] = v[1]; } }
+        const a = this.mixer.clipAction(clip); a.enabled = true; a.setEffectiveWeight(0); a.play(); this.actions[clip.name] = a;
+      }
+      for (const once of ['jump', 'climb']) if (this.actions[once]) { this.actions[once].setLoop(THREE.LoopOnce, 1); this.actions[once].clampWhenFinished = true; }
+      this.play('idle', 0);
+    }
   }
 
   place(p: THREE.Vector3, yaw = Math.PI) { this.pos.copy(p); this.yaw = yaw; this.vel.set(0, 0, 0); this.speed = 0; this.groundY = p.y; }
@@ -191,7 +207,7 @@ export class Hero {
         const dx = nx - p.x, dz = nz - p.z, d = Math.hypot(dx, dz); if (d < 1e-4 || d > RADIUS + 0.4) continue;
         if ((wish.x * dx + wish.z * dz) / d < 0.3) continue;
         p.y = top; p.x = nx + dx / d * (RADIUS + 0.1); p.z = nz + dz / d * (RADIUS + 0.1);
-        this.vel.set(0, 0, 0); this.speed = 0; this.onGround = true; this.groundY = top; this.squash = 0.45; this.events.onPush?.();
+        this.vel.set(0, 0, 0); this.speed = 0; this.onGround = true; this.groundY = top; this.squash = 0.45; this.mantling = 0.55; this.events.onPush?.();
         break;
       }
     }
@@ -210,6 +226,19 @@ export class Hero {
     } else if (this.pos.y > this.groundY + .05) this.onGround = false;
   }
 
+  /** クリップを切り替える（クロスフェード） */
+  private play(name: string, fade = 0.18, timeScale = 1) {
+    const a = this.actions[name]; if (!a) return;
+    a.timeScale = timeScale;
+    if (this.current === name) return;
+    const prev = this.actions[this.current];
+    if (a.loop === THREE.LoopOnce) a.reset();
+    a.enabled = true; a.setEffectiveWeight(1);
+    if (prev && prev !== a) { if (fade > 0) prev.crossFadeTo(a, fade, false); else { prev.setEffectiveWeight(0); } }
+    a.fadeIn(fade);
+    this.current = name;
+  }
+
   /** 見た目の更新（フレームごとに1回） */
   animate(dt: number) {
     this.root.rotation.y = this.yaw;
@@ -219,8 +248,18 @@ export class Hero {
     const sq = this.squash; hips.scale.set(1 + sq * 0.35, 1 - sq * 0.45, 1 + sq * 0.35);
     this.root.position.copy(this.pos);
     if (this.model) {
-      // 本番モデル（まだ骨なし）: 全体の傾き・弾み・しゃがみだけ付ける
       const m = this.model; m.scale.set(1 + sq * 0.25, 1 - sq * 0.35, 1 + sq * 0.25);
+      if (this.mixer) {
+        // 状態からクリップを選ぶ。ride=座り、skate=バランス、空中=ジャンプ、よじ登り、歩き、待機
+        this.mantling = Math.max(0, this.mantling - dt);
+        if (this.ride) this.play('sit', 0.2);
+        else if (this.mantling > 0) this.play('climb', 0.1, 1.6);
+        else if (this.skate) this.play('skate', 0.25, 0.6);
+        else if (!this.onGround) this.play('jump', 0.08, 1.1);
+        else if (sp > 0.25) this.play('walk', 0.15, clamp(sp / WALK_SPEED, 0.6, 1.4));
+        else this.play('idle', 0.25);
+        this.mixer.update(dt);
+      }
       if (this.ride) { const car = this.ride; car.position.copy(this.pos); car.rotation.set(0, this.yaw - Math.PI / 2, lerp(car.rotation.z, -this.steer * 0.06 * Math.min(1, Math.abs(this.speed) / 6), e(8)));
         const face = new THREE.Vector3(Math.sin(this.yaw), 0, Math.cos(this.yaw)); this.root.position.addScaledVector(face, -this.rideShape.back).y += this.rideShape.seatY; m.rotation.set(0.05, 0, -this.steer * 0.12); m.position.y = 0; return; }
       if (this.skate) { m.rotation.set(0.05 + Math.min(0.2, this.speed * 0.03), -0.9, this.steer * 0.35); m.position.y = (this.onGround ? 0.17 : 0.27);

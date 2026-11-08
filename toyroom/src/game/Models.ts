@@ -11,7 +11,7 @@ const base = `${import.meta.env.BASE_URL}models/`;
 // 配信先が .glb を置けないとき（Claude のアーティファクトなど）は拡張子を差し替えられる
 const ext = (globalThis as { __TOYROOM_MODEL_EXT?: string }).__TOYROOM_MODEL_EXT ?? '.glb';
 
-export interface LoadedModel { root: THREE.Group; height: number }
+export interface LoadedModel { root: THREE.Group; height: number; animations: THREE.AnimationClip[] }
 
 /** name.glb を読み、足元を原点、指定の高さに揃えて返す */
 export async function loadModel(name: string, targetHeight: number, opts: { faceZ?: number; fitAxis?: 'x' | 'y' | 'z' } = {}): Promise<LoadedModel | null> {
@@ -21,7 +21,7 @@ export async function loadModel(name: string, targetHeight: number, opts: { face
     root.traverse(o => {
       const m = o as THREE.Mesh;
       if (m.isMesh) {
-        m.castShadow = true; m.receiveShadow = true;
+        m.castShadow = true; m.receiveShadow = true; if ((m as unknown as THREE.SkinnedMesh).isSkinnedMesh) m.frustumCulled = false;
         const mat = m.material as THREE.MeshStandardMaterial;
         if (mat && 'roughness' in mat) { mat.roughness = Math.min(1, mat.roughness + 0.05); }
       }
@@ -36,7 +36,7 @@ export async function loadModel(name: string, targetHeight: number, opts: { face
     const c = box.getCenter(new THREE.Vector3());
     root.position.set(-c.x, -box.min.y, -c.z); // 足元を原点に
     const wrap = new THREE.Group(); wrap.add(root);
-    return { root: wrap, height: targetHeight };
+    return { root: wrap, height: targetHeight, animations: gltf.animations ?? [] };
   } catch (e) {
     console.warn(`model ${name} not loaded`, e);
     return null;
