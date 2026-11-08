@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import * as T from './textures';
+import { scanned } from './assets';
 
 // 子供部屋（仮モデル）。単位 1 = 10cm。
 // ゾーン: 机の上(出発) / ラグ / 窓の下 / 机の下 / ベッドの上 / 枕元(ゴール)
@@ -34,19 +35,20 @@ export class Room {
 
   constructor(private scene: THREE.Scene, aniso: number, lowTier: boolean) {
     scene.add(this.group);
-    const woodP = T.wood(), rugP = T.rug(), wallP = T.wallpaper(), quiltP = T.quilt();
-    const bearFur = T.fur(0xa8743f, 0xd4a56c), bellyFur = T.fur(0xe9d2ad, 0xf6e6c9);
+    const woodP = T.wood();
 
-    const floorMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(woodP, { repeat: 5, normalStrength: 1.6, aniso }), roughness: 0.7, clearcoat: 0.25, clearcoatRoughness: 0.35 });
-    floorMat.normalScale.set(0.7, 0.7);
-    const rugMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(rugP, { repeat: 9, normalStrength: 2.2, aniso }), roughness: 1, sheen: 1, sheenRoughness: 0.75, sheenColor: new THREE.Color(0xffd7b8) });
-    const wallMat = new THREE.MeshStandardMaterial({ ...T.pbr(wallP, { repeat: 6, normalStrength: 0.8, aniso }), roughness: 0.95 });
+    // 床・壁・布はスキャン素材（public/textures、CC0）。小物や仮キャラはコード生成のまま
+    const floorMat = new THREE.MeshPhysicalMaterial({ ...scanned('wood_floor', { repeat: [2.2, 1.8], aniso }), roughness: 1, clearcoat: 0.3, clearcoatRoughness: 0.3 });
+    floorMat.normalScale.set(1.1, 1.1);
+    const rugMat = new THREE.MeshPhysicalMaterial({ ...scanned('knitted_fleece', { repeat: [3.5, 3.5], aniso }), color: 0xe0a07e, roughness: 1, sheen: 1, sheenRoughness: 0.7, sheenColor: new THREE.Color(0xffd7b8) });
+    rugMat.normalScale.set(1.4, 1.4);
+    const wallMat = new THREE.MeshStandardMaterial({ ...scanned('plastered_wall_04', { repeat: [5, 3.2], aniso }), color: 0xffffff, roughness: 1 });
     const trimMat = new THREE.MeshStandardMaterial({ color: 0xf4efe6, roughness: 0.5 });
     const deskMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(woodP, { repeat: 2, normalStrength: 1.0, aniso }), color: 0xd9b98f, roughness: 0.55, clearcoat: 0.4, clearcoatRoughness: 0.3 });
-    const quiltMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(quiltP, { repeat: 6, normalStrength: 1.6, aniso }), roughness: 1, sheen: 0.9, sheenRoughness: 0.8 });
-    const sheetMat = new THREE.MeshPhysicalMaterial({ color: 0xf6f1e6, roughness: 1, sheen: 0.8 });
-    const bearMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(bearFur, { repeat: 3, normalStrength: 2.5, aniso }), roughness: 1, sheen: 1, sheenRoughness: 0.6, sheenColor: new THREE.Color(0xffe0b8) });
-    const bellyMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(bellyFur, { repeat: 3, normalStrength: 2, aniso }), roughness: 1, sheen: 1, sheenRoughness: 0.6, sheenColor: new THREE.Color(0xfff2dc) });
+    const quiltMat = new THREE.MeshPhysicalMaterial({ ...scanned('gingham_check', { repeat: [2.2, 3.4], aniso }), color: 0xd6e2f0, roughness: 1, sheen: 0.9, sheenRoughness: 0.8 });
+    const sheetMat = new THREE.MeshPhysicalMaterial({ ...scanned('cotton_jersey', { repeat: [3, 3], aniso }), color: 0xf6f1e6, roughness: 1, sheen: 0.8 });
+    const bearMat = new THREE.MeshPhysicalMaterial({ ...scanned('curly_teddy_natural', { repeat: [1.6, 1.6], aniso }), color: 0xc48a52, roughness: 1, sheen: 1, sheenRoughness: 0.6, sheenColor: new THREE.Color(0xffe0b8) });
+    const bellyMat = new THREE.MeshPhysicalMaterial({ ...scanned('curly_teddy_natural', { repeat: [1.6, 1.6], aniso }), color: 0xf1dcc0, roughness: 1, sheen: 1, sheenRoughness: 0.6, sheenColor: new THREE.Color(0xfff2dc) });
     const rubber = new THREE.MeshStandardMaterial({ color: 0x2b2725, roughness: 0.85 });
     const whitePlastic = new THREE.MeshPhysicalMaterial({ color: 0xf3efe6, roughness: 0.4, clearcoat: 0.6, clearcoatRoughness: 0.2 });
     const carPaint = new THREE.MeshPhysicalMaterial({ color: 0xd63a2b, roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.08 });
@@ -181,8 +183,8 @@ export class Room {
     this.preset = p;
     const night = p === 'night';
     this.sun.intensity = night ? 0 : 3.0; this.moon.intensity = night ? 0.55 : 0.25;
-    this.sky.intensity = night ? 0.18 : 0.55; this.nightLight.intensity = night ? 110 : 0; this.fill.intensity = night ? 10 : 0;
-    this.scene.environmentIntensity = night ? 0.14 : 0.45;
+    this.sky.intensity = night ? 0.32 : 0.55; this.nightLight.intensity = night ? 110 : 0; this.fill.intensity = night ? 16 : 0;
+    this.scene.environmentIntensity = night ? 0.2 : 0.45;
     this.glass.material.color.set(night ? 0x8fa6cc : 0xfff1d2);
     const bg = night ? 0x262838 : 0xf0d7b8;
     this.scene.background = new THREE.Color(bg); this.scene.fog = new THREE.FogExp2(bg, night ? 0.016 : 0.013);

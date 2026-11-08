@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import * as T from './textures';
+import { scanned } from './assets';
 import type { Frame } from './Input';
 import type { CameraRig } from './CameraRig';
 
@@ -30,8 +31,8 @@ export class Hero {
   private squash = 0; private airTime = 0; private peakFall = 0;
 
   constructor(scene: THREE.Scene, aniso: number) {
-    const denimMat = new THREE.MeshStandardMaterial({ ...T.pbr(T.denim(), { repeat: 4, normalStrength: 1.6, aniso }), roughness: .95 });
-    const jerseyMat = new THREE.MeshPhysicalMaterial({ ...T.pbr(T.jersey(), { repeat: 6, normalStrength: 1.2, aniso }), roughness: .9, sheen: .6, sheenRoughness: .8, sheenColor: new THREE.Color(0xffffff) });
+    const denimMat = new THREE.MeshStandardMaterial({ ...scanned('denim_fabric', { repeat: [2, 2], aniso }), color: 0x7d9bd0, roughness: 1 });
+    const jerseyMat = new THREE.MeshPhysicalMaterial({ ...scanned('cotton_jersey', { repeat: [2, 2], aniso }), color: 0xf4f1ea, roughness: 1, sheen: .6, sheenRoughness: .8, sheenColor: new THREE.Color(0xffffff) });
     const skinMat = new THREE.MeshPhysicalMaterial({ color: 0xe7b58d, roughness: .45, clearcoat: .35, clearcoatRoughness: .4 });
     const hairMat = new THREE.MeshPhysicalMaterial({ color: 0x4a2f1f, roughness: .5, clearcoat: .3 });
     const shoeMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2e, roughness: .7 });
