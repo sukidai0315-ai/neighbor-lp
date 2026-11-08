@@ -37,8 +37,8 @@ export class CameraRig {
   right() { const f = this.forward(); return new THREE.Vector3(-f.z, 0, f.x); }
 
   input(dx: number, dy: number, stick: { x: number; y: number }, dt: number, time: number) {
-    if (dx || dy) { this.yaw -= dx * 0.006; this.pitch = clamp(this.pitch + dy * 0.004, -0.15, 1.1); this.lastInput = time; }
-    if (stick.x || stick.y) { this.yaw -= stick.x * 2.4 * dt; this.pitch = clamp(this.pitch + stick.y * 1.6 * dt, -0.15, 1.1); this.lastInput = time; }
+    if (dx || dy) { this.yaw -= dx * 0.006; this.pitch = clamp(this.pitch + dy * 0.004, -0.7, 1.1); this.lastInput = time; }
+    if (stick.x || stick.y) { this.yaw -= stick.x * 2.4 * dt; this.pitch = clamp(this.pitch + stick.y * 1.6 * dt, -0.7, 1.1); this.lastInput = time; }
   }
 
   update(dt: number, time: number, heroPos: THREE.Vector3, heroVel: THREE.Vector3, speedBoost: number, cine: { active: boolean; pos: THREE.Vector3; look: THREE.Vector3 }, falling = false) {

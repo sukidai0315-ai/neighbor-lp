@@ -60,6 +60,7 @@ export class Room {
   private bedLamp!: THREE.PointLight;
   private bedLampMat!: THREE.MeshStandardMaterial;
   private clouds: THREE.Group[] = [];
+  private ventDust!: THREE.Points;
   private childLump!: THREE.Mesh;
   private ceilingLight!: THREE.PointLight;
   private ceilingMat!: THREE.MeshStandardMaterial;
@@ -368,7 +369,15 @@ export class Room {
     add(new THREE.BoxGeometry(ventW - 0.1, 0.1, 3.9), new THREE.MeshStandardMaterial({ color: 0x80838a, roughness: .6, metalness: .4 }), [ventX, ventY - ventH / 2 + 0.05, wallZ - 2.0], undefined, { solid: true }); // 床（上面 11.65）
     // ひみつきちの中身: 懐中電灯（ついている）とビー玉
     add(new THREE.CylinderGeometry(.22, .18, 1.1, 12), new THREE.MeshPhysicalMaterial({ color: 0xe3a21a, roughness: .4, clearcoat: .5 }), [ventX - 0.7, ventY - ventH / 2 + 0.3, wallZ - 3.0], [0, 0, Math.PI / 2 - 0.3]);
-    const torch = new THREE.PointLight(0xffe8b0, 6 * S * S, 10 * S, 2); torch.position.set(ventX - 0.2, ventY - ventH / 2 + 0.4, wallZ - 3.0); this.group.add(torch);
+    const torch = new THREE.PointLight(0xffe8b0, 14 * S * S, 14 * S, 2); torch.position.set(ventX - 0.2, ventY - ventH / 2 + 0.4, wallZ - 3.0); this.group.add(torch);
+    // 格子の奥がほんのり光って見える（外からの手がかり）
+    add(new THREE.PlaneGeometry(ventW - 0.3, ventH - 0.3), new THREE.MeshStandardMaterial({ color: 0xffe2a8, emissive: 0xffc878, emissiveIntensity: 1.6, transparent: true, opacity: 0.55 }), [ventX, ventY, wallZ - 0.6], undefined, { shadow: false });
+    // 排気口から埃がゆっくり流れ出る
+    const vn = 36, vgeo = new THREE.BufferGeometry(), vp = new Float32Array(vn * 3);
+    for (let i = 0; i < vn; i++) { vp[i * 3] = ventX + (Math.random() - .5) * ventW; vp[i * 3 + 1] = ventY + (Math.random() - .5) * ventH; vp[i * 3 + 2] = wallZ + Math.random() * 6; }
+    vgeo.setAttribute('position', new THREE.BufferAttribute(vp, 3));
+    this.ventDust = new THREE.Points(vgeo, new THREE.PointsMaterial({ color: 0xffe9c4, size: .09, transparent: true, opacity: .7, depthWrite: false, blending: THREE.AdditiveBlending }));
+    this.ventDust.userData = { x: ventX, y: ventY, w: ventW, h: ventH, z: wallZ }; this.group.add(this.ventDust);
     for (let i = 0; i < 5; i++) add(new THREE.SphereGeometry(.12, 12, 10), new THREE.MeshPhysicalMaterial({ color: [0x3b6fc4, 0xd8443a, 0x3da36b, 0xe3a21a, 0xffffff][i], roughness: .1, clearcoat: 1, transmission: .3 }), [ventX + 0.3 + (i % 3) * 0.3, ventY - ventH / 2 + 0.22, wallZ - 2.4 - Math.floor(i / 3) * 0.3]);
     // 天井の照明（スイッチで点く）
     this.ceilingMat = new THREE.MeshStandardMaterial({ color: 0xfdfaf3, roughness: .8, emissive: 0xfff2d0, emissiveIntensity: 0 });
@@ -482,6 +491,8 @@ export class Room {
     for (let i = 0; i < this.dustVel.length; i++) { a[i * 3 + 1] += Math.sin(t * .3 + i) * .002 - .0025 * this.dustVel[i]; if (a[i * 3 + 1] < .05) a[i * 3 + 1] = 9; }
     pos.needsUpdate = true;
     this.bearHead.rotation.y = Math.sin(t * .5) * .08;
+    { const d = this.ventDust.userData as { x: number; y: number; w: number; h: number; z: number }; const a = (this.ventDust.geometry.attributes.position as THREE.BufferAttribute);
+      const arr = a.array as Float32Array; for (let i = 0; i < arr.length / 3; i++) { arr[i * 3 + 2] += dt * 0.9; arr[i * 3 + 1] -= dt * 0.25; if (arr[i * 3 + 2] > d.z + 6) { arr[i * 3] = d.x + (Math.random() - .5) * d.w; arr[i * 3 + 1] = d.y + (Math.random() - .5) * d.h; arr[i * 3 + 2] = d.z; } } a.needsUpdate = true; }
     this.clouds.forEach((c, i) => { c.position.y += Math.sin(t * 0.6 + i * 2) * 0.0015; c.rotation.y = Math.sin(t * 0.2 + i) * 0.05; });
     const breath = 1 + Math.sin(t * 1.1) * 0.025; this.childLump.scale.set(1, breath, 1);
     if (this.morningT >= 0 && this.morningT < 1) {

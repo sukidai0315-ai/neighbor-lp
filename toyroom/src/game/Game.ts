@@ -22,6 +22,7 @@ export class Game {
   private interactables: Interactable[] = [];
   private flags = { metBear: false, hasAward: false, metDash: false, metRobot: false, metRabbit: false, frag1: false, frag2: false, repaired: false };
   private ending = false; private endingT = 0;
+  private hintedDesk = false;
   private toastTimer: number | null = null;
   private flights: { mesh: THREE.Mesh; from: THREE.Vector3; t: number; onDone: () => void }[] = [];
   private $ = (id: string) => document.getElementById(id) as HTMLElement;
@@ -57,7 +58,8 @@ export class Game {
     this.setupInteractables();
     for (const it of this.interactables) {
       const kind = it.label === 'はなす' ? 'talk' : it.label === 'のる' ? 'ride' : 'item';
-      if (it.id === 'vent' || it.id === 'photo') { it.show = () => this.hero.pos.distanceTo(it.pos) < 30; } // 隠し要素は近くまで来たときだけ目印が出る
+      if (it.id === 'vent') it.show = () => this.hero.pos.y > 30 || this.hero.pos.distanceTo(it.pos) < 30; // 机の上に立つと見える
+      if (it.id === 'photo') it.show = () => this.hero.pos.distanceTo(it.pos) < 24; // 棚の裏は近くまで来たときだけ
       it.marker = this.makeMarker(kind); it.marker.visible = false; this.scene.add(it.marker);
     }
     this.setObjective('ラグの クマ（ボロ）に はなす');
@@ -271,6 +273,8 @@ export class Game {
       else if (riding) { this.hero.dismount(); this.room.setRiding(false); }
     }
 
+    // 机の上に戻ってきたとき、上の壁に目を向けさせる一言（オープニング中は出さない）
+    if (controlling && !this.hintedDesk && this.hero.pos.y > 34 && this.hero.pos.x > 40 && this.hero.pos.z < -27 && t > 20) { this.hintedDesk = true; this.toast('パーカー「うえの かべ、なにか ひかってる……」'); }
     // 目印: 対象の頭上で上下に揺れ、近いと少し大きく
     for (const it of this.interactables) {
       const m = it.marker; if (!m) continue;
